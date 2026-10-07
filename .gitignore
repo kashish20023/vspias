@@ -1,14 +1,14 @@
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
 
 # testing
-/coverage
+coverage/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
 /build
@@ -22,8 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
+# env files
+.env*
 
 # vercel
 .vercel
@@ -31,3 +31,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# non-frontend, planning, docs, prompts & scripts
+.agent/
+.planning/
+docs/
+references/
+scripts/
+PROJECT.md
+VSPIAS-*.md
+*.log
+

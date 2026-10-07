@@ -10,6 +10,13 @@ export interface BagProduct {
   image: string;
   imageClass?: string;
   alt: string;
+  dimensions?: string;
+  gsmRange?: string;
+  handleType?: string;
+  printCapabilities?: string;
+  typicalUse?: string;
+  moqContext?: string;
+  availableFinishes?: string[];
 }
 
 export interface BagDetailData {
@@ -43,7 +50,14 @@ export const BAG_COLLECTION_PRODUCTS: BagProduct[] = [
     slug: 'kraft-carry-bags',
     image: ASSETS.bagArtwork,
     imageClass: 'crop-kraft',
-    alt: 'Illustrative natural kraft carry bag'
+    alt: 'Illustrative natural kraft carry bag with twisted paper handles',
+    dimensions: '220 × 110 × 310 mm (Customizable)',
+    gsmRange: '80 – 140 GSM virgin / recycled kraft',
+    handleType: 'Twisted paper cord or flat paper handle',
+    printCapabilities: 'In-line 1 or 2-colour flexographic printing',
+    typicalUse: 'Apparel stores, bookshops, boutique retail and gift packaging',
+    moqContext: 'Volume production batches manufactured at Peenya unit',
+    availableFinishes: ['Natural Kraft', 'Bleached Ivory', 'Custom Tinted']
   },
   {
     id: 'food-takeaway',
@@ -54,7 +68,14 @@ export const BAG_COLLECTION_PRODUCTS: BagProduct[] = [
     slug: 'food-takeaway',
     image: ASSETS.foodPackaging,
     imageClass: 'packaging',
-    alt: 'Paper packaging illustration from the VSPIAS brochure'
+    alt: 'Paper packaging illustration from the VSPIAS brochure',
+    dimensions: '260 × 140 × 320 mm (Customizable)',
+    gsmRange: '70 – 120 GSM food-contact compatible kraft',
+    handleType: 'Flat fold-in handle or pinch bottom (handle-less)',
+    printCapabilities: 'Food-grade water-based flexographic inks',
+    typicalUse: 'Cafés, quick-service food deliveries, bakeries, and patisseries',
+    moqContext: 'Bulk orders dispatched across commercial food chains',
+    availableFinishes: ['Natural Brown', 'Bleached White', 'Grease-Resistant']
   },
   {
     id: 'retail-custom',
@@ -65,7 +86,14 @@ export const BAG_COLLECTION_PRODUCTS: BagProduct[] = [
     slug: 'retail-custom-print',
     image: ASSETS.bagArtwork,
     imageClass: 'crop-ivory',
-    alt: 'Illustrative ivory paper shopping bag'
+    alt: 'Illustrative ivory paper shopping bag with printed brand identity',
+    dimensions: '300 × 120 × 400 mm (Customizable)',
+    gsmRange: '100 – 160 GSM premium smooth kraft / ivory',
+    handleType: 'Reinforced twisted cord or custom cotton-feel rope',
+    printCapabilities: 'Edge-to-edge 2-colour flexo brand printing',
+    typicalUse: 'Luxury lifestyle boutiques, corporate hampers, exhibition gift bags',
+    moqContext: 'Tailored manufacturing runs with pre-production sample sign-off',
+    availableFinishes: ['Bleached Ivory', 'Forest Green', 'Natural Kraft']
   }
 ];
 

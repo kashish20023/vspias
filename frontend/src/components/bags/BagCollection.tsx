@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { BAG_FILTERS, BAG_COLLECTION_PRODUCTS, BAG_COLLECTION_NOTE } from '@/content/bags';
+import { BAG_FILTERS, BAG_COLLECTION_PRODUCTS, BAG_COLLECTION_NOTE, BagProduct } from '@/content/bags';
+import BagDetailModal from './BagDetailModal';
 
 export default function BagCollection(): JSX.Element {
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [selectedProduct, setSelectedProduct] = useState<BagProduct | null>(null);
 
   const filteredProducts = BAG_COLLECTION_PRODUCTS.filter((product) => {
     if (activeFilter === 'all') return true;
@@ -29,7 +31,7 @@ export default function BagCollection(): JSX.Element {
           </p>
         </div>
 
-        <div className="filters" aria-label="Filter product concepts">
+        <div className="filters" role="group" aria-label="Filter product collection">
           {BAG_FILTERS.map((btn) => (
             <button
               key={btn.filter}
@@ -44,13 +46,27 @@ export default function BagCollection(): JSX.Element {
           ))}
         </div>
 
+        {/* Live announcer for screen readers */}
+        <div className="sr-only" aria-live="polite" role="status">
+          Showing {filteredProducts.length} bag style{filteredProducts.length === 1 ? '' : 's'}
+        </div>
+
         <div className="products">
           {filteredProducts.map((product) => (
             <article key={product.id} className="product" data-category={product.category}>
-              <Link
-                href={`/paper-bags/${product.slug}`}
+              <div
                 className={`product-img ${product.imageClass || ''}`}
-                style={{ display: 'block' }}
+                style={{ cursor: 'pointer' }}
+                onClick={() => setSelectedProduct(product)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedProduct(product);
+                  }
+                }}
+                aria-label={`View details and specifications for ${product.title}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -59,17 +75,47 @@ export default function BagCollection(): JSX.Element {
                   className={product.imageClass === 'packaging' ? 'packaging' : undefined}
                 />
                 <span className="product-tag">{product.tag}</span>
-              </Link>
-              <Link href={`/paper-bags/${product.slug}`} className="product-heading">
-                {product.title} <span>↗</span>
-              </Link>
-              <p>{product.description}</p>
+              </div>
+
+              <div className="product-details-bar">
+                <button
+                  type="button"
+                  className="product-heading-btn"
+                  onClick={() => setSelectedProduct(product)}
+                >
+                  <h3>{product.title}</h3>
+                  <span className="arrow" aria-hidden="true">↗</span>
+                </button>
+                <p>{product.description}</p>
+                <div className="product-actions-row">
+                  <button
+                    type="button"
+                    className="button secondary mini-btn"
+                    onClick={() => setSelectedProduct(product)}
+                    aria-label={`Quick view specifications for ${product.title}`}
+                  >
+                    View Specs &amp; Options
+                  </button>
+                  <Link
+                    href={`/contact?interest=Paper%20bags&requirements=${encodeURIComponent(`I would like to request a quotation for ${product.title}.`)}`}
+                    className="text-link mini-link"
+                  >
+                    Request Quote ↗
+                  </Link>
+                </div>
+              </div>
             </article>
           ))}
         </div>
 
         <p className="note">{BAG_COLLECTION_NOTE}</p>
       </div>
+
+      {/* Accessible Detail Dialog */}
+      <BagDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </section>
   );
 }
