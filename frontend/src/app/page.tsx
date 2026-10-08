@@ -3,12 +3,13 @@ import type { Metadata } from 'next';
 import BagHero from '@/components/home/BagHero';
 import CapabilityStrip from '@/components/home/CapabilityStrip';
 import BagRangeShowcase from '@/components/bags/BagRangeShowcase';
+import AboutPackagingSection from '@/components/home/AboutPackagingSection';
+import IndustryApplicationsSection from '@/components/home/IndustryApplicationsSection';
+import BusinessHighlightsSection from '@/components/home/BusinessHighlightsSection';
 import MaterialDetailsSection from '@/components/bags/MaterialDetailsSection';
-import BagsInUseSection from '@/components/bags/BagsInUseSection';
 import CustomPackagingJourney from '@/components/bags/CustomPackagingJourney';
 import ManufacturingEvidenceSection from '@/components/industrial/ManufacturingEvidenceSection';
 import AutomationCrosslink from '@/components/home/AutomationCrosslink';
-import CompanyStorySection from '@/components/home/CompanyStorySection';
 import PaperEnquirySection from '@/components/bags/PaperEnquirySection';
 
 export const metadata: Metadata = {
@@ -20,34 +21,37 @@ export const metadata: Metadata = {
 export default function PaperPackagingHomePage(): JSX.Element {
   return (
     <div className="homepage-wrapper paper-division-page" id="paper-packaging-home">
-      {/* 4.B Signature Product Hero (Dominant visual on left, concise copy on right) */}
+      {/* 6.B Signature Hero Banner (Design 1: Warm boutique background, large bag visual on right, copy on left) */}
       <BagHero />
 
-      {/* 4.C Compact Capability Strip (4 verified capabilities with fine dividers) */}
+      {/* Capability Strip connecting hero to product range */}
       <CapabilityStrip />
 
-      {/* 4.D Interactive Bag-Range Showcase (Product selector updating image, specs & enquiry) */}
+      {/* 6.C Existing Bag Range (Product selector updating image, specs & enquiry) */}
       <BagRangeShowcase />
 
-      {/* 4.E Material and Construction Details (Tactile close-ups, handles, substrate & base) */}
+      {/* 6.D About VSPIAS (Design 2: Dark olive composition, ivory text, burnt orange CTA) */}
+      <AboutPackagingSection />
+
+      {/* 6.E Industry Applications (Designs 3 & 4: Combined 12-sector responsive CSS Grid mosaic) */}
+      <IndustryApplicationsSection />
+
+      {/* 6.F Business Highlights (Design 5: Three-part composition: Headline, central collage, 3 supporting rows) */}
+      <BusinessHighlightsSection />
+
+      {/* Material and Construction Details (Tactile close-ups, handles, substrate & base) */}
       <MaterialDetailsSection />
 
-      {/* 4.F Paper Bags in Real Business Applications (Retail, Food Takeaway, E-Commerce) */}
-      <BagsInUseSection />
-
-      {/* 4.G Custom Packaging Process (4-step buyer journey: "Make every carry count") */}
+      {/* 6.G Custom Packaging Process (4-step buyer journey: "Make every carry count") */}
       <CustomPackagingJourney />
 
-      {/* 4.H Manufacturing & Quality Evidence (Contrasting deep section: "Your brand. In every impression.") */}
+      {/* Manufacturing & Quality Proof (Deep contrast section: "Your brand. In every impression.") */}
       <ManufacturingEvidenceSection />
 
       {/* Industrial Division Cross-Link */}
       <AutomationCrosslink />
 
-      {/* Company Heritage & Provenance */}
-      <CompanyStorySection />
-
-      {/* 4.I Final Enquiry CTA & Consultation Desk */}
+      {/* Final Enquiry CTA & Direct Consultation Desk */}
       <PaperEnquirySection />
     </div>
   );

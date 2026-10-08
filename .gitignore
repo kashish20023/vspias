@@ -42,3 +42,9 @@ PROJECT.md
 VSPIAS-*.md
 *.log
 
+# root-level artifacts, screenshots & package folders
+/*.png
+/verification-screenshots/
+/VSPIAS-*/
+
+

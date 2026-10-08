@@ -1,4 +1,4 @@
-import { ASSETS } from './assets';
+import { ASSETS, APPROVED_ASSETS } from './assets';
 
 export interface BagProduct {
   id: string;
@@ -48,9 +48,9 @@ export const BAG_COLLECTION_PRODUCTS: BagProduct[] = [
     description: 'Retail · Shopping · Everyday carry',
     category: 'retail custom',
     slug: 'kraft-carry-bags',
-    image: ASSETS.bagArtwork,
-    imageClass: 'crop-kraft',
-    alt: 'Illustrative natural kraft carry bag with twisted paper handles',
+    image: APPROVED_ASSETS.kraftCarryBags,
+    imageClass: 'family-kraft',
+    alt: 'Studio family view of natural brown kraft carry bags with twisted paper loop handles',
     dimensions: '220 × 110 × 310 mm (Customizable)',
     gsmRange: '80 – 140 GSM virgin / recycled kraft',
     handleType: 'Twisted paper cord or flat paper handle',
@@ -129,8 +129,8 @@ export const BAG_DETAILS: Record<string, BagDetailData> = {
     title: 'Kraft carry bags.',
     breadcrumb: 'Kraft carry bags',
     description: SHARED_BAG_DESCRIPTION,
-    image: ASSETS.bagArtwork,
-    imageAlt: 'Illustrative natural kraft carry bag',
+    image: APPROVED_ASSETS.kraftCarryBags,
+    imageAlt: 'Studio family view of natural brown kraft carry bags with twisted paper loop handles',
     specifications: [...SHARED_BAG_SPECS],
     applicationTags: [...SHARED_BAG_TAGS]
   },

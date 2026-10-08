@@ -1,5 +1,5 @@
 import React from 'react';
-import { ASSETS } from '@/content/assets';
+import { APPROVED_ASSETS } from '@/content/assets';
 
 const DETAILS = [
   {
@@ -54,13 +54,17 @@ export default function MaterialDetailsSection(): JSX.Element {
           <div className="material-primary-card">
             <div className="primary-media-wrapper">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={ASSETS.bagArtwork}
-                alt="Close-up photograph showing paper texture, twisted paper handle attachments and crisp side gussets"
-                className="material-macro-img"
-                width={700}
-                height={480}
-              />
+              <picture>
+                <source srcSet={APPROVED_ASSETS.paperHandlesDetail} type="image/webp" />
+                <img
+                  src={APPROVED_ASSETS.paperHandlesDetailPng}
+                  alt="Macro close-up photograph of paper bag twisted paper handle attachment, natural kraft fiber texture, and crisp mechanical side gusset"
+                  className="material-macro-img"
+                  width={768}
+                  height={512}
+                  loading="lazy"
+                />
+              </picture>
               <div className="media-overlay-badge">
                 <span>Natural Paper Texture &amp; Formed Handles</span>
               </div>

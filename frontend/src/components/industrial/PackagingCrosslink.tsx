@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ASSETS } from '@/content/assets';
+import { APPROVED_ASSETS } from '@/content/assets';
 
 export default function PackagingCrosslink(): JSX.Element {
   return (
@@ -30,11 +30,17 @@ export default function PackagingCrosslink(): JSX.Element {
 
           <div className="packaging-crosslink-media">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={ASSETS.bagArtwork}
-              alt="Studio composition of paper bag packaging concepts"
-              className="crosslink-bag-img"
-            />
+            <picture>
+              <source srcSet={APPROVED_ASSETS.paperBagsCollection} type="image/webp" />
+              <img
+                src={APPROVED_ASSETS.paperBagsCollectionPng}
+                alt="Studio collection preview of VSPIAS sustainable kraft and white paper bags with twisted cord and ribbon handles"
+                className="crosslink-bag-img"
+                width={768}
+                height={512}
+                loading="lazy"
+              />
+            </picture>
             <div className="media-caption">
               <span>Paper Bags &middot; Printing &middot; Possibilities</span>
               <span className="division-badge">PRIMARY DIVISION</span>

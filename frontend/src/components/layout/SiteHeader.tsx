@@ -130,7 +130,15 @@ export default function SiteHeader(): JSX.Element {
         aria-label="Mobile Navigation"
       >
         <div className="drawer-header">
-          <span className="drawer-title">VSPIAS Navigation</span>
+          <Link
+            href={isPaper ? '/' : '/automation'}
+            className="logo drawer-logo"
+            aria-label="VSPIAS Ecoautomation Homepage"
+            onClick={closeMenu}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ASSETS.logo} alt="VSPIAS Logo" width={140} height={32} />
+          </Link>
           <button
             type="button"
             className="drawer-close"

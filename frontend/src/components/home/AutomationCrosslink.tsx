@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ASSETS } from '@/content/assets';
+import { APPROVED_ASSETS } from '@/content/assets';
 
 export default function AutomationCrosslink(): JSX.Element {
   return (
@@ -9,13 +9,19 @@ export default function AutomationCrosslink(): JSX.Element {
         <div className="auto-crosslink-card">
           <div className="auto-crosslink-media">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={ASSETS.automationOverview}
-              alt="Multi-brand electrical and automation equipment from the supplied product brochure"
-              className="auto-crosslink-img"
-            />
+            <picture>
+              <source srcSet={APPROVED_ASSETS.automationHardware} type="image/webp" />
+              <img
+                src={APPROVED_ASSETS.automationHardwarePng}
+                alt="Industrial control and automation hardware including Schneider Modicon PLCs, variable frequency drives, and modular I/O components"
+                className="auto-crosslink-img"
+                width={724}
+                height={543}
+                loading="lazy"
+              />
+            </picture>
             <div className="media-caption">
-              <span>Brochure collage &middot; Illustrative portfolio overview</span>
+              <span>Industrial automation hardware &middot; PLCs, VFDs &amp; power distribution</span>
               <span className="division-badge">ELECTRICAL &amp; AUTOMATION</span>
             </div>
           </div>

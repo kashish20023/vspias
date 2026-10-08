@@ -173,6 +173,11 @@ export const ASSETS = {
   logo: '/assets/reference/vspias-logo.png',
   companyBrochurePdf: '/downloads/vspias-company-brochure.pdf',
 
+  // Approved Package Derivatives (from VSPIAS-Antigravity-Image-First-Package)
+  heroBags: '/assets/approved/01-hero-bags.png',
+  aboutBags: '/assets/approved/02-about-bags.png',
+  businessHighlightsCollage: '/assets/approved/05-highlights-collage.png',
+
   // Core Packaging Artwork (hero, kraft card, custom card, custom section, kraft/custom detail)
   bagArtwork: '/assets/reference/hero-packaging.jpg',
 
@@ -195,7 +200,47 @@ export const ASSETS = {
   hmi: '/assets/reference/detail-bag-kraft-variant.png',
   panels: '/assets/reference/detail-bag-food-variant.png',
   scada: '/assets/reference/detail-bag-custom-variant.png',
-  switchgear: '/assets/reference/automation-card-control-panel.png'
+  switchgear: '/assets/reference/automation-card-control-panel.png',
+
+  // Four New Approved Assets (VSPIAS-Visual-Fixes-20261008 distinct keys)
+  automationHardware: '/images/automation/automation-hardware-premium.webp',
+  paperBagsCollection: '/images/paper-bags/paper-bags-collection-premium.webp',
+  paperHandlesDetail: '/images/paper-bags/paper-handles-detail-premium.webp',
+  kraftCarryBags: '/images/paper-bags/kraft-carry-bags-premium.webp'
+} as const;
+
+export const APPROVED_ASSETS = {
+  heroBags: '/assets/approved/01-hero-bags.png',
+  aboutBags: '/assets/approved/02-about-bags.png',
+  businessHighlightsCollage: '/assets/approved/05-highlights-collage.png',
+  automationHardware: '/images/automation/automation-hardware-premium.webp',
+  paperBagsCollection: '/images/paper-bags/paper-bags-collection-premium.webp',
+  paperHandlesDetail: '/images/paper-bags/paper-handles-detail-premium.webp',
+  kraftCarryBags: '/images/paper-bags/kraft-carry-bags-premium.webp',
+  automationHardwarePng: '/assets/approved/automation-hardware-premium.png',
+  paperBagsCollectionPng: '/assets/approved/paper-bags-collection-premium.png',
+  paperHandlesDetailPng: '/assets/approved/paper-handles-detail-premium.png',
+  kraftCarryBagsPng: '/assets/approved/kraft-carry-bags-premium.png',
+  highlightTiles: {
+    kraftBags: '/assets/approved/05-highlight-tile-kraft-bags.png',
+    pouch: '/assets/approved/05-highlight-tile-pouch.png',
+    handles: '/assets/approved/05-highlight-tile-handles.png',
+    whiteKraft: '/assets/approved/05-highlight-tile-white-kraft.png',
+  },
+  industries: {
+    agricultureProduce: '/assets/approved/01-agriculture-produce.png',
+    supermarkets: '/assets/approved/02-supermarkets.png',
+    bakery: '/assets/approved/03-bakery.png',
+    travel: '/assets/approved/04-travel.png',
+    ecommerce: '/assets/approved/05-ecommerce.png',
+    electronics: '/assets/approved/06-electronics.png',
+    fashionRetail: '/assets/approved/07-fashion-retail.png',
+    booksStationery: '/assets/approved/08-books-stationery.png',
+    pharmaceuticals: '/assets/approved/09-pharmaceuticals.png',
+    groceries: '/assets/approved/10-groceries.png',
+    quickServiceRestaurants: '/assets/approved/11-quick-service-restaurants.png',
+    foodBeverages: '/assets/approved/12-food-beverages.png',
+  }
 } as const;
 
 export type AssetKey = keyof typeof ASSETS;
