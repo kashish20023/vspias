@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '@/styles/reference.css';
+import '@/styles/enhancements.css';
 import TopBar from '@/components/layout/TopBar';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';

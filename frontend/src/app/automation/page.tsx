@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import AutomationHero from '@/components/industrial/AutomationHero';
 import BrochureBrandBand from '@/components/industrial/BrochureBrandBand';
+import ProductRangeSection from '@/components/catalog/ProductRangeSection';
 import AutomationPortfolio from '@/components/industrial/AutomationPortfolio';
 import ControlPanelEngineering from '@/components/industrial/ControlPanelEngineering';
 import IndustriesServedSection from '@/components/industrial/IndustriesServedSection';
@@ -17,25 +18,28 @@ export const metadata: Metadata = {
 export default function ElectricalAutomationHomePage(): JSX.Element {
   return (
     <div className="homepage-wrapper automation-division-page" id="automation-home">
-      {/* B2. Large Graphite Industrial Hero */}
+      {/* Large Graphite Industrial Hero */}
       <AutomationHero />
 
-      {/* B3. Restrained Brochure Brand-Reference Band */}
+      {/* Brochure Brand-Reference Band */}
       <BrochureBrandBand />
 
-      {/* B4. Six-Category Portfolio with Technical Specification Modals */}
+      {/* Verified Catalogue Range (Left-to-Right Motion) & Full 26-Product Catalogue Discovery */}
+      <ProductRangeSection pageType="automation" />
+
+      {/* Six-Category Portfolio with Technical Specification Modals */}
       <AutomationPortfolio />
 
-      {/* B5. Engineering / Control Panel Feature (Understand / Define / Discuss) */}
+      {/* Engineering / Control Panel Feature */}
       <ControlPanelEngineering />
 
-      {/* B6. Five Industrial Applications (Full-Width Rows with Prefilled Enquiries) */}
+      {/* Five Industrial Applications */}
       <IndustriesServedSection />
 
-      {/* B7. Visual Cross-Link to Paper & Packaging Division */}
+      {/* Visual Cross-Link to Paper & Packaging Division */}
       <PackagingCrosslink />
 
-      {/* B8. Company Section & "What would you like to power?" Contact CTA */}
+      {/* Company Section & Contact CTA */}
       <AutomationCompanyContact />
     </div>
   );

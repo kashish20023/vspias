@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import BagHero from '@/components/home/BagHero';
 import CapabilityStrip from '@/components/home/CapabilityStrip';
+import ProductRangeSection from '@/components/catalog/ProductRangeSection';
 import BagRangeShowcase from '@/components/bags/BagRangeShowcase';
 import AboutPackagingSection from '@/components/home/AboutPackagingSection';
 import IndustryApplicationsSection from '@/components/home/IndustryApplicationsSection';
@@ -21,31 +22,34 @@ export const metadata: Metadata = {
 export default function PaperPackagingHomePage(): JSX.Element {
   return (
     <div className="homepage-wrapper paper-division-page" id="paper-packaging-home">
-      {/* 6.B Signature Hero Banner (Design 1: Warm boutique background, large bag visual on right, copy on left) */}
+      {/* Signature Hero Banner */}
       <BagHero />
 
       {/* Capability Strip connecting hero to product range */}
       <CapabilityStrip />
 
-      {/* 6.C Existing Bag Range (Product selector updating image, specs & enquiry) */}
+      {/* Opposite-Moving Product Rows & Complete Full Range Discovery */}
+      <ProductRangeSection pageType="paper" />
+
+      {/* Bag Range Showcase */}
       <BagRangeShowcase />
 
-      {/* 6.D About VSPIAS (Design 2: Dark olive composition, ivory text, burnt orange CTA) */}
+      {/* About VSPIAS */}
       <AboutPackagingSection />
 
-      {/* 6.E Industry Applications (Designs 3 & 4: Combined 12-sector responsive CSS Grid mosaic) */}
+      {/* Industry Applications Mosaic */}
       <IndustryApplicationsSection />
 
-      {/* 6.F Business Highlights (Design 5: Three-part composition: Headline, central collage, 3 supporting rows) */}
+      {/* Business Highlights */}
       <BusinessHighlightsSection />
 
-      {/* Material and Construction Details (Tactile close-ups, handles, substrate & base) */}
+      {/* Material and Construction Details */}
       <MaterialDetailsSection />
 
-      {/* 6.G Custom Packaging Process (4-step buyer journey: "Make every carry count") */}
+      {/* Custom Packaging Process */}
       <CustomPackagingJourney />
 
-      {/* Manufacturing & Quality Proof (Deep contrast section: "Your brand. In every impression.") */}
+      {/* Manufacturing & Quality Proof */}
       <ManufacturingEvidenceSection />
 
       {/* Industrial Division Cross-Link */}
