@@ -126,7 +126,7 @@ export const SHARED_BAG_TAGS = ['Retail', 'Boutiques', 'Events', 'Gifting'] as c
 export const BAG_DETAILS: Record<string, BagDetailData> = {
   'kraft-carry-bags': {
     slug: 'kraft-carry-bags',
-    title: 'Kraft carry bags.',
+    title: 'Kraft carry bags',
     breadcrumb: 'Kraft carry bags',
     description: SHARED_BAG_DESCRIPTION,
     image: APPROVED_ASSETS.kraftCarryBags,
@@ -136,7 +136,7 @@ export const BAG_DETAILS: Record<string, BagDetailData> = {
   },
   'food-takeaway': {
     slug: 'food-takeaway',
-    title: 'Food & takeaway bags.',
+    title: 'Food & takeaway bags',
     breadcrumb: 'Food & takeaway bags',
     description: SHARED_BAG_DESCRIPTION,
     image: ASSETS.foodPackaging,
@@ -146,7 +146,7 @@ export const BAG_DETAILS: Record<string, BagDetailData> = {
   },
   'retail-custom-print': {
     slug: 'retail-custom-print',
-    title: 'Retail & custom-printed bags.',
+    title: 'Retail & custom-printed bags',
     breadcrumb: 'Retail & custom-printed bags',
     description: SHARED_BAG_DESCRIPTION,
     image: ASSETS.bagArtwork,

@@ -714,3 +714,91 @@ button, input, select, textarea {
   }
 }
 
+/* Chunk 6: Visual Finish Selector on Product Detail Page */
+.detail-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-image-visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.detail-image-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 350ms ease, transform 350ms ease;
+}
+
+.detail-image-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+
+.detail-image-overlay.finish-ivory {
+  opacity: 1;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 252, 240, 0.42) 0%, rgba(240, 234, 218, 0.5) 100%);
+  mix-blend-mode: soft-light;
+}
+
+.detail-image-overlay.finish-custom-print {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(23, 59, 48, 0.22) 0%, rgba(219, 233, 153, 0.12) 100%);
+  mix-blend-mode: multiply;
+}
+
+.detail-image-visual.finish-ivory img {
+  filter: brightness(1.1) contrast(0.94) saturate(0.7);
+}
+
+.detail-image-visual.finish-custom-print img {
+  filter: contrast(1.12) saturate(1.18);
+}
+
+.finish-preview-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(23, 59, 48, 0.88);
+  color: #f5f3eb;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  animation: fadeInBadge 250ms ease forwards;
+}
+
+@keyframes fadeInBadge {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-image-visual img,
+  .detail-image-overlay,
+  .finish-preview-badge {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+

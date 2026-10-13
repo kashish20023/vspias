@@ -22,10 +22,25 @@ export function FinishSelector({ activeFinish, onSelect }: FinishSelectorProps):
           <button
             key={swatch.name}
             type="button"
+            role="radio"
             className={`swatch ${isActive ? 'active' : ''}`}
             data-color={swatch.name}
-            aria-pressed={isActive}
+            aria-checked={isActive}
+            tabIndex={isActive ? 0 : -1}
             onClick={() => onSelect(swatch.name)}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                const idx = SWATCHES.findIndex((s) => s.name === swatch.name);
+                const next = SWATCHES[(idx + 1) % SWATCHES.length];
+                onSelect(next.name);
+              } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                const idx = SWATCHES.findIndex((s) => s.name === swatch.name);
+                const prev = SWATCHES[(idx - 1 + SWATCHES.length) % SWATCHES.length];
+                onSelect(prev.name);
+              }
+            }}
           >
             <i aria-hidden="true" />
             {swatch.label}

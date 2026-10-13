@@ -13,7 +13,14 @@ interface BagDetailProps {
 export function BagDetail({ bag }: BagDetailProps): JSX.Element {
   const [activeFinish, setActiveFinish] = useState<string>('Natural kraft');
 
-  const quoteRequirements = `I am interested in ${bag.title}. Preferred finish: ${activeFinish}.`;
+  const cleanTitle = bag.title.replace(/\.+$/, '');
+  const quoteRequirements = `I am interested in ${cleanTitle}. Preferred finish: ${activeFinish}.`;
+
+  const isKraft = activeFinish === 'Natural kraft';
+  const finishSlug = activeFinish.toLowerCase().replace(/\s+/g, '-');
+  const imageAlt = isKraft
+    ? `${cleanTitle} in Natural kraft finish`
+    : `${cleanTitle} in ${activeFinish} finish (illustrative finish preview)`;
 
   return (
     <div className="wrap page-intro">
@@ -27,20 +34,33 @@ export function BagDetail({ bag }: BagDetailProps): JSX.Element {
 
       <div className="detail-grid">
         <div className="detail-image">
-          <Image
-            id="detail-bag-img"
-            src={bag.image}
-            alt={bag.title}
-            width={640}
-            height={590}
-            priority
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <div className={`detail-image-visual finish-${finishSlug}`}>
+            <Image
+              id="detail-bag-img"
+              src={bag.image}
+              alt={imageAlt}
+              width={640}
+              height={590}
+              priority
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+            {!isKraft && (
+              <div
+                className={`detail-image-overlay finish-${finishSlug}`}
+                aria-hidden="true"
+              />
+            )}
+          </div>
+          {!isKraft && (
+            <div className="finish-preview-badge" aria-live="polite">
+              Illustrative finish preview
+            </div>
+          )}
         </div>
 
         <div className="detail-copy">
           <div className="eyebrow">Paper bag collection / Concept range</div>
-          <h1 id="bag-title">{bag.title}.</h1>
+          <h1 id="bag-title">{cleanTitle}.</h1>
           <p id="bag-description">{bag.description}</p>
 
           <span className="sub-label">Your preferred finish</span>
@@ -64,7 +84,7 @@ export function BagDetail({ bag }: BagDetailProps): JSX.Element {
               Request a Bag Quote <span className="arrow">↗</span>
             </Link>
             <Link
-              href={`/contact?interest=Paper%20bags&requirements=${encodeURIComponent(`I would like to discuss sample swatches for ${bag.title}.`)}`}
+              href={`/contact?interest=Paper%20bags&requirements=${encodeURIComponent(`I would like to discuss sample swatches for ${cleanTitle}.`)}`}
               className="button secondary"
               id="bag-sample"
             >
