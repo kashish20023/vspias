@@ -541,3 +541,91 @@ button, input, select, textarea {
     transform: none;
   }
 }
+
+/* ==========================================================================
+   CHUNK 1: HEADER ALIGNMENT, ZERO-WRAP & BUTTON STANDARDIZATION
+   ========================================================================== */
+
+.site-header .header-row {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  height: 100% !important;
+}
+
+.site-header .desktop-nav {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 22px !important;
+  margin-left: auto !important;
+  line-height: 1 !important;
+}
+
+/* Nav links share one line-height box */
+.site-header .desktop-nav > a:not(.division-nav-link) {
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  box-sizing: border-box !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 0 4px !important;
+}
+
+/* Both buttons same height (~44px), same font-size/weight/line-height, arrow icon vertically centred */
+.site-header .division-nav-link,
+.site-header .header-cta,
+.site-header .button.header-cta {
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  gap: 6px !important;
+}
+
+.site-header .header-cta {
+  margin-left: 12px !important;
+}
+
+/* Arrow icon vertically centred */
+.site-header .division-nav-link .arrow,
+.site-header .header-cta .arrow {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 1160px) {
+  .site-header .header-row {
+    gap: 16px !important;
+  }
+  .site-header .desktop-nav {
+    gap: 14px !important;
+  }
+  .site-header .desktop-nav > a:not(.division-nav-link) {
+    font-size: 12px !important;
+    padding: 0 2px !important;
+  }
+  .site-header .division-nav-link,
+  .site-header .header-cta {
+    font-size: 12px !important;
+    padding: 0 12px !important;
+  }
+}
+

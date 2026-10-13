@@ -77,7 +77,7 @@ export default function SiteHeader(): JSX.Element {
                   Company
                 </Link>
                 <Link href="/automation" className="division-nav-link" onClick={closeMenu}>
-                  Automation Division ↗
+                  Automation Division <span className="arrow">↗</span>
                 </Link>
               </>
             ) : (
@@ -95,7 +95,7 @@ export default function SiteHeader(): JSX.Element {
                   Company
                 </Link>
                 <Link href="/" className="division-nav-link" onClick={closeMenu}>
-                  Packaging Division ↗
+                  Packaging Division <span className="arrow">↗</span>
                 </Link>
               </>
             )}
