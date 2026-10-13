@@ -1,8 +1,25 @@
 import React from 'react';
 import Link from 'next/link';
+import fs from 'node:fs';
+import path from 'node:path';
 import { ASSETS, APPROVED_ASSETS } from '@/content/assets';
 
 export default function BagHero(): JSX.Element {
+  const paperBrochurePath = ASSETS.paperBrochurePdf;
+  let paperBrochureExists = false;
+  let paperBrochureSizeLabel = '';
+  try {
+    const fullPath = path.join(process.cwd(), 'public', paperBrochurePath.replace(/^\//, ''));
+    if (fs.existsSync(fullPath)) {
+      paperBrochureExists = true;
+      const stats = fs.statSync(fullPath);
+      const mb = (stats.size / (1024 * 1024)).toFixed(1);
+      paperBrochureSizeLabel = ` (${mb} MB)`;
+    }
+  } catch {
+    paperBrochureExists = false;
+  }
+
   return (
     <section className="hero bag-signature-hero" id="home-hero" aria-label="Paper bags product showcase hero">
       <div className="wrap">
@@ -47,16 +64,18 @@ export default function BagHero(): JSX.Element {
             </div>
 
             <div className="hero-meta-strip">
-              <a
-                href={ASSETS.companyBrochurePdf}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="brochure-download-link"
-                title="Download technical brochure PDF (12.5 MB)"
-              >
-                <span className="pdf-icon" aria-hidden="true">&darr;</span>
-                <span>Download Technical Brochure (PDF, 12.5 MB)</span>
-              </a>
+              {paperBrochureExists && (
+                <a
+                  href={paperBrochurePath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="brochure-download-link"
+                  title={`Download technical brochure PDF${paperBrochureSizeLabel}`}
+                >
+                  <span className="pdf-icon" aria-hidden="true">&darr;</span>
+                  <span>Download Technical Brochure (PDF{paperBrochureSizeLabel})</span>
+                </a>
+              )}
 
               <div className="hero-proof-point">
                 <span className="proof-indicator" aria-hidden="true">&bull;</span>

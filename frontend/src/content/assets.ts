@@ -172,6 +172,7 @@ export const ASSETS = {
   // Brand & Document
   logo: '/assets/reference/vspias-logo.png',
   companyBrochurePdf: '/downloads/vspias-company-brochure.pdf',
+  paperBrochurePdf: '/assets/paper-bags-brochure.pdf',
 
   // Approved Package Derivatives (from VSPIAS-Antigravity-Image-First-Package)
   heroBags: '/assets/approved/01-hero-bags.png',
