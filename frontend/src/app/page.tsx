@@ -52,8 +52,8 @@ export default function PaperPackagingHomePage(): JSX.Element {
       {/* Manufacturing & Quality Proof */}
       <ManufacturingEvidenceSection />
 
-      {/* Industrial Division Cross-Link */}
-      <AutomationCrosslink />
+      {/* Industrial Division Cross-Link removed per client feedback (Chunk 9) */}
+      {/* <AutomationCrosslink /> */}
 
       {/* Final Enquiry CTA & Direct Consultation Desk */}
       <PaperEnquirySection />

@@ -17,9 +17,9 @@ export default function PackagingCrosslink(): JSX.Element {
               Explore our dedicated Paper &amp; Packaging division. From retail kraft carry bags and food takeaway packaging to 2-colour flexographic printing and complete paper bag manufacturing machines.
             </p>
             <div className="crosslink-bullets">
-              <span>&check; FSC-certified natural &amp; white kraft options</span>
-              <span>&check; In-line flexographic brand printing</span>
-              <span>&check; Complete roll-to-bag production machinery</span>
+              <span>✓ FSC-certified natural &amp; white kraft options</span>
+              <span>✓ In-line flexographic brand printing</span>
+              <span>✓ Complete roll-to-bag production machinery</span>
             </div>
             <div className="actions" style={{ marginTop: '28px' }}>
               <Link href="/" className="button lime" id="visit-paper-division-btn">

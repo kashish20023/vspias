@@ -36,8 +36,8 @@ export default function ElectricalAutomationHomePage(): JSX.Element {
       {/* Five Industrial Applications */}
       <IndustriesServedSection />
 
-      {/* Visual Cross-Link to Paper & Packaging Division */}
-      <PackagingCrosslink />
+      {/* Visual Cross-Link to Paper & Packaging Division removed per client feedback (Chunk 9) */}
+      {/* <PackagingCrosslink /> */}
 
       {/* Company Section & Contact CTA */}
       <AutomationCompanyContact />
