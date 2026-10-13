@@ -629,3 +629,34 @@ button, input, select, textarea {
   }
 }
 
+/* Breadcrumb consistent spacing (Chunk 2) */
+.breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  color: var(--muted, #5c6a60) !important;
+  margin-bottom: 32px !important;
+}
+
+.breadcrumb a {
+  color: inherit !important;
+  text-decoration: underline !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.breadcrumb-separator {
+  color: var(--muted, #5c6a60);
+  opacity: 0.6;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+}
+

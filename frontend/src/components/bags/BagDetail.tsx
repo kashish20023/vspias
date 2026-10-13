@@ -18,7 +18,10 @@ export function BagDetail({ bag }: BagDetailProps): JSX.Element {
   return (
     <div className="wrap page-intro">
       <nav className="breadcrumb" aria-label="Breadcrumb">
-        <Link href="/paper-bags">Home</Link> &nbsp; / &nbsp; <Link href="/paper-bags#collection">Paper bags</Link> &nbsp; / &nbsp;{' '}
+        <Link href="/paper-bags">Home</Link>
+        <span className="breadcrumb-separator" aria-hidden="true">/</span>
+        <Link href="/paper-bags#collection">Paper bags</Link>
+        <span className="breadcrumb-separator" aria-hidden="true">/</span>
         <span id="bag-crumb">{bag.breadcrumb}</span>
       </nav>
 

@@ -13,7 +13,9 @@ export default function PrintingPage(): JSX.Element {
     <main id="main-content">
       <div className="wrap page-intro">
         <nav className="breadcrumb" aria-label="Breadcrumb">
-          <Link href="/">Home</Link> &nbsp; / &nbsp; Machines & printing
+          <Link href="/">Home</Link>
+          <span className="breadcrumb-separator" aria-hidden="true">/</span>
+          <span>Machines & printing</span>
         </nav>
 
         <div className="detail-grid">

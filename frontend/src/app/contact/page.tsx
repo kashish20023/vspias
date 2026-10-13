@@ -15,7 +15,9 @@ export default function ContactPage(): JSX.Element {
     <main id="main-content">
       <div className="wrap page-intro">
         <nav className="breadcrumb" aria-label="Breadcrumb">
-          <Link href="/">Home</Link> &nbsp; / &nbsp; Start a conversation
+          <Link href="/">Home</Link>
+          <span className="breadcrumb-separator" aria-hidden="true">/</span>
+          <span>Start a conversation</span>
         </nav>
 
         <div className="quote-grid">
