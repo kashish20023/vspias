@@ -802,3 +802,20 @@ button, input, select, textarea {
   }
 }
 
+/* Chunk 7: Application cards robust layout - eliminate empty void */
+.mosaic-card-desc {
+  flex: 0 1 auto;
+  margin: 0 0 16px;
+}
+
+.mosaic-cta-text {
+  margin-top: auto;
+}
+
+.mosaic-card.featured-tile .mosaic-media-container {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 260px;
+}
+
+
