@@ -660,3 +660,57 @@ button, input, select, textarea {
   padding: 0;
 }
 
+/* Chunk 5: Quick view specification guidelines alignment */
+.modal-specs {
+  margin-top: 24px;
+}
+
+.modal-specs-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink, #173b30);
+  margin: 0 0 14px 0;
+  line-height: 1.3;
+}
+
+.modal-specs-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-top: 1px solid var(--line);
+}
+
+.modal-spec-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 1.1fr) minmax(0, 2fr);
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.modal-spec-label {
+  font-weight: 600;
+  color: var(--ink, #173b30);
+  min-width: 0;
+  word-break: break-word;
+}
+
+.modal-spec-value {
+  color: var(--muted, #5c6a60);
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .modal-spec-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 8px 0;
+  }
+}
+

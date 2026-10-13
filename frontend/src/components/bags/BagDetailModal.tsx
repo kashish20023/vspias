@@ -12,17 +12,39 @@ interface BagDetailModalProps {
 export default function BagDetailModal({ product, onClose }: BagDetailModalProps): JSX.Element | null {
   const modalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!product) return;
 
+    // Save previous active element for focus restoration on close
+    previousActiveElementRef.current = document.activeElement as HTMLElement | null;
+
     // Focus close button on open
     closeBtnRef.current?.focus();
 
-    // Trap Escape key
+    // Trap Tab focus and Escape key
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
 
@@ -32,6 +54,7 @@ export default function BagDetailModal({ product, onClose }: BagDetailModalProps
     return () => {
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
+      previousActiveElementRef.current?.focus?.();
     };
   }, [product, onClose]);
 
@@ -97,22 +120,22 @@ export default function BagDetailModal({ product, onClose }: BagDetailModalProps
           </div>
 
           <div className="modal-info">
-            <p className="modal-description">{detailData.description}</p>
+            <p className="modal-description" style={{ marginBottom: 0, lineHeight: 1.6 }}>{detailData.description}</p>
 
             <div className="modal-specs">
-              <h3>Specification Guidelines</h3>
-              <table className="spec-table" style={{ width: '100%', marginTop: '12px' }}>
-                <tbody>
-                  {detailData.specifications.map((spec, i) => (
-                    <tr key={i}>
-                      <td style={{ fontWeight: 600, padding: '8px 12px 8px 0', width: '38%' }}>
-                        {spec.label}
-                      </td>
-                      <td style={{ padding: '8px 0' }}>{spec.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <h3 className="modal-specs-title">Specification Guidelines</h3>
+              <div className="modal-specs-grid" role="table" aria-label="Specification Guidelines">
+                {detailData.specifications.map((spec, i) => (
+                  <div key={i} className="modal-spec-row" role="row">
+                    <span className="modal-spec-label" role="rowheader">
+                      {spec.label}
+                    </span>
+                    <span className="modal-spec-value" role="cell">
+                      {spec.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="modal-tags" style={{ marginTop: '16px' }}>
