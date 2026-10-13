@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
 
 export function QuoteForm(): JSX.Element {
   const searchParams = useSearchParams();
@@ -122,7 +123,7 @@ ${requirements.trim()}
 Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Bengaluru' : 'Peenya, Bengaluru'})`;
 
     const mailto = `mailto:info@vspias.in?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    const whatsapp = `https://wa.me/919783133333?text=${encodeURIComponent(subject + '\n\n' + body)}`;
+    const whatsapp = buildWhatsAppUrl(subject + '\n\n' + body);
 
     setMailtoUrl(mailto);
     setWhatsappUrl(whatsapp);

@@ -819,13 +819,21 @@ button, input, select, textarea {
 }
 
 /* Chunk 8: Last row alignment and equal height cards */
+.mosaic-grid {
+  align-items: stretch;
+}
+
 .mosaic-card {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .mosaic-media-container {
   aspect-ratio: 16 / 10;
   height: auto;
+  position: relative;
+  overflow: hidden;
 }
 
 .mosaic-img {
@@ -834,11 +842,17 @@ button, input, select, textarea {
   object-fit: cover;
 }
 
+.mosaic-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
 /* Groceries: wide card in the last row spans 2 columns and 1 row */
 .mosaic-card.wide-tile,
 .mosaic-grid > .mosaic-card:nth-child(10) {
   grid-column: span 2;
-  grid-row: span 1;
+  grid-row: span 1 !important;
 }
 
 .mosaic-card.wide-tile .mosaic-media-container,
@@ -846,7 +860,7 @@ button, input, select, textarea {
   aspect-ratio: auto;
   flex: 1 1 auto;
   min-height: 180px;
-  height: auto;
+  height: 100%;
 }
 
 .mosaic-card.wide-tile .mosaic-card-title,
@@ -858,7 +872,7 @@ button, input, select, textarea {
   .mosaic-card.wide-tile,
   .mosaic-grid > .mosaic-card:nth-child(10) {
     grid-column: span 2;
-    grid-row: auto;
+    grid-row: span 1 !important;
   }
 }
 
@@ -866,11 +880,14 @@ button, input, select, textarea {
   .mosaic-card.wide-tile,
   .mosaic-grid > .mosaic-card:nth-child(10) {
     grid-column: span 1;
+    grid-row: span 1 !important;
   }
   .mosaic-card.wide-tile .mosaic-media-container,
   .mosaic-grid > .mosaic-card:nth-child(10) .mosaic-media-container {
     aspect-ratio: 16 / 10;
     min-height: 160px;
+    height: auto;
+    flex: none;
   }
 }
 

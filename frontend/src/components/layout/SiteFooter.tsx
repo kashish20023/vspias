@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ASSETS } from '@/content/assets';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
 
 export default function SiteFooter(): JSX.Element {
   const pathname = usePathname();
@@ -78,7 +79,7 @@ export default function SiteFooter(): JSX.Element {
                 +91 97831 33333 ↗
               </a>
               <a
-                href="https://wa.me/919783133333?text=Hello%20VSPIAS%2C%20I%20would%20like%20to%20discuss%20my%20requirements."
+                href={buildWhatsAppUrl('Hello VSPIAS, I would like to discuss my requirements.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-link whatsapp-link"
