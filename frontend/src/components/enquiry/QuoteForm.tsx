@@ -119,7 +119,7 @@ Requirements:
 ${requirements.trim()}
 
 ---
-Enquiry initiated from VSPIAS web showcase (Peenya, Bengaluru)`;
+Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Bengaluru' : 'Peenya, Bengaluru'})`;
 
     const mailto = `mailto:info@vspias.in?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     const whatsapp = `https://wa.me/919783133333?text=${encodeURIComponent(subject + '\n\n' + body)}`;
@@ -276,7 +276,7 @@ Enquiry initiated from VSPIAS web showcase (Peenya, Bengaluru)`;
       </button>
 
       <p className="form-info" style={{ marginTop: '14px', fontSize: '11px', color: 'var(--muted)' }}>
-        <strong>Transparent workflow:</strong> This system prepares an email or WhatsApp draft containing your exact specifications. You retain full control to review the text before sending it to our Peenya office.
+        <strong>Transparent workflow:</strong> This system prepares an email or WhatsApp draft containing your exact specifications. You retain full control to review the text before sending it to our {interest === 'Paper bags' ? 'Bengaluru' : 'Peenya'} office.
       </p>
 
       {submitted && (

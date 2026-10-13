@@ -56,7 +56,7 @@ export const BAG_COLLECTION_PRODUCTS: BagProduct[] = [
     handleType: 'Twisted paper cord or flat paper handle',
     printCapabilities: 'In-line 1 or 2-colour flexographic printing',
     typicalUse: 'Apparel stores, bookshops, boutique retail and gift packaging',
-    moqContext: 'Volume production batches manufactured at Peenya unit',
+    moqContext: 'Volume production batches manufactured at Bengaluru unit',
     availableFinishes: ['Natural Kraft', 'Bleached Ivory', 'Custom Tinted']
   },
   {

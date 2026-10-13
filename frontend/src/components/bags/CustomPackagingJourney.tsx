@@ -29,7 +29,7 @@ const STEPS = [
     phase: 'PRODUCTION & SUPPLY',
     title: 'Receive Quotation & Confirm',
     description:
-      'Our Peenya team shares transparent pricing, paper availability, and production schedules directly from Bengaluru.'
+      'Our team shares transparent pricing, paper availability, and production schedules directly from Bengaluru.'
   }
 ];
 
@@ -50,7 +50,7 @@ export default function CustomPackagingJourney(): JSX.Element {
               carry count.
             </h2>
             <p className="journey-lead">
-              A transparent, 4-step path from your brand concept to high-speed reel-fed bag manufacturing at our Peenya facility.
+              A transparent, 4-step path from your brand concept to high-speed reel-fed bag manufacturing at our Bengaluru facility.
             </p>
 
             <div className="steps-list" role="list">
@@ -91,7 +91,7 @@ export default function CustomPackagingJourney(): JSX.Element {
                 height={520}
               />
               <div className="journey-media-badge">
-                <span className="badge-title">Direct Peenya Manufacturing</span>
+                <span className="badge-title">Direct Bengaluru Manufacturing</span>
                 <span className="badge-subtitle">1 &amp; 2-colour flexo print in-line</span>
               </div>
             </div>

@@ -29,7 +29,7 @@ export default function TopBar(): JSX.Element {
           </Link>
         </nav>
         <div className="top-contact">
-          <span className="location">Peenya, Bengaluru</span>
+          <span className="location">{isPaper ? 'Bengaluru' : 'Peenya, Bengaluru'}</span>
           <span aria-hidden="true">/</span>
           <a href="tel:+919783133333" className="phone" aria-label="Call +91 97831 33333">
             +91 97831 33333

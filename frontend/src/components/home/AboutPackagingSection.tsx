@@ -24,14 +24,14 @@ export default function AboutPackagingSection(): JSX.Element {
                 Explore paper bag options for your business and bring your packaging ideas to life.
               </p>
               <p>
-                <strong>VSPIAS Ecoautomation Pvt. Ltd.</strong> operates from Peenya Industrial Area, Bengaluru, delivering precision bag forming, in-line 2-colour flexographic printing, and volume manufacturing for commercial retail and foodservice chains.
+                <strong>VSPIAS Ecoautomation Pvt. Ltd.</strong> operates from Bengaluru, delivering precision bag forming, in-line 2-colour flexographic printing, and volume manufacturing for commercial retail and foodservice chains.
               </p>
             </div>
 
             <div className="olive-stats-row">
               <div className="olive-stat-item">
                 <span className="stat-label">Production Base</span>
-                <strong className="stat-value">Peenya, Bengaluru</strong>
+                <strong className="stat-value">Bengaluru</strong>
               </div>
               <div className="olive-stat-item">
                 <span className="stat-label">In-Line Printing</span>
@@ -73,7 +73,7 @@ export default function AboutPackagingSection(): JSX.Element {
                 loading="lazy"
               />
               <div className="about-media-tag">
-                <span>Peenya 2nd Phase &middot; Bengaluru Manufacturing</span>
+                <span>Bengaluru Manufacturing</span>
               </div>
             </div>
           </div>

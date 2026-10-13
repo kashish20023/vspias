@@ -82,7 +82,7 @@ export default function ManufacturingEvidenceSection(): JSX.Element {
         <div className="section-head-split light-on-dark">
           <div className="head-copy">
             <div className="eyebrow contrast-eyebrow">
-              PRODUCTION CAPABILITY &middot; PEENYA, BENGALURU
+              PRODUCTION CAPABILITY &middot; BENGALURU
             </div>
             <h2 className="section-title contrast-title">
               Your brand.<br />
@@ -92,13 +92,13 @@ export default function ManufacturingEvidenceSection(): JSX.Element {
           </div>
           <div className="head-desc-block">
             <p className="head-desc contrast-desc">
-              Engineered for consistency at volume. Automatic reel-fed bag making machines, integrated 2-colour in-line flexographic printing, and rigorous handle pull testing from our facility in Peenya Industrial Area.
+              Engineered for consistency at volume. Automatic reel-fed bag making machines, integrated 2-colour in-line flexographic printing, and rigorous handle pull testing from our facility in Bengaluru.
             </p>
             <div className="quality-pill-row">
               <span className="q-pill">Automated Reel-Fed Machinery</span>
               <span className="q-pill">2-Colour In-Line Flexo</span>
               <span className="q-pill">Handle Pull Testing</span>
-              <span className="q-pill">Peenya 2nd Phase Hub</span>
+              <span className="q-pill">Bengaluru Manufacturing Hub</span>
             </div>
           </div>
         </div>

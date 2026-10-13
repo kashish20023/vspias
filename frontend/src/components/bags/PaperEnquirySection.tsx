@@ -19,7 +19,7 @@ export default function PaperEnquirySection(): JSX.Element {
               your paper bags?
             </h2>
             <p className="enquiry-desc">
-              Speak directly with our team in Peenya, Bengaluru to specify paper grades, custom in-line print artwork, and production schedules for your business.
+              Speak directly with our team in Bengaluru to specify paper grades, custom in-line print artwork, and production schedules for your business.
             </p>
 
             <div className="enquiry-stage-card">
@@ -32,7 +32,7 @@ export default function PaperEnquirySection(): JSX.Element {
                 height={380}
               />
               <div className="enquiry-stage-caption">
-                <strong>Direct Factory Procurement</strong> &middot; Peenya Industrial Area, Bengaluru
+                <strong>Direct Factory Procurement</strong> &middot; Bengaluru
               </div>
             </div>
 
@@ -51,7 +51,7 @@ export default function PaperEnquirySection(): JSX.Element {
               </div>
               <div className="contact-item">
                 <span className="contact-label">Facility Location</span>
-                <span className="contact-val">Peenya 2nd Phase, Bengaluru, Karnataka</span>
+                <span className="contact-val">Bengaluru, Karnataka</span>
               </div>
             </div>
           </div>

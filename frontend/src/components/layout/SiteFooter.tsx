@@ -1,8 +1,15 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ASSETS } from '@/content/assets';
 
 export default function SiteFooter(): JSX.Element {
+  const pathname = usePathname();
+  const isAutomation = pathname.startsWith('/automation') || pathname.startsWith('/industrial-solutions');
+  const isPaper = !isAutomation;
+
   return (
     <footer id="footer">
       <div className="wrap">
@@ -60,7 +67,7 @@ export default function SiteFooter(): JSX.Element {
             <p className="footer-person">
               <strong>Paawan Bhargava</strong><br />
               #66, 6th Main Road, behind UCO Bank,<br />
-              Peenya, Bengaluru 560058,<br />
+              {isPaper ? 'Bengaluru 560058,' : 'Peenya, Bengaluru 560058,'}<br />
               Karnataka, India.
             </p>
             <div className="footer-contact-actions">
@@ -84,7 +91,11 @@ export default function SiteFooter(): JSX.Element {
 
         <div className="footer-bottom">
           <span>&copy; VSPIAS Ecoautomation Pvt. Ltd. &middot; B2B Product Showcase</span>
-          <span>Peenya Industrial Area &middot; Bengaluru, Karnataka, India</span>
+          <span>
+            {isPaper
+              ? 'Bengaluru, Karnataka, India'
+              : 'Peenya Industrial Area \u00b7 Bengaluru, Karnataka, India'}
+          </span>
         </div>
       </div>
     </footer>

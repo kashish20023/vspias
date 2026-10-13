@@ -214,7 +214,7 @@ export default function SiteHeader(): JSX.Element {
         <div className="drawer-contact">
           <p>
             <strong>Paawan Bhargava</strong><br />
-            Peenya, Bengaluru, Karnataka, India
+            {isPaper ? 'Bengaluru, Karnataka, India' : 'Peenya, Bengaluru, Karnataka, India'}
           </p>
           <div className="drawer-contact-links">
             <a href="tel:+919783133333">+91 97831 33333</a>

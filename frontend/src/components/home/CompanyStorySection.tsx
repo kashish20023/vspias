@@ -18,7 +18,7 @@ export default function CompanyStorySection(): JSX.Element {
 
           <div className="about-body">
             <p className="about-paragraph">
-              <strong>VSPIAS Ecoautomation Pvt. Ltd.</strong> brings a professionally managed approach to sourcing electrical, automation and industrial materials from Peenya, Bengaluru. Our established sourcing relationships and engineering discipline provide the bedrock for our business.
+              <strong>VSPIAS Ecoautomation Pvt. Ltd.</strong> brings a professionally managed approach to sourcing electrical, automation and industrial materials from Bengaluru. Our established sourcing relationships and engineering discipline provide the bedrock for our business.
             </p>
             <p className="about-paragraph" style={{ marginTop: '18px' }}>
               Our next chapter places <strong>sustainable paper bags, flexographic printing and packaging machinery</strong> at the center of the conversation. Whether you need branded carry bags for retail, takeaway packaging for food services, or complete bag manufacturing machinery, we provide practical, transparent solutions tailored to your operational scale.
@@ -31,7 +31,7 @@ export default function CompanyStorySection(): JSX.Element {
               </div>
               <div className="fact-item">
                 <span className="fact-label">Operating Hub</span>
-                <strong className="fact-value">Peenya, Bengaluru, Karnataka, India</strong>
+                <strong className="fact-value">Bengaluru, Karnataka, India</strong>
               </div>
               <div className="fact-item">
                 <span className="fact-label">Core Focus</span>

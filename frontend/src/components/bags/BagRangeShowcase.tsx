@@ -41,7 +41,7 @@ export default function BagRangeShowcase(): JSX.Element {
         {/* Section Header */}
         <div className="section-head-split">
           <div className="head-copy">
-            <div className="eyebrow">PORTFOLIO &middot; PEENYA, BENGALURU</div>
+            <div className="eyebrow">PORTFOLIO &middot; BENGALURU</div>
             <h2 className="section-title">
               Engineered for your brand.<br />
               The paper bag range.
@@ -191,7 +191,7 @@ export default function BagRangeShowcase(): JSX.Element {
                   </div>
                   <div className="spec-row">
                     <dt>Production &amp; Supply</dt>
-                    <dd>{activeProduct.moqContext || 'Manufactured per batch in Peenya, Bengaluru'}</dd>
+                    <dd>{activeProduct.moqContext || 'Manufactured per batch in Bengaluru'}</dd>
                   </div>
                 </dl>
               </div>

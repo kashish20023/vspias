@@ -18,8 +18,8 @@ const CAPABILITIES = [
   },
   {
     number: '04',
-    title: 'Peenya Manufacturing Hub',
-    detail: 'Direct factory production and reliable batch dispatch from Peenya, Bengaluru.'
+    title: 'Bengaluru Manufacturing Hub',
+    detail: 'Direct factory production and reliable batch dispatch from Bengaluru.'
   }
 ];
 

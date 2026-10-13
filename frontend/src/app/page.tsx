@@ -14,9 +14,9 @@ import AutomationCrosslink from '@/components/home/AutomationCrosslink';
 import PaperEnquirySection from '@/components/bags/PaperEnquirySection';
 
 export const metadata: Metadata = {
-  title: 'VSPIAS — Paper Bags, Flexo Printing & Packaging Solutions | Peenya, Bengaluru',
+  title: 'VSPIAS — Paper Bags, Flexo Printing & Packaging Solutions | Bengaluru',
   description:
-    'Sustainable paper bags for retail, food takeaway and commercial packaging. Precision in-line flexographic printing and volume manufacturing by VSPIAS Ecoautomation Pvt. Ltd., Peenya, Bengaluru.'
+    'Sustainable paper bags for retail, food takeaway and commercial packaging. Precision in-line flexographic printing and volume manufacturing by VSPIAS Ecoautomation Pvt. Ltd., Bengaluru.'
 };
 
 export default function PaperPackagingHomePage(): JSX.Element {

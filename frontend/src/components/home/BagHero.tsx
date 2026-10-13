@@ -23,7 +23,7 @@ export default function BagHero(): JSX.Element {
                 Explore our paper bag range and find the right fit for your business.
               </p>
               <p className="hero-description">
-                Direct manufacturing from our Peenya, Bengaluru facility with precision in-line 2-colour flexographic printing, custom dimensions, and certified commercial paper grades.
+                Direct manufacturing from our Bengaluru facility with precision in-line 2-colour flexographic printing, custom dimensions, and certified commercial paper grades.
               </p>
             </div>
 
@@ -60,7 +60,7 @@ export default function BagHero(): JSX.Element {
 
               <div className="hero-proof-point">
                 <span className="proof-indicator" aria-hidden="true">&bull;</span>
-                <span>Direct Peenya Manufacturing &middot; Verified B2B Supply</span>
+                <span>Direct Bengaluru Manufacturing &middot; Verified B2B Supply</span>
               </div>
             </div>
           </div>
