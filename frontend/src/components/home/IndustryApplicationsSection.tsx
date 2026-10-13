@@ -29,7 +29,7 @@ export default function IndustryApplicationsSection(): JSX.Element {
             <Link
               key={ind.id}
               href={ind.enquiryHref}
-              className={`mosaic-card ${ind.isFeatured ? 'featured-tile' : ''}`}
+              className={`mosaic-card ${ind.isFeatured ? 'featured-tile' : ''} ${ind.id === 'groceries' ? 'wide-tile' : ''}`}
               aria-label={`Enquire about ${ind.title} paper packaging bags`}
             >
               <div className="mosaic-media-container">
