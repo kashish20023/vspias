@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import '@/styles/reference.css';
 import '@/styles/enhancements.css';
-import TopBar from '@/components/layout/TopBar';
+import '@/components/motion/animated-enquiry-button.css';
+import '@/components/motion/enquiry-surface.css';
+import '@/components/motion/variable-headline.css';
+import '@/components/studio/bag-studio.css';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import ReviewBar from '@/components/layout/ReviewBar';
@@ -22,7 +25,6 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <TopBar />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

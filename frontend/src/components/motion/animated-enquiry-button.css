@@ -1,0 +1,277 @@
+/* Adapted from Nawsome, Uiverse, MIT. See THIRD-PARTY-NOTICES.md. */
+.vsp-enquiry-button {
+  --color: #fff;
+  --background: #404660;
+  --background-hover: #3A4059;
+  --background-left: #2B3044;
+  --folder: #F3E9CB;
+  --folder-inner: #BEB393;
+  --paper: #FFFFFF;
+  --paper-lines: #BBC1E1;
+  --paper-behind: #E1E6F9;
+  --pencil-cap: #fff;
+  --pencil-top: #275EFE;
+  --pencil-middle: #fff;
+  --pencil-bottom: #5C86FF;
+  --shadow: rgba(13, 15, 25, .2);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 17px 29px 17px 69px;
+  transition: background 0.3s;
+  color: var(--color);
+  background: var(--bg, var(--background));
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 53px;
+  position: absolute;
+  overflow: hidden;
+  border-radius: 5px 0 0 5px;
+  background: var(--background-left);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder {
+  width: 23px;
+  height: 27px;
+  position: absolute;
+  left: 15px;
+  top: 13px;
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder .top {
+  left: 0;
+  top: 0;
+  z-index: 2;
+  position: absolute;
+  transform: translateX(var(--fx, 0));
+  transition: transform 0.4s ease var(--fd, 0.3s);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder .top svg {
+  width: 24px;
+  height: 27px;
+  display: block;
+  fill: var(--folder);
+  transform-origin: 0 50%;
+  transition: transform 0.3s ease var(--fds, 0.45s);
+  transform: perspective(120px) rotateY(var(--fr, 0deg));
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder:before, .vsp-enquiry-button > .vsp-enquiry-icon .folder:after,
+.vsp-enquiry-button > .vsp-enquiry-icon .folder .paper {
+  content: "";
+  position: absolute;
+  left: var(--l, 0);
+  top: var(--t, 0);
+  width: var(--w, 100%);
+  height: var(--h, 100%);
+  border-radius: 1px;
+  background: var(--b, var(--folder-inner));
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder:before {
+  box-shadow: 0 1.5px 3px var(--shadow), 0 2.5px 5px var(--shadow), 0 3.5px 7px var(--shadow);
+  transform: translateX(var(--fx, 0));
+  transition: transform 0.4s ease var(--fd, 0.3s);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder:after,
+.vsp-enquiry-button > .vsp-enquiry-icon .folder .paper {
+  --l: 1px;
+  --t: 1px;
+  --w: 21px;
+  --h: 25px;
+  --b: var(--paper-behind);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder:after {
+  transform: translate(var(--pbx, 0), var(--pby, 0));
+  transition: transform 0.4s ease var(--pbd, 0s);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder .paper {
+  z-index: 1;
+  --b: var(--paper);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder .paper:before, .vsp-enquiry-button > .vsp-enquiry-icon .folder .paper:after {
+  content: "";
+  width: var(--wp, 14px);
+  height: 2px;
+  border-radius: 1px;
+  transform: scaleY(0.5);
+  left: 3px;
+  top: var(--tp, 3px);
+  position: absolute;
+  background: var(--paper-lines);
+  box-shadow: 0 12px 0 0 var(--paper-lines), 0 24px 0 0 var(--paper-lines);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .folder .paper:after {
+  --tp: 6px;
+  --wp: 10px;
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .pencil {
+  height: 2px;
+  width: 3px;
+  border-radius: 1px 1px 0 0;
+  top: 8px;
+  left: 105%;
+  position: absolute;
+  z-index: 3;
+  transform-origin: 50% 19px;
+  background: var(--pencil-cap);
+  transform: translateX(var(--pex, 0)) rotate(35deg);
+  transition: transform 0.4s ease var(--pbd, 0s);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .pencil:before, .vsp-enquiry-button > .vsp-enquiry-icon .pencil:after {
+  content: "";
+  position: absolute;
+  display: block;
+  background: var(--b, linear-gradient(var(--pencil-top) 55%, var(--pencil-middle) 55.1%, var(--pencil-middle) 60%, var(--pencil-bottom) 60.1%));
+  width: var(--w, 5px);
+  height: var(--h, 20px);
+  border-radius: var(--br, 2px 2px 0 0);
+  top: var(--t, 2px);
+  left: var(--l, -1px);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .pencil:before {
+  -webkit-clip-path: polygon(0 5%, 5px 5%, 5px 17px, 50% 20px, 0 17px);
+  clip-path: polygon(0 5%, 5px 5%, 5px 17px, 50% 20px, 0 17px);
+}
+
+.vsp-enquiry-button > .vsp-enquiry-icon .pencil:after {
+  --b: none;
+  --w: 3px;
+  --h: 6px;
+  --br: 0 2px 1px 0;
+  --t: 3px;
+  --l: 3px;
+  border-top: 1px solid var(--pencil-top);
+  border-right: 1px solid var(--pencil-top);
+}
+
+.vsp-enquiry-button:before, .vsp-enquiry-button:after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color);
+  transform-origin: 9px 1px;
+  transform: translateX(var(--cx, 0)) scale(0.5) rotate(var(--r, -45deg));
+  top: 26px;
+  right: 16px;
+  transition: transform 0.3s;
+}
+
+.vsp-enquiry-button:after {
+  --r: 45deg;
+}
+
+.vsp-enquiry-button:is(:focus-visible, :active):not(:disabled) {
+  --cx: 2px;
+  --bg: var(--background-hover);
+  --fx: -40px;
+  --fr: -60deg;
+  --fd: .15s;
+  --fds: 0s;
+  --pbx: 3px;
+  --pby: -3px;
+  --pbd: .15s;
+  --pex: -24px;
+}
+
+/* Brand, sizing and accessible interaction adaptation. */
+.vsp-enquiry-button {
+  --color: #ffffff;
+  --background: #173b30;
+  --background-hover: #214e3e;
+  --background-left: #102c23;
+  --folder: #dbe999;
+  --folder-inner: #aab77a;
+  --paper: #fffef9;
+  --paper-lines: #789385;
+  --paper-behind: #e4e9d5;
+  --pencil-cap: #f5f3eb;
+  --pencil-top: #dbe999;
+  --pencil-middle: #f5f3eb;
+  --pencil-bottom: #8cae7e;
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-height: 54px;
+  border-radius: 10px;
+  padding: 15px 36px 15px 69px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 24px;
+  text-align: left;
+  vertical-align: middle;
+  text-decoration: none;
+}
+.vsp-enquiry-button > .vsp-enquiry-icon { border-radius: 10px 0 0 10px; }
+.vsp-enquiry-button > .vsp-enquiry-icon .folder { top: calc(50% - 13.5px); }
+.vsp-enquiry-button > .vsp-enquiry-icon .pencil { top: calc(50% - 18.5px); }
+.vsp-enquiry-button::before,
+.vsp-enquiry-button::after { top: calc(50% - 1px); }
+.vsp-enquiry-button:focus-visible {
+  outline: 3px solid #447b61;
+  outline-offset: 4px;
+}
+.vsp-enquiry-button:active:not(:disabled) { transform: translateY(1px); }
+.vsp-enquiry-button:disabled { opacity: .6; cursor: not-allowed; }
+.vsp-enquiry-button[aria-busy="true"] { cursor: progress; }
+@media (hover: hover) and (pointer: fine) {
+  .vsp-enquiry-button:hover:not(:disabled) {
+    --cx: 2px;
+    --bg: var(--background-hover);
+    --fx: -40px;
+    --fr: -60deg;
+    --fd: .15s;
+    --fds: 0s;
+    --pbx: 3px;
+    --pby: -3px;
+    --pbd: .15s;
+    --pex: -24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vsp-enquiry-button {
+    --cx: 0 !important;
+    --fx: 0 !important;
+    --fr: 0deg !important;
+    --pbx: 0 !important;
+    --pby: 0 !important;
+    --pex: 0 !important;
+  }
+  .vsp-enquiry-button,
+  .vsp-enquiry-button *,
+  .vsp-enquiry-button::before,
+  .vsp-enquiry-button::after,
+  .vsp-enquiry-button *::before,
+  .vsp-enquiry-button *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+  .vsp-enquiry-button:active:not(:disabled) { transform: none; }
+}
+@media (forced-colors: active) {
+  .vsp-enquiry-button { border: 2px solid ButtonText; }
+  .vsp-enquiry-button:focus-visible { outline-color: Highlight; }
+}

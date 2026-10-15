@@ -1,0 +1,68 @@
+.vsp-variable-headline {
+  overflow: visible;
+  font-weight: 700;
+  line-height: 1.16;
+}
+.vsp-motion-word { display: inline-flex; white-space: nowrap; }
+.vsp-motion-character { display: inline-grid; position: relative; }
+.vsp-motion-measure,
+.vsp-motion-glyph { grid-area: 1 / 1; }
+.vsp-motion-measure {
+  visibility: hidden;
+  font-weight: 750;
+  font-variation-settings: "wght" 750;
+}
+.vsp-motion-glyph {
+  display: block;
+  transform-origin: 50% 75%;
+  font-variation-settings: "wght" 700;
+}
+.vsp-variable-headline[data-play="true"] .vsp-motion-glyph {
+  animation-duration: 680ms;
+  animation-timing-function: cubic-bezier(.2, .7, .2, 1);
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+.vsp-variable-headline[data-play="true"][data-motion-mode="expand"] .vsp-motion-glyph {
+  animation-name: vsp-type-expand;
+}
+.vsp-variable-headline[data-play="true"][data-motion-mode="shrink"] .vsp-motion-glyph {
+  animation-name: vsp-type-shrink;
+}
+.vsp-variable-headline[data-play="true"][data-motion-mode="squoosh"] .vsp-motion-glyph {
+  animation-name: vsp-type-squoosh;
+}
+@keyframes vsp-type-expand {
+  from { transform: scaleX(.82); font-variation-settings: "wght" 540; opacity: .72; }
+  to { transform: none; font-variation-settings: "wght" 700; opacity: 1; }
+}
+@keyframes vsp-type-shrink {
+  from { transform: scale(1.08, 1.05); font-variation-settings: "wght" 750; opacity: .72; }
+  to { transform: none; font-variation-settings: "wght" 700; opacity: 1; }
+}
+@keyframes vsp-type-squoosh {
+  0% { transform: scale(.94, 1.08); font-variation-settings: "wght" 600; }
+  45% { transform: scale(1.06, .90); font-variation-settings: "wght" 750; }
+  100% { transform: none; font-variation-settings: "wght" 700; }
+}
+.vsp-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vsp-variable-headline[data-play="true"] .vsp-motion-glyph {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+@media (forced-colors: active) {
+  .vsp-motion-glyph { color: CanvasText; }
+}

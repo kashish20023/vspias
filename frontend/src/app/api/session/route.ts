@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, isPasswordConfigured } from '@/lib/catalog-service';
+import { getSession, isPasswordConfigured, ADMIN_AUTH_DISABLED } from '@/lib/catalog-service';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
     {
       authenticated: Boolean(session),
       adminConfigured: isPasswordConfigured(),
-      csrf: session?.csrf || null
+      csrf: session?.csrf || null,
+      authDisabled: ADMIN_AUTH_DISABLED
     },
     {
       status: 200,

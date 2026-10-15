@@ -3,7 +3,9 @@
 <main class="admin-wrap">
 <section id="login-panel" class="login-panel"><div class="eyebrow">VSPIAS admin</div><h1>Make the range<br>your own.</h1><p>Manage product images, captions, order and the company brochure.</p><form id="login-form"><label class="field">Admin password<input id="password" type="password" required autocomplete="current-password"></label><button class="button" type="submit">Sign in <span class="arrow">↗</span></button></form><p id="setup-note" class="note" hidden>The local server needs ADMIN_PASSWORD before admin sign-in is enabled. See START-HERE.md in the kit.</p></section>
 <section id="workspace" hidden>
-<div class="admin-title"><div><div class="eyebrow">Content management</div><h1>Your product range.</h1><p>Save a draft, preview it, then publish when ready.</p></div><button id="logout" class="button secondary">Sign out</button></div>
+<div class="admin-title"><div><div class="eyebrow">Content management</div><h1>Workspace</h1><p>Manage your product range and customer enquiries.</p></div><button id="logout" class="button secondary">Sign out</button></div>
+<div class="admin-tabs" style="display:flex;gap:12px;margin:24px 0 0;"><button id="tab-catalog" class="button" type="button">Catalogue Range</button><button id="tab-enquiries" class="button secondary" type="button">Customer Enquiries <span id="enquiry-count" style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:#173b30;color:#fff;margin-left:4px;">0</span></button></div>
+<div id="catalog-section">
 <div class="admin-toolbar"><div><strong id="draft-state">Loading catalogue…</strong><p id="publish-state"></p></div><div class="admin-actions"><button id="reload" class="button secondary">Reload</button><a id="preview" href="index.html?preview=draft" target="_blank" rel="noopener" class="button secondary">Preview Saved Draft ↗</a><button id="save" class="button secondary">Save Draft</button><button id="publish" class="button">Publish</button></div></div>
 <div class="admin-layout"><aside><div class="admin-list-head"><h2>Products</h2><button id="add" class="small-button">+ Add</button></div><label class="field">Find a product<input type="search" id="product-search" placeholder="Search name or brand"></label><div id="product-list" class="product-list"></div></aside>
 <div class="admin-editor"><form id="product-form"><div class="editor-heading"><h2 id="editor-title">Select a product</h2><label class="check"><input id="visible" type="checkbox"><span>Visible on website</span></label></div>
@@ -16,8 +18,15 @@
 <label class="check"><input id="illustrative" type="checkbox"><span>This is illustrative imagery, not an exact product photograph.</span></label>
 <p class="note">Changes control the moving ranges and product catalogue. Save the draft before previewing.</p>
 </form>
-<section class="brochure-editor"><div><h2>Company brochure</h2><a id="current-brochure" target="_blank" rel="noopener">Open selected PDF ↗</a></div><label class="field">Replace brochure PDF<input id="brochure-file" type="file" accept="application/pdf"></label><p class="note">PDF · Up to 18 MB · Published with the rest of the draft.</p></section>
+<section class="brochure-editor"><div style="margin-bottom: 16px;"><div><h2>Electrical &amp; Automation Brochure</h2><a id="current-brochure" target="_blank" rel="noopener">Open automation PDF ↗</a></div><label class="field">Replace automation brochure PDF<input id="brochure-file" type="file" accept="application/pdf"></label><p class="note">PDF · Up to 18 MB · Covers industrial automation catalogue.</p></div><div><div><h2>Paper Packaging Brochure</h2><a id="current-paper-brochure" target="_blank" rel="noopener">Open paper PDF ↗</a></div><label class="field">Replace paper brochure PDF<input id="paper-brochure-file" type="file" accept="application/pdf"></label><p class="note">PDF · Up to 18 MB · Missing paper PDF stays a request action, never electrical fallback.</p></div></section>
 <div class="discard-row"><button id="discard" class="small-button">Discard saved draft changes</button><span>The published catalogue will be restored as your draft.</span></div>
-</div></div></section>
+</div></div>
+</div>
+<div id="enquiries-section" hidden style="margin-top: 24px;">
+<div class="admin-toolbar"><div><strong>Customer Enquiries</strong><p>Direct enquiries and quote requests submitted via website contact form.</p></div><div class="admin-actions"><button id="reload-enquiries" class="button secondary" type="button">Refresh Enquiries</button></div></div>
+<div id="enquiries-empty" class="admin-editor" style="text-align:center;padding:48px 24px;color:#5b7153;font-size:15px;" hidden>No enquiries yet</div>
+<div id="enquiries-container" style="display:grid;gap:16px;"></div>
+</div>
+</section>
 <p id="message" class="admin-message" role="status" aria-live="polite"></p>
 </main><script type="module" src="admin.js"></script></body></html>

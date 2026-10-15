@@ -8,229 +8,231 @@ import { ASSETS } from '@/content/assets';
 export default function SiteHeader(): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  const isHome = pathname === '/';
   const isAutomation = pathname.startsWith('/automation') || pathname.startsWith('/industrial-solutions');
-  const isPaper = !isAutomation;
+  const isPaper = pathname.startsWith('/paper-bags');
+  const isContact = pathname.startsWith('/contact');
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => !prev);
   };
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
-  // Close menu on Escape key press & prevent body scroll when open
+  // Close menu on Escape key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && menuOpen) {
+      if (e.key === 'Escape') {
         closeMenu();
       }
     };
     if (menuOpen) {
-      document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
-    } else {
-      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [menuOpen]);
 
   // Reset menu when pathname changes
   useEffect(() => {
-    setMenuOpen(false);
+    closeMenu();
   }, [pathname]);
 
-  const contactHref = isPaper
-    ? '/contact?interest=Paper%20bags'
-    : '/contact?interest=Electrical%20%26%20automation';
-
   return (
-    <>
-      <header className={`site-header ${isAutomation ? 'theme-graphite' : ''}`}>
-        <div className="wrap header-row">
-          <Link
-            href={isPaper ? '/' : '/automation'}
-            className="logo"
-            aria-label="VSPIAS Ecoautomation Homepage"
-            onClick={closeMenu}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ASSETS.logo} alt="VSPIAS Logo" width={172} height={40} />
-          </Link>
-
-          <nav id="desktop-nav" aria-label="Main navigation" className="desktop-nav">
-            {isPaper ? (
-              <>
-                <Link href="/#collection-section" onClick={closeMenu}>
-                  Collection
-                </Link>
-                <Link href="/#customise-section" onClick={closeMenu}>
-                  Customise
-                </Link>
-                <Link href="/#manufacturing-section" onClick={closeMenu}>
-                  Manufacturing
-                </Link>
-                <Link href="/#company-section" onClick={closeMenu}>
-                  Company
-                </Link>
-                <Link href="/automation" className="division-nav-link" onClick={closeMenu}>
-                  Automation Division <span className="arrow">↗</span>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/automation#portfolio-section" onClick={closeMenu}>
-                  Portfolio
-                </Link>
-                <Link href="/automation#engineering-section" onClick={closeMenu}>
-                  Engineering
-                </Link>
-                <Link href="/automation#industries-section" onClick={closeMenu}>
-                  Applications
-                </Link>
-                <Link href="/automation#company-section" onClick={closeMenu}>
-                  Company
-                </Link>
-                <Link href="/" className="division-nav-link" onClick={closeMenu}>
-                  Packaging Division <span className="arrow">↗</span>
-                </Link>
-              </>
-            )}
-          </nav>
-
-          <Link href={contactHref} className="button header-cta" id="header-quote-button" onClick={closeMenu}>
-            Let&apos;s talk <span className="arrow">↗</span>
-          </Link>
-
-          <button
-            className="menu-toggle"
-            type="button"
-            aria-expanded={menuOpen ? 'true' : 'false'}
-            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            aria-controls="mobile-drawer"
-            onClick={toggleMenu}
-          >
-            <span aria-hidden="true" className="menu-icon">
-              {menuOpen ? '✕' : '☰'}
-            </span>
-          </button>
-        </div>
-      </header>
-
-      {/* Accessible Mobile Navigation Drawer */}
-      <div
-        id="mobile-drawer"
-        className={`mobile-drawer ${menuOpen ? 'open' : ''} ${isAutomation ? 'theme-graphite' : ''}`}
-        aria-hidden={!menuOpen}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mobile Navigation"
-      >
-        <div className="drawer-header">
-          <Link
-            href={isPaper ? '/' : '/automation'}
-            className="logo drawer-logo"
-            aria-label="VSPIAS Ecoautomation Homepage"
-            onClick={closeMenu}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ASSETS.logo} alt="VSPIAS Logo" width={140} height={32} />
-          </Link>
-          <button
-            type="button"
-            className="drawer-close"
-            onClick={closeMenu}
-            aria-label="Close navigation"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className="drawer-divisions">
-          <span className="drawer-label">Switch Business Division:</span>
-          <div className="drawer-pill-group">
+    <header className="claude-sticky-header">
+      <div className="claude-header-container">
+        <div className={`claude-header-pill ${menuOpen ? 'menu-expanded' : ''}`}>
+          <div className="claude-pill-bar">
+            {/* Authentic Original VSPIAS Logo */}
             <Link
               href="/"
-              className={`drawer-pill ${isPaper ? 'active' : ''}`}
-              aria-current={isPaper ? 'page' : undefined}
+              className="claude-logo"
+              aria-label="VSPIAS Ecoautomation Homepage"
               onClick={closeMenu}
             >
-              Paper &amp; Packaging
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={ASSETS.logo}
+                alt="VSPIAS Ecoautomation Pvt Ltd"
+                className="claude-logo-img"
+                width={172}
+                height={38}
+              />
             </Link>
+
+            {/* Desktop Navigation - Direct links without dropdowns */}
+            <nav id="desktop-nav" aria-label="Main navigation" className="claude-desktop-nav">
+              <Link
+                href="/"
+                className={`claude-nav-link ${isHome ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                {isHome && <span className="claude-active-dot" aria-hidden="true" />}
+                <span>Home</span>
+              </Link>
+
+              <Link
+                href="/automation"
+                className={`claude-nav-link ${isAutomation ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                {isAutomation && <span className="claude-active-dot" aria-hidden="true" />}
+                <span>Automation</span>
+              </Link>
+
+              <Link
+                href="/paper-bags"
+                className={`claude-nav-link ${isPaper ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                {isPaper && <span className="claude-active-dot" aria-hidden="true" />}
+                <span>Paper Bags</span>
+              </Link>
+
+              <Link
+                href="/contact"
+                className={`claude-nav-link ${isContact ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                {isContact && <span className="claude-active-dot" aria-hidden="true" />}
+                <span>Contact</span>
+              </Link>
+            </nav>
+
+            {/* Send Enquiry CTA Button */}
             <Link
-              href="/automation"
-              className={`drawer-pill ${isAutomation ? 'active' : ''}`}
-              aria-current={isAutomation ? 'page' : undefined}
+              href="/contact#quote"
+              className="claude-cta-btn"
+              id="header-quote-button"
               onClick={closeMenu}
             >
-              Electrical &amp; Automation
+              <span>Send Enquiry</span>
+              <span className="claude-cta-icon-box" aria-hidden="true">
+                <svg
+                  className="claude-cta-arw"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#12372a"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="3" />
+                  <path d="M3.5 7.5l8.5 6 8.5-6" />
+                </svg>
+              </span>
             </Link>
-          </div>
-        </div>
 
-        <nav className="drawer-nav" aria-label="Mobile main navigation">
-          {isPaper ? (
-            <>
-              <Link href="/#collection-section" onClick={closeMenu}>
-                Collection
+            {/* Mobile Toggle Button */}
+            <button
+              type="button"
+              className="claude-mobile-toggle"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              onClick={toggleMenu}
+            >
+              {menuOpen ? (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#f2f3ec"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              ) : (
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#f2f3ec"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <line x1="4" y1="7" x2="20" y2="7" />
+                  <line x1="4" y1="12" x2="20" y2="12" />
+                  <line x1="4" y1="17" x2="20" y2="17" />
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* Mobile Drawer */}
+          {menuOpen && (
+            <div className="claude-mobile-menu">
+              <Link
+                href="/"
+                className={`claude-mobile-link ${isHome ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                <span>Home</span>
+                {isHome ? (
+                  <span className="claude-mobile-dot" aria-hidden="true" />
+                ) : (
+                  <span className="claude-mobile-chev" aria-hidden="true">&rsaquo;</span>
+                )}
               </Link>
-              <Link href="/#customise-section" onClick={closeMenu}>
-                Customise Bag
+              <Link
+                href="/automation"
+                className={`claude-mobile-link ${isAutomation ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                <span>Automation</span>
+                {isAutomation ? (
+                  <span className="claude-mobile-dot" aria-hidden="true" />
+                ) : (
+                  <span className="claude-mobile-chev" aria-hidden="true">&rsaquo;</span>
+                )}
               </Link>
-              <Link href="/#manufacturing-section" onClick={closeMenu}>
-                Manufacturing Journey
+              <Link
+                href="/paper-bags"
+                className={`claude-mobile-link ${isPaper ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                <span>Paper Bags</span>
+                {isPaper ? (
+                  <span className="claude-mobile-dot" aria-hidden="true" />
+                ) : (
+                  <span className="claude-mobile-chev" aria-hidden="true">&rsaquo;</span>
+                )}
               </Link>
-              <Link href="/#printing-section" onClick={closeMenu}>
-                Flexographic Printing
+              <Link
+                href="/contact"
+                className={`claude-mobile-link ${isContact ? 'active' : ''}`}
+                onClick={closeMenu}
+              >
+                <span>Contact</span>
+                {isContact ? (
+                  <span className="claude-mobile-dot" aria-hidden="true" />
+                ) : (
+                  <span className="claude-mobile-chev" aria-hidden="true">&rsaquo;</span>
+                )}
               </Link>
-              <Link href="/#company-section" onClick={closeMenu}>
-                Company Story
+              <Link
+                href="/contact#quote"
+                className="claude-mobile-cta"
+                onClick={closeMenu}
+              >
+                <span>Send Enquiry</span>
+                <span aria-hidden="true">&rarr;</span>
               </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/automation#portfolio-section" onClick={closeMenu}>
-                Product Portfolio
-              </Link>
-              <Link href="/automation#engineering-section" onClick={closeMenu}>
-                Control Panels &amp; Systems
-              </Link>
-              <Link href="/automation#industries-section" onClick={closeMenu}>
-                Industries Served
-              </Link>
-              <Link href="/automation#company-section" onClick={closeMenu}>
-                Company Heritage
-              </Link>
-            </>
+            </div>
           )}
-          <Link href={contactHref} className="button drawer-cta" onClick={closeMenu}>
-            Let&apos;s talk about your project <span className="arrow">↗</span>
-          </Link>
-        </nav>
-
-        <div className="drawer-contact">
-          <p>
-            <strong>Paawan Bhargava</strong><br />
-            {isPaper ? 'Bengaluru, Karnataka, India' : 'Peenya, Bengaluru, Karnataka, India'}
-          </p>
-          <div className="drawer-contact-links">
-            <a href="tel:+919783133333">+91 97831 33333</a>
-            <a href="mailto:info@vspias.in">info@vspias.in</a>
-          </div>
         </div>
       </div>
-
-      {/* Backdrop overlay for mobile drawer */}
-      {menuOpen && (
-        <div
-          className="drawer-backdrop"
-          onClick={closeMenu}
-          aria-hidden="true"
-        />
-      )}
-    </>
+    </header>
   );
 }

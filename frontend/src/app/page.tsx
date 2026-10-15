@@ -1,62 +1,34 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import BagHero from '@/components/home/BagHero';
-import CapabilityStrip from '@/components/home/CapabilityStrip';
-import ProductRangeSection from '@/components/catalog/ProductRangeSection';
-import BagRangeShowcase from '@/components/bags/BagRangeShowcase';
-import AboutPackagingSection from '@/components/home/AboutPackagingSection';
-import IndustryApplicationsSection from '@/components/home/IndustryApplicationsSection';
-import BusinessHighlightsSection from '@/components/home/BusinessHighlightsSection';
-import MaterialDetailsSection from '@/components/bags/MaterialDetailsSection';
-import CustomPackagingJourney from '@/components/bags/CustomPackagingJourney';
-import ManufacturingEvidenceSection from '@/components/industrial/ManufacturingEvidenceSection';
-import AutomationCrosslink from '@/components/home/AutomationCrosslink';
-import PaperEnquirySection from '@/components/bags/PaperEnquirySection';
+import CompanyHero from '@/components/home/CompanyHero';
+import HomeProductRails from '@/components/home/HomeProductRails';
+import CompanyBenefitsSection from '@/components/home/CompanyBenefitsSection';
+import DivisionSolutionCards from '@/components/home/DivisionSolutionCards';
+import CompactEnquiryBand from '@/components/home/CompactEnquiryBand';
 
 export const metadata: Metadata = {
-  title: 'VSPIAS — Paper Bags, Flexo Printing & Packaging Solutions | Bengaluru',
+  title: 'VSPIAS Ecoautomation — Industrial Automation & Paper Bag Manufacturing | Bengaluru',
   description:
-    'Sustainable paper bags for retail, food takeaway and commercial packaging. Precision in-line flexographic printing and volume manufacturing by VSPIAS Ecoautomation Pvt. Ltd., Bengaluru.'
+    'Your trusted partner for industrial automation, electrical switchgear and paper bag manufacturing solutions. Direct B2B operations in Bengaluru, India.'
 };
 
-export default function PaperPackagingHomePage(): JSX.Element {
+export default function CompanyHomePage(): JSX.Element {
   return (
-    <div className="homepage-wrapper paper-division-page" id="paper-packaging-home">
-      {/* Signature Hero Banner */}
-      <BagHero />
+    <div className="homepage-wrapper company-home-page" id="company-home">
+      {/* Block H1: Company Hero */}
+      <CompanyHero />
 
-      {/* Capability Strip connecting hero to product range */}
-      <CapabilityStrip />
+      {/* Blocks H2 & H3: Opposite-Moving Product Rails (Automation L->R, Paper R->L) */}
+      <HomeProductRails />
 
-      {/* Opposite-Moving Product Rows & Complete Full Range Discovery */}
-      <ProductRangeSection pageType="paper" />
+      {/* Block H4: Why Choose VSPIAS ECOAUTOMATION (5 Benefits) */}
+      <CompanyBenefitsSection />
 
-      {/* Bag Range Showcase */}
-      <BagRangeShowcase />
+      {/* Block H5: Division Solution Cards (Automation & Paper Bags) */}
+      <DivisionSolutionCards />
 
-      {/* About VSPIAS */}
-      <AboutPackagingSection />
-
-      {/* Industry Applications Mosaic */}
-      <IndustryApplicationsSection />
-
-      {/* Business Highlights */}
-      <BusinessHighlightsSection />
-
-      {/* Material and Construction Details */}
-      <MaterialDetailsSection />
-
-      {/* Custom Packaging Process */}
-      <CustomPackagingJourney />
-
-      {/* Manufacturing & Quality Proof */}
-      <ManufacturingEvidenceSection />
-
-      {/* Industrial Division Cross-Link removed per client feedback (Chunk 9) */}
-      {/* <AutomationCrosslink /> */}
-
-      {/* Final Enquiry CTA & Direct Consultation Desk */}
-      <PaperEnquirySection />
+      {/* Block H6: Compact Enquiry Band */}
+      <CompactEnquiryBand />
     </div>
   );
 }

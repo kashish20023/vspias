@@ -1,16 +1,21 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { ProductItem } from '@/lib/catalog-service';
+import { VariableHeadline } from '@/components/motion/VariableHeadline';
 
 interface ProductRangeRailProps {
   division: 'automation' | 'paper';
   title: string;
-  subtitle: string;
-  footnote: string;
+  subtitle?: string;
+  footnote?: string;
   products: ProductItem[];
   onSelectProduct: (product: ProductItem) => void;
   onOpenFullRange: () => void;
+  headingMode?: 'expand' | 'shrink' | 'squoosh';
+  headingTag?: 'h2' | 'h3';
+  actionLink?: { href: string; label: string };
 }
 
 export default function ProductRangeRail({
@@ -20,7 +25,10 @@ export default function ProductRangeRail({
   footnote,
   products,
   onSelectProduct,
-  onOpenFullRange
+  onOpenFullRange,
+  headingMode,
+  headingTag,
+  actionLink
 }: ProductRangeRailProps): JSX.Element | null {
   const isRight = division === 'automation'; // Automation moves LEFT TO RIGHT; Paper moves RIGHT TO LEFT
   const speed = isRight ? 29 : 25; // px/sec
@@ -238,13 +246,31 @@ export default function ProductRangeRail({
   if (!products.length) return null;
 
   return (
-    <div className="range-block" data-division={division}>
+    <div className={`range-section range-section--${division}`}>
       <div className="range-heading wrap">
         <div>
-          <h3>{title}</h3>
-          <p>{subtitle}</p>
+          <div className="range-title-wrap">
+            {headingMode ? (
+              <VariableHeadline as={headingTag || 'h2'} text={title} mode={headingMode} />
+            ) : headingTag === 'h2' ? (
+              <h2>{title}</h2>
+            ) : (
+              <h3>{title}</h3>
+            )}
+            <div className="heading-lime-bar" aria-hidden="true" />
+          </div>
+          {subtitle && <p className="range-subtitle">{subtitle}</p>}
         </div>
         <div className="range-actions">
+          {actionLink && (
+            <Link
+              href={actionLink.href}
+              className="button secondary"
+              style={{ fontSize: '12px', padding: '8px 14px', minHeight: 'auto', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            >
+              {actionLink.label} &rarr;
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => {
@@ -264,25 +290,42 @@ export default function ProductRangeRail({
         </div>
       </div>
 
-      <div
-        className="range-viewport"
-        ref={viewportRef}
-        aria-label="Moving product imagery. Use View Full Range for accessible product details."
-        onPointerEnter={(e) => {
-          if (e.pointerType === 'mouse') {
-            isHoveredRef.current = true;
+      <div className="range-viewport-wrapper">
+        <button
+          type="button"
+          className="rail-arrow-btn rail-arrow-prev"
+          aria-label={`Scroll ${title} left`}
+          onClick={() => {
+            if (animationRef.current) {
+              const anim = animationRef.current;
+              const dur = durationRef.current || 20000;
+              const cur = Number(anim.currentTime) || 0;
+              anim.currentTime = (cur - (dur * 0.1) + dur) % dur;
+            }
+          }}
+        >
+          <span aria-hidden="true">&lsaquo;</span>
+        </button>
+
+        <div
+          className="range-viewport"
+          ref={viewportRef}
+          aria-label="Moving product imagery. Use View Full Range for accessible product details."
+          onPointerEnter={(e) => {
+            if (e.pointerType === 'mouse') {
+              isHoveredRef.current = true;
+              syncAnimationState();
+            }
+          }}
+          onPointerLeave={() => {
+            isHoveredRef.current = false;
             syncAnimationState();
-          }
-        }}
-        onPointerLeave={() => {
-          isHoveredRef.current = false;
-          syncAnimationState();
-        }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-      >
+          }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
         <div className="range-track" ref={trackRef} aria-hidden="true">
           <div className="range-group" ref={groupRef}>
             {products.map((p) => (
@@ -346,8 +389,24 @@ export default function ProductRangeRail({
           </div>
         </div>
       </div>
+      <button
+        type="button"
+        className="rail-arrow-btn rail-arrow-next"
+        aria-label={`Scroll ${title} right`}
+        onClick={() => {
+          if (animationRef.current) {
+            const anim = animationRef.current;
+            const dur = durationRef.current || 20000;
+            const cur = Number(anim.currentTime) || 0;
+            anim.currentTime = (cur + (dur * 0.1)) % dur;
+          }
+        }}
+      >
+        <span aria-hidden="true">&rsaquo;</span>
+      </button>
+    </div>
 
-      <p className="range-footnote wrap">{footnote}</p>
+      {footnote && <p className="range-footnote wrap">{footnote}</p>}
     </div>
   );
 }

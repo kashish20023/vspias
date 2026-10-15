@@ -88,29 +88,18 @@ export default function ProductRangeSection({
 
       {pageType === 'paper' ? (
         <>
-          <section className="range-section" id="ranges" aria-label="Product range rows">
+          <section className="range-section" id="ranges" aria-label="Paper packaging range">
             <div className="wrap">
-              <div className="eyebrow">Two divisions. One considered approach.</div>
-              <h2>Explore our range.</h2>
+              <div className="eyebrow">Bengaluru Manufacturing &middot; Direct B2B Supply</div>
+              <h2>Explore our paper bag range.</h2>
             </div>
-
-            {/* Automation moves LEFT TO RIGHT */}
-            <ProductRangeRail
-              division="automation"
-              title="Industrial Automation & Electricals"
-              subtitle="Electrical and automation categories from our company brochure."
-              footnote="Catalogue categories shown. Select a product or browse the complete range."
-              products={automationProducts}
-              onSelectProduct={setSelectedProduct}
-              onOpenFullRange={() => handleOpenFullRange('automation')}
-            />
 
             {/* Paper Bag Manufacturing moves RIGHT TO LEFT */}
             <ProductRangeRail
               division="paper"
               title="Paper Bag Manufacturing"
-              subtitle="Paper packaging styles to begin your conversation."
-              footnote="Illustrative bag and packaging concepts. Machinery is selected against your production requirements."
+              subtitle="High quality V-Bottom, Square-Bottom and Flexo-Printed paper bags."
+              footnote="Illustrative bag and packaging concepts. Custom specifications manufactured to order."
               products={paperProducts}
               onSelectProduct={setSelectedProduct}
               onOpenFullRange={() => handleOpenFullRange('paper')}
@@ -125,16 +114,6 @@ export default function ProductRangeSection({
             onSelectProduct={setSelectedProduct}
             id="paper-catalog"
           />
-
-          {showFullRange && (
-            <FullRangeDiscovery
-              division="automation"
-              title="Industrial Automation & Electricals Sourcing Range"
-              products={automationProducts}
-              onSelectProduct={setSelectedProduct}
-              id="automation-catalog"
-            />
-          )}
         </>
       ) : (
         <>

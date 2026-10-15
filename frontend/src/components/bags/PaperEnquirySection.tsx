@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { ASSETS } from '@/content/assets';
 import { QuoteForm } from '@/components/enquiry/QuoteForm';
+import { EnquirySurface } from '@/components/motion/EnquirySurface';
 
 export default function PaperEnquirySection(): JSX.Element {
   return (
@@ -58,17 +59,11 @@ export default function PaperEnquirySection(): JSX.Element {
 
           {/* Right Column: Embedded Quote Form */}
           <div className="enquiry-form-col">
-            <div className="form-card-container">
-              <div className="form-card-header">
-                <h3>Draft a Specific Quotation</h3>
-                <p>
-                  Share your estimated sizes, volume, and printing requirement. We prepare a transparent draft via Email or WhatsApp.
-                </p>
-              </div>
+            <EnquirySurface label="Draft a specific quotation">
               <Suspense fallback={<div className="loading-state">Loading quotation desk...</div>}>
                 <QuoteForm />
               </Suspense>
-            </div>
+            </EnquirySurface>
           </div>
         </div>
       </div>

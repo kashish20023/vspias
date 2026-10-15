@@ -1,0 +1,104 @@
+/* Depth/ribbon adaptation of 0xnihilism (MIT); see THIRD-PARTY-NOTICES.md. */
+.vsp-enquiry-surface {
+  --vsp-ink: #173b30;
+  --vsp-surface: #f5f3eb;
+  --vsp-accent: #dbe999;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 56rem;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 10px 10px 0;
+  box-sizing: border-box;
+}
+.vsp-enquiry-surface::before {
+  content: "";
+  position: absolute;
+  inset: 8px 2px 2px 8px;
+  background: var(--vsp-ink);
+  border-radius: 16px;
+  z-index: -1;
+  transform: rotate(-0.35deg);
+  transition: transform 200ms ease;
+  pointer-events: none;
+}
+.vsp-enquiry-surface__body {
+  position: relative;
+  min-width: 0;
+  border: 2px solid var(--vsp-ink);
+  border-radius: 14px;
+  background: var(--vsp-surface);
+  color: var(--vsp-ink);
+  padding: 64px clamp(20px, 4vw, 40px) 32px;
+  /* Do not clip this body: focus rings, select menus and errors need room. */
+}
+.vsp-enquiry-ribbon {
+  position: absolute;
+  inset: 16px 16px auto auto;
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 28px;
+  overflow: hidden;
+  background: var(--vsp-accent);
+  color: var(--vsp-ink);
+  border: 1px solid var(--vsp-ink);
+  border-radius: 5px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+  pointer-events: none;
+}
+.vsp-enquiry-ribbon span {
+  grid-area: 1 / 1;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+.vsp-enquiry-ribbon span:last-child {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.vsp-enquiry-surface:focus-within .vsp-enquiry-ribbon span:first-child {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+.vsp-enquiry-surface:focus-within .vsp-enquiry-ribbon span:last-child {
+  opacity: 1;
+  transform: none;
+}
+.vsp-enquiry-surface:focus-within::before { transform: none; }
+.vsp-enquiry-surface .vsp-field {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  border: 1px solid #7b8b80;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  color: #173b30;
+  font: inherit;
+  font-size: 16px;
+}
+.vsp-enquiry-surface .vsp-field:focus-visible {
+  outline: 2px solid #173b30;
+  outline-offset: 3px;
+}
+.vsp-enquiry-surface .vsp-field[aria-invalid="true"] {
+  border-color: #a0312e;
+}
+@media (hover: hover) and (pointer: fine) {
+  .vsp-enquiry-surface:hover::before { transform: translateY(-2px) rotate(0deg); }
+  .vsp-enquiry-surface:hover .vsp-enquiry-ribbon span:first-child {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  .vsp-enquiry-surface:hover .vsp-enquiry-ribbon span:last-child {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .vsp-enquiry-surface::before { transform: none !important; transition: none; }
+  .vsp-enquiry-ribbon span { transition: none; }
+}

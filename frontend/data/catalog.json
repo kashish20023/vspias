@@ -1,9 +1,10 @@
 {
-  "revision": 13,
-  "publishedAt": "2026-10-13T08:17:20.105Z",
+  "revision": 17,
+  "publishedAt": "2026-10-15T07:02:52.661Z",
   "published": {
     "schemaVersion": 1,
     "brochure": "assets/company-brochure.pdf",
+    "paperBrochure": "",
     "products": [
       {
         "id": "schneider-drives",
@@ -460,6 +461,7 @@
   "draft": {
     "schemaVersion": 1,
     "brochure": "assets/company-brochure.pdf",
+    "paperBrochure": "",
     "products": [
       {
         "id": "schneider-drives",

@@ -4,13 +4,16 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  async redirects() {
+  async rewrites() {
     return [
       {
         source: '/admin',
-        destination: '/admin.html',
-        permanent: false
-      },
+        destination: '/admin.html'
+      }
+    ];
+  },
+  async redirects() {
+    return [
       {
         source: '/automation.html',
         destination: '/automation',
@@ -20,6 +23,21 @@ const nextConfig = {
         source: '/index.html',
         destination: '/',
         permanent: false
+      },
+      {
+        source: '/privacy-policy',
+        destination: '/privacy',
+        permanent: true
+      },
+      {
+        source: '/terms-and-conditions',
+        destination: '/terms',
+        permanent: true
+      },
+      {
+        source: '/terms-of-service',
+        destination: '/terms',
+        permanent: true
       }
     ];
   }

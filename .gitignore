@@ -24,6 +24,7 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -40,11 +41,35 @@ references/
 scripts/
 PROJECT.md
 VSPIAS-*.md
+ADMIN-START-HERE.md
 *.log
 
 # root-level artifacts, screenshots & package folders
 /*.png
 /verification-screenshots/
 /VSPIAS-*/
+/media/
+
+# customer & dynamic upload data
+frontend/data/enquiries.json
+data/enquiries.json
+frontend/data/uploads/
+
+# scratch mockups & test images
+frontend/public/assets/ref-card-*.png
+frontend/public/assets/reference-hero-*.png
+frontend/public/assets/uploaded-hero-*.png
+frontend/public/assets/reference/vspias-logo-white.png
+frontend/public/images/*.png
+frontend/public/images/*.jpg
+!frontend/public/images/automation/**
+!frontend/public/images/paper-bags/**
+
+# IDE & system
+.vscode/
+.idea/
+*.zip
+*.tar.gz
+
 
 

@@ -1,38 +1,34 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 export default function TopBar(): JSX.Element {
-  const pathname = usePathname();
-  const isAutomation = pathname.startsWith('/automation') || pathname.startsWith('/industrial-solutions');
-  const isPaper = !isAutomation;
-
   return (
-    <div className="topbar">
-      <div className="wrap">
-        <nav className="division-switch" aria-label="Business Divisions">
-          <Link
-            href="/"
-            className={`division-pill ${isPaper ? 'active' : ''}`}
-            aria-current={isPaper ? 'page' : undefined}
+    <div className="claude-utility-strip">
+      <div className="claude-utility-wrap">
+        <div className="claude-utility-left">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#6fa83a"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
           >
-            <span>Paper &amp; Packaging</span>
-          </Link>
-          <Link
-            href="/automation"
-            className={`division-pill ${isAutomation ? 'active' : ''}`}
-            aria-current={isAutomation ? 'page' : undefined}
-          >
-            <span>Electrical &amp; Automation</span>
-          </Link>
-        </nav>
-        <div className="top-contact">
-          <span className="location">{isPaper ? 'Bengaluru' : 'Peenya, Bengaluru'}</span>
-          <span aria-hidden="true">/</span>
-          <a href="tel:+919783133333" className="phone" aria-label="Call +91 97831 33333">
+            <path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z" />
+            <path d="M5 19c3-5 6-8 10-10" />
+          </svg>
+          <span>Eco Automation &middot; Paper Bags</span>
+        </div>
+        <div className="claude-utility-right">
+          <a href="tel:+919783133333" className="claude-utility-link">
             +91 97831 33333
+          </a>
+          <a href="mailto:info@vspias.in" className="claude-utility-link">
+            info@vspias.in
           </a>
         </div>
       </div>

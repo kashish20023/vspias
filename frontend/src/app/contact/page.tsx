@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { QuoteForm } from '@/components/enquiry/QuoteForm';
 import { FAQAccordion } from '@/components/enquiry/FAQAccordion';
+import { EnquirySurface } from '@/components/motion/EnquirySurface';
 
 export const metadata: Metadata = {
   title: 'Contact & Enquiries — VSPIAS',
@@ -43,9 +44,11 @@ export default function ContactPage(): JSX.Element {
             </div>
           </div>
 
-          <Suspense fallback={<div className="quote-form"><h3>Your next step, made simple.</h3><p>Loading form...</p></div>}>
-            <QuoteForm />
-          </Suspense>
+          <EnquirySurface label="Direct consultation and quotation request">
+            <Suspense fallback={<div className="quote-form"><h3>Your next step, made simple.</h3><p>Loading form...</p></div>}>
+              <QuoteForm />
+            </Suspense>
+          </EnquirySurface>
         </div>
 
         <FAQAccordion />
