@@ -35,6 +35,8 @@ next-env.d.ts
 
 # non-frontend, planning, docs, prompts & scripts
 .agent/
+.agents/
+skills-lock.json
 .planning/
 docs/
 references/
@@ -46,6 +48,7 @@ ADMIN-START-HERE.md
 
 # root-level artifacts, screenshots & package folders
 /*.png
+/*.html
 /verification-screenshots/
 /VSPIAS-*/
 /media/
