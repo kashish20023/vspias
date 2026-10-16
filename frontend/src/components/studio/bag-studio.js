@@ -1,17 +1,30 @@
 /** VSPIAS Bag Studio. Browser-only mount; safe to import from an SSR application. */
 export const PAPER_COLOURS = Object.freeze([
-  { id: 'kraft', label: 'Natural kraft', value: '#bc9465' },
-  { id: 'ivory', label: 'Warm ivory', value: '#eee9d8' },
-  { id: 'forest', label: 'Forest green', value: '#193b2d' },
-  { id: 'sage', label: 'Soft sage', value: '#a9b69c' }
+  { id: 'kraft', label: 'Natural kraft', value: '#C59F70' },
+  { id: 'ivory', label: 'White / ivory', value: '#F7F4EA' },
+  { id: 'forest', label: 'Forest green', value: '#1F4737' },
+  { id: 'sage', label: 'Sage', value: '#B8C4AC' },
+  { id: 'navy', label: 'Midnight navy', value: '#24344D' }
 ]);
 export const PRINT_COLOURS = Object.freeze([
-  { id: 'forest', label: 'Forest ink', value: '#193b2d' },
-  { id: 'ivory', label: 'Ivory ink', value: '#fffdf3' },
-  { id: 'charcoal', label: 'Charcoal ink', value: '#222822' }
+  { id: 'forest', label: 'Forest ink', value: '#183D2D' },
+  { id: 'ivory', label: 'Ivory ink', value: '#F5F0E0' },
+  { id: 'charcoal', label: 'Charcoal ink', value: '#222222' },
+  { id: 'lime', label: 'Lime ink', value: '#D5ED86' },
+  { id: 'orange', label: 'Orange ink', value: '#C4460F' }
 ]);
-const SHAPES = Object.freeze({ classic: [210, 264, 76], tall: [182, 282, 70], wide: [242, 210, 88] });
-export const DEFAULT_DESIGN = Object.freeze({ version: 1, paper: 'kraft', print: 'forest', brand: 'YOUR BRAND', pattern: 'plain', handle: 'rope', shape: 'classic' });
+export const BAG_FORMATS = Object.freeze([
+  { id: 'custom', label: 'Custom' },
+  { id: 'kraft-takeaway', label: 'Kraft takeaway' },
+  { id: 'twisted-retail', label: 'Twisted-handle retail' },
+  { id: 'flat-grocery', label: 'Flat-handle grocery' },
+  { id: 'sos-block-bottom', label: 'SOS block-bottom' },
+  { id: 'euro-tote', label: 'Euro-tote' },
+  { id: 'v-bottom', label: 'V-Bottom Paper Bag' },
+  { id: 'square-bottom', label: 'Square-Bottom Paper Bag' }
+]);
+const SHAPES = Object.freeze({ classic: [210, 264, 76], tall: [182, 282, 70], wide: [242, 210, 88], tote: [215, 230, 80] });
+export const DEFAULT_DESIGN = Object.freeze({ version: 1, paper: 'kraft', print: 'forest', brand: 'YOUR BRAND', pattern: 'plain', handle: 'rope', shape: 'classic', format: 'custom' });
 const choose = (list, key, fallback) => list.some(item => item.id === key) ? key : fallback;
 export function normalizeDesign(value = {}) {
   const v = value && typeof value === 'object' ? value : {};
@@ -21,13 +34,23 @@ export function normalizeDesign(value = {}) {
     print: choose(PRINT_COLOURS, v.print, DEFAULT_DESIGN.print),
     brand: Array.from(typeof v.brand === 'string' ? v.brand.replace(/[\u0000-\u001f\u007f]/g, '') : DEFAULT_DESIGN.brand).slice(0, 28).join(''),
     pattern: ['plain', 'dots', 'stripes'].includes(v.pattern) ? v.pattern : 'plain',
-    handle: ['rope', 'flat'].includes(v.handle) ? v.handle : 'rope',
-    shape: Object.hasOwn(SHAPES, v.shape) ? v.shape : 'classic'
+    handle: ['rope', 'flat', 'none'].includes(v.handle) ? v.handle : 'rope',
+    shape: Object.hasOwn(SHAPES, v.shape) ? v.shape : 'classic',
+    format: choose(BAG_FORMATS, v.format, DEFAULT_DESIGN.format)
   };
 }
 export function designBrief(value) {
   const d = normalizeDesign(value);
-  return { ...d, paperColour: PAPER_COLOURS.find(x => x.id === d.paper).value, printColour: PRINT_COLOURS.find(x => x.id === d.print).value, note: 'Illustrative visual preference only. Dimensions, material, print, handles, quantity and availability must be confirmed before manufacture.' };
+  const foundPaper = PAPER_COLOURS.find(x => x.id === d.paper);
+  const foundPrint = PRINT_COLOURS.find(x => x.id === d.print);
+  const foundFormat = BAG_FORMATS.find(x => x.id === d.format);
+  return {
+    ...d,
+    paperColour: foundPaper ? foundPaper.value : '#C59F70',
+    printColour: foundPrint ? foundPrint.value : '#183D2D',
+    formatLabel: foundFormat ? foundFormat.label : 'Custom',
+    note: 'Illustrative visual preference only. Dimensions, material, print, handles, quantity and availability must be confirmed before manufacture.'
+  };
 }
 
 let instance = 0;
@@ -63,7 +86,7 @@ export function mountBagStudio(root, options = {}) {
       <fieldset><legend>02 <span>Print colour</span></legend><div class="bs-swatches bs-print-swatches">${swatches(PRINT_COLOURS, 'print')}</div></fieldset>
       <label class="bs-field" for="${id}-brand">03 <span>Your brand name</span><input id="${id}-brand" data-brand-input type="text" maxlength="56" autocomplete="off" spellcheck="false" aria-describedby="${id}-brand-help" /></label>
       <small id="${id}-brand-help" class="bs-help">Up to 28 characters. Preview text stays within the print area.</small>
-      <div class="bs-setting-row"><label class="bs-field" for="${id}-pattern">Pattern<select id="${id}-pattern" data-select="pattern"><option value="plain">Minimal</option><option value="dots">Micro dots</option><option value="stripes">Fine stripes</option></select></label><label class="bs-field" for="${id}-handle">Handle<select id="${id}-handle" data-select="handle"><option value="rope">Rope</option><option value="flat">Flat paper</option></select></label><label class="bs-field" for="${id}-shape">Proportions<select id="${id}-shape" data-select="shape"><option value="classic">Classic</option><option value="tall">Tall</option><option value="wide">Wide</option></select></label></div>
+      <div class="bs-setting-row"><label class="bs-field" for="${id}-format">Bag format<select id="${id}-format" data-select="format">${BAG_FORMATS.map(f => `<option value="${f.id}">${f.label}</option>`).join('')}</select></label><label class="bs-field" for="${id}-handle">Handle<select id="${id}-handle" data-select="handle"><option value="rope">Rope</option><option value="flat">Flat paper</option><option value="none">No handle</option></select></label><label class="bs-field" for="${id}-shape">Proportions<select id="${id}-shape" data-select="shape"><option value="classic">Classic</option><option value="tall">Tall</option><option value="wide">Wide</option><option value="tote">Tote</option></select></label></div>
       <p class="bs-summary" data-summary></p><p class="bs-help" data-contrast hidden>For clearer lettering, choose a contrasting print colour.</p>
       <div class="bs-actions"><button type="button" class="bs-primary" data-action="download">Download design brief <span aria-hidden="true">↗</span></button><button type="button" class="bs-reset" data-action="reset">Reset</button></div>
       <button type="button" class="bs-quote" data-action="quote" hidden>Use this design in my enquiry →</button>
@@ -106,7 +129,7 @@ export function mountBagStudio(root, options = {}) {
   }
   function render(notify = true) {
     const paper = PAPER_COLOURS.find(x => x.id === state.paper), ink = PRINT_COLOURS.find(x => x.id === state.print);
-    const [w, h, d] = SHAPES[state.shape];
+    const [w, h, d] = SHAPES[state.shape] || SHAPES.classic;
     model.style.setProperty('--bs-paper', paper.value); model.style.setProperty('--bs-ink', ink.value);
     model.style.setProperty('--bs-w', `${w}px`); model.style.setProperty('--bs-h', `${h}px`); model.style.setProperty('--bs-d', `${d}px`);
     model.dataset.pattern = state.pattern; model.dataset.handle = state.handle;
@@ -114,7 +137,9 @@ export function mountBagStudio(root, options = {}) {
     query('[data-brand-input]').value = state.brand;
     root.querySelectorAll('[data-key]').forEach(button => button.setAttribute('aria-pressed', String(state[button.dataset.key] === button.dataset.value)));
     root.querySelectorAll('[data-select]').forEach(select => { select.value = state[select.dataset.select]; });
-    query('[data-summary]').textContent = `${paper.label} · ${ink.label} · ${state.handle === 'rope' ? 'Rope' : 'Flat paper'} handle`;
+    const fmt = BAG_FORMATS.find(x => x.id === state.format);
+    const handleStr = state.handle === 'rope' ? 'Rope' : state.handle === 'none' ? 'No handle' : 'Flat paper';
+    query('[data-summary]').textContent = `${paper.label} · ${ink.label} · ${handleStr} handle · ${fmt ? fmt.label : 'Custom'}`;
     query('[data-contrast]').hidden = !((state.paper === 'forest' && state.print === 'forest') || (state.paper === 'ivory' && state.print === 'ivory'));
     syncAngle(); syncPlay(); fit();
     if (notify && typeof options.onDesignChange === 'function') options.onDesignChange(designBrief(state));

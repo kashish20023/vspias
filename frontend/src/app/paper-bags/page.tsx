@@ -1,17 +1,17 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import BagHero from '@/components/home/BagHero';
-import CapabilityStrip from '@/components/home/CapabilityStrip';
-import ProductRangeSection from '@/components/catalog/ProductRangeSection';
-import BagRangeShowcase from '@/components/bags/BagRangeShowcase';
-import BagStudioSection from '@/components/bags/BagStudioSection';
-import AboutPackagingSection from '@/components/home/AboutPackagingSection';
-import IndustryApplicationsSection from '@/components/home/IndustryApplicationsSection';
-import BusinessHighlightsSection from '@/components/home/BusinessHighlightsSection';
-import MaterialDetailsSection from '@/components/bags/MaterialDetailsSection';
-import CustomPackagingJourney from '@/components/bags/CustomPackagingJourney';
-import ManufacturingEvidenceSection from '@/components/industrial/ManufacturingEvidenceSection';
-import PaperEnquirySection from '@/components/bags/PaperEnquirySection';
+import '@/styles/paper-bags-premium.css';
+
+import PremiumSymbols from '@/components/bags/premium/PremiumSymbols';
+import PremiumHeroSection from '@/components/bags/premium/PremiumHeroSection';
+import PremiumRangeSection from '@/components/bags/premium/PremiumRangeSection';
+import PremiumStudioSection from '@/components/bags/premium/PremiumStudioSection';
+import PremiumIndustriesSection from '@/components/bags/premium/PremiumIndustriesSection';
+import PremiumProcessSection from '@/components/bags/premium/PremiumProcessSection';
+import PremiumMaterialsSection from '@/components/bags/premium/PremiumMaterialsSection';
+import PremiumEnquirySection from '@/components/bags/premium/PremiumEnquirySection';
+import PremiumPhotoViewer from '@/components/bags/premium/PremiumPhotoViewer';
+import PremiumMotionController from '@/components/bags/premium/PremiumMotionController';
 
 export const metadata: Metadata = {
   title: 'Paper Bags & Packaging Division — VSPIAS Ecoautomation | Bengaluru',
@@ -21,42 +21,36 @@ export const metadata: Metadata = {
 
 export default function PaperBagsPage(): JSX.Element {
   return (
-    <div className="homepage-wrapper paper-division-page" id="paper-packaging-home">
-      {/* Signature Hero Banner */}
-      <BagHero />
+    <div className="homepage-wrapper paper-division-page pb-premium-page" id="paper-packaging-home">
+      {/* SVG symbols definition sprite */}
+      <PremiumSymbols />
 
-      {/* Capability Strip connecting hero to product range */}
-      <CapabilityStrip />
+      {/* 1. Large editorial hero with green image frame and considered typography */}
+      <PremiumHeroSection />
 
-      {/* Opposite-Moving Product Rows & Complete Full Range Discovery */}
-      <ProductRangeSection pageType="paper" />
+      {/* 2. Expanding 5-family product collection accordion */}
+      <PremiumRangeSection />
 
-      {/* Bag Range Showcase */}
-      <BagRangeShowcase />
+      {/* 3. Interactive 3D Bag Studio in reference framing (preserving working 3D renderer) */}
+      <PremiumStudioSection />
 
-      {/* Interactive 360 Design Your Own Bag Studio */}
-      <BagStudioSection />
+      {/* 4. Balanced 8-sector industry bento grid with spotlight hover */}
+      <PremiumIndustriesSection />
 
-      {/* About VSPIAS */}
-      <AboutPackagingSection />
+      {/* 5. 4-step manufacturing timeline with interactive SVG flexo schematic */}
+      <PremiumProcessSection />
 
-      {/* Industry Applications Mosaic */}
-      <IndustryApplicationsSection />
+      {/* 6. Tactile material explorer, GSM slider, and texture inspection */}
+      <PremiumMaterialsSection />
 
-      {/* Business Highlights */}
-      <BusinessHighlightsSection />
+      {/* 7. Commercial contact desk & protected quotation form */}
+      <PremiumEnquirySection />
 
-      {/* Material and Construction Details */}
-      <MaterialDetailsSection />
+      {/* Accessible native <dialog> photo viewer & toast */}
+      <PremiumPhotoViewer />
 
-      {/* Custom Packaging Process */}
-      <CustomPackagingJourney />
-
-      {/* Manufacturing & Quality Proof */}
-      <ManufacturingEvidenceSection />
-
-      {/* Final Enquiry CTA & Direct Consultation Desk */}
-      <PaperEnquirySection />
+      {/* High-performance spring follower, spotlights, and motion controller */}
+      <PremiumMotionController />
     </div>
   );
 }
