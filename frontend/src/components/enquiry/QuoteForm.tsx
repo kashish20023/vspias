@@ -9,7 +9,7 @@ import { AnimatedEnquiryButton } from '@/components/motion/AnimatedEnquiryButton
 export function QuoteForm(): JSX.Element {
   const searchParams = useSearchParams();
 
-  const [interest, setInterest] = useState<string>('Paper bags');
+  const [interest, setInterest] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [company, setCompany] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -100,6 +100,10 @@ export function QuoteForm(): JSX.Element {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!interest) {
+      setErrorMessage('Please select what you are interested in.');
+      return;
+    }
     if (!name.trim()) {
       setErrorMessage('Please enter your full name.');
       return;
@@ -186,212 +190,221 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
 
   return (
     <form className="quote-form" id="quote-form" ref={formRef} onSubmit={handleSubmit} noValidate>
-        {/* Invisible honeypot field for bot defense */}
-        <input type="text" name="hp" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" aria-hidden="true" />
-        <h3>Your next step, made simple.</h3>
-        <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: '20px' }}>
-          Configure your specifications below. We will generate a structured draft for your review.
-        </p>
+      {/* Invisible honeypot field for bot defense */}
+      <input type="text" name="hp" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" aria-hidden="true" />
+      <h3>Your next step, made simple.</h3>
+      <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: '20px' }}>
+        Configure your specifications below. We will generate a structured draft for your review.
+      </p>
 
-        {errorMessage && (
-          <div className="form-error-alert" role="alert" style={{ background: '#fdf2f2', border: '1px solid #f8b4b4', color: '#9b1c1c', padding: '12px 16px', borderRadius: '4px', marginBottom: '16px', fontSize: '13px' }}>
-            <strong>Attention:</strong> {errorMessage}
-            {mailtoUrl !== '#' && (
-              <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <a href={mailtoUrl} className="button" style={{ fontSize: '12px', padding: '8px 14px', minHeight: '36px' }}>
-                  Open in Email (info@vspias.in) ↗
-                </a>
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="button secondary" style={{ fontSize: '12px', padding: '8px 14px', minHeight: '36px' }}>
-                  Open in WhatsApp (+91 97831 33333) ↗
-                </a>
-              </div>
-            )}
-          </div>
-        )}
-
-        <label className="field">
-          I am interested in
-          <select id="interest" name="interest" value={interest} onChange={handleInterestChange}>
-            <option value="Paper bags">Paper bags</option>
-            <option value="Machinery & printing">Machinery & printing</option>
-            <option value="Electrical & automation">Electrical & automation</option>
-          </select>
-        </label>
-
-        {/* Contextual Indicators */}
-        {isPaper && (bagFinish || brandName) && (
-          <div className="form-context-badge" style={{ background: 'var(--sage)', padding: '10px 14px', borderRadius: '4px', marginBottom: '16px', fontSize: '12px', color: 'var(--ink)' }}>
-            <span><strong>Carried from Preview:</strong> {bagFinish ? `Finish: ${bagFinish}` : ''}{bagFinish && brandName ? ' · ' : ''}{brandName ? `Brand: "${brandName}"` : ''}</span>
-          </div>
-        )}
-
-        {isAuto && industrySector && (
-          <div className="form-context-badge" style={{ background: 'var(--sage)', padding: '10px 14px', borderRadius: '4px', marginBottom: '16px', fontSize: '12px', color: 'var(--ink)' }}>
-            <span><strong>Target Sector:</strong> {industrySector}</span>
-          </div>
-        )}
-
-        <div className="form-row">
-          <label className="field">
-            Your name <span aria-hidden="true" style={{ color: '#b91c1c' }}>*</span>
-            <input
-              name="name"
-              required
-              placeholder="Full name"
-              autoComplete="name"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setSubmitted(false);
-              }}
-            />
-          </label>
-          <label className="field">
-            Company
-            <input
-              name="company"
-              placeholder="Company name"
-              autoComplete="organization"
-              value={company}
-              onChange={(e) => {
-                setCompany(e.target.value);
-                setSubmitted(false);
-              }}
-            />
-          </label>
-        </div>
-
-        <div className="form-row">
-          <label className="field">
-            Email <span aria-hidden="true" style={{ color: '#b91c1c' }}>*</span>
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="you@company.com"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setSubmitted(false);
-              }}
-            />
-          </label>
-          <label className="field">
-            Phone / WhatsApp
-            <input
-              type="tel"
-              name="phone"
-              placeholder="+91 97831 33333"
-              autoComplete="tel"
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-                setSubmitted(false);
-              }}
-            />
-          </label>
-        </div>
-
-        <label className="field">
-          <span id="quantity-label">{quantityLabel}</span>
-          <input
-            name="quantity"
-            id="quantity-input"
-            placeholder={quantityPlaceholder}
-            value={quantity}
-            onChange={(e) => {
-              setQuantity(e.target.value);
-              setSubmitted(false);
-            }}
-          />
-        </label>
-
-        <label className="field">
-          Tell us about your requirements <span aria-hidden="true" style={{ color: '#b91c1c' }}>*</span>
-          <textarea
-            name="requirements"
-            required
-            rows={4}
-            placeholder="Bag size, paper GSM, print colours, target monthly volume or machine specifications..."
-            value={requirements}
-            onChange={(e) => {
-              setRequirements(e.target.value);
-              setSubmitted(false);
-            }}
-          />
-        </label>
-
-        <label className="check" style={{ marginTop: '12px' }}>
-          <input
-            type="checkbox"
-            required
-            checked={consent}
-            onChange={(e) => {
-              setConsent(e.target.checked);
-              setErrorMessage('');
-            }}
-          />
-          <span>
-            I agree to be contacted by VSPIAS regarding this enquiry. My details are prepared into a reviewed draft and only sent when I choose email or WhatsApp below.
-          </span>
-        </label>
-
-        <div style={{ marginTop: '20px', width: '100%' }}>
-          <AnimatedEnquiryButton
-            type="submit"
-            id="prepare-enquiry-btn"
-            style={{ width: '100%', justifyContent: 'center' }}
-          >
-            Prepare My Enquiry Draft
-          </AnimatedEnquiryButton>
-        </div>
-
-        <p className="form-info" style={{ marginTop: '14px', fontSize: '11px', color: 'var(--muted)' }}>
-          <strong>Transparent workflow:</strong> This system prepares an email or WhatsApp draft containing your exact specifications. You retain full control to review the text before sending it to our {interest === 'Paper bags' ? 'Bengaluru' : 'Peenya'} office.
-        </p>
-
-        {submitted && (
-          <div className="success" id="enquiry-success" aria-live="polite" style={{ marginTop: '24px', padding: '20px', background: 'var(--sage)', borderRadius: '4px', border: '1px solid var(--line)' }}>
-            <strong style={{ fontSize: '16px', display: 'block', color: 'var(--ink)' }}>
-              Your enquiry draft is ready for review.
-            </strong>
-            <p style={{ fontSize: '13px', margin: '8px 0 16px', color: 'var(--muted)' }}>
-              Review the drafted parameters and choose your preferred messaging method to dispatch your enquiry directly to Paawan Bhargava.
-            </p>
-
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <a
-                id="send-email"
-                href={mailtoUrl}
-                className="button"
-                style={{ fontSize: '13px', padding: '12px 20px', minHeight: '44px' }}
-              >
+      {errorMessage && (
+        <div className="form-error-alert" role="alert" style={{ background: '#fdf2f2', border: '1px solid #f8b4b4', color: '#9b1c1c', padding: '12px 16px', borderRadius: '4px', marginBottom: '16px', fontSize: '13px' }}>
+          <strong>Attention:</strong> {errorMessage}
+          {mailtoUrl !== '#' && (
+            <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <a href={mailtoUrl} className="button" style={{ fontSize: '12px', padding: '8px 14px', minHeight: '36px' }}>
                 Open in Email (info@vspias.in) ↗
               </a>
-              <a
-                id="send-whatsapp"
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button secondary"
-                style={{ fontSize: '13px', padding: '12px 20px', minHeight: '44px' }}
-              >
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="button secondary" style={{ fontSize: '12px', padding: '8px 14px', minHeight: '36px' }}>
                 Open in WhatsApp (+91 97831 33333) ↗
               </a>
             </div>
+          )}
+        </div>
+      )}
 
-            <details style={{ marginTop: '16px', fontSize: '12px' }}>
-              <summary style={{ cursor: 'pointer', color: 'var(--ink)', fontWeight: 600 }}>
-                View Draft Text Preview
-              </summary>
-              <pre style={{ marginTop: '8px', padding: '12px', background: '#ffffff', borderRadius: '4px', whiteSpace: 'pre-wrap', fontSize: '11px', color: 'var(--ink)', border: '1px solid var(--line)' }}>
-                {draftSummary}
-              </pre>
-            </details>
+      <label className="field">
+        <span className="field-label">
+          I am interested in <span aria-hidden="true" style={{ color: '#b91c1c' }}>*</span>
+        </span>
+        <select id="interest" name="interest" required value={interest} onChange={handleInterestChange}>
+          <option value="">Select any one</option>
+          <option value="Paper bags">Paper bags</option>
+          <option value="Machinery & printing">Machinery & printing</option>
+          <option value="Electrical & automation">Electrical & automation</option>
+        </select>
+      </label>
+
+      {/* Contextual Indicators */}
+      {isPaper && (bagFinish || brandName) && (
+        <div className="form-context-badge" style={{ background: 'var(--sage)', padding: '10px 14px', borderRadius: '4px', marginBottom: '16px', fontSize: '12px', color: 'var(--ink)' }}>
+          <span><strong>Carried from Preview:</strong> {bagFinish ? `Finish: ${bagFinish}` : ''}{bagFinish && brandName ? ' · ' : ''}{brandName ? `Brand: "${brandName}"` : ''}</span>
+        </div>
+      )}
+
+      {isAuto && industrySector && (
+        <div className="form-context-badge" style={{ background: 'var(--sage)', padding: '10px 14px', borderRadius: '4px', marginBottom: '16px', fontSize: '12px', color: 'var(--ink)' }}>
+          <span><strong>Target Sector:</strong> {industrySector}</span>
+        </div>
+      )}
+
+      <div className="form-row">
+        <label className="field">
+          <span className="field-label">
+            Your name <span aria-hidden="true" style={{ color: '#b91c1c' }}>*</span>
+          </span>
+          <input
+            name="name"
+            required
+            placeholder="Full name"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setSubmitted(false);
+            }}
+          />
+        </label>
+        <label className="field">
+          <span className="field-label">Company</span>
+          <input
+            name="company"
+            placeholder="Company name"
+            autoComplete="organization"
+            value={company}
+            onChange={(e) => {
+              setCompany(e.target.value);
+              setSubmitted(false);
+            }}
+          />
+        </label>
+      </div>
+
+      <div className="form-row">
+        <label className="field">
+          <span className="field-label">
+            Email <span aria-hidden="true" style={{ color: '#b91c1c' }}>*</span>
+          </span>
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="you@company.com"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setSubmitted(false);
+            }}
+          />
+        </label>
+        <label className="field">
+          <span className="field-label">Phone / WhatsApp</span>
+          <input
+            type="tel"
+            name="phone"
+            placeholder="+91 97831 33333"
+            autoComplete="tel"
+            value={phone}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              setSubmitted(false);
+            }}
+          />
+        </label>
+      </div>
+
+      <label className="field">
+        <span className="field-label" id="quantity-label">{quantityLabel}</span>
+        <input
+          name="quantity"
+          id="quantity-input"
+          placeholder={quantityPlaceholder}
+          value={quantity}
+          onChange={(e) => {
+            setQuantity(e.target.value);
+            setSubmitted(false);
+          }}
+        />
+      </label>
+
+      <label className="field">
+        <span className="field-label">
+          Tell us about your requirements <span aria-hidden="true" style={{ color: '#b91c1c' }}>*</span>
+        </span>
+        <textarea
+          name="requirements"
+          required
+          rows={4}
+          placeholder="Bag size, paper GSM, print colours, target monthly volume or machine specifications..."
+          value={requirements}
+          onChange={(e) => {
+            setRequirements(e.target.value);
+            setSubmitted(false);
+          }}
+        />
+      </label>
+
+      <label className="check" style={{ marginTop: '12px' }}>
+        <input
+          type="checkbox"
+          required
+          checked={consent}
+          onChange={(e) => {
+            setConsent(e.target.checked);
+            setErrorMessage('');
+          }}
+        />
+        <span>
+          I agree to be contacted by VSPIAS regarding this enquiry. My details are prepared into a reviewed draft and only sent when I choose email or WhatsApp below.
+        </span>
+      </label>
+
+      <div style={{ marginTop: '20px', width: '100%' }}>
+        <AnimatedEnquiryButton
+          type="submit"
+          id="prepare-enquiry-btn"
+          style={{ width: '100%', justifyContent: 'center' }}
+        >
+          Prepare My Enquiry Draft
+        </AnimatedEnquiryButton>
+      </div>
+
+      <p className="form-info" style={{ marginTop: '14px', fontSize: '11px', color: 'var(--muted)' }}>
+        <strong>Transparent workflow:</strong> This system prepares an email or WhatsApp draft containing your exact specifications. You retain full control to review the text before sending it to our {interest === 'Paper bags' ? 'Bengaluru' : 'Peenya'} office.
+      </p>
+
+      {submitted && (
+        <div className="success" id="enquiry-success" aria-live="polite" style={{ marginTop: '24px', padding: '20px', background: 'var(--sage)', borderRadius: '4px', border: '1px solid var(--line)' }}>
+          <strong style={{ fontSize: '16px', display: 'block', color: 'var(--ink)' }}>
+            Your enquiry draft is ready for review.
+          </strong>
+          <p style={{ fontSize: '13px', margin: '8px 0 16px', color: 'var(--muted)' }}>
+            Review the drafted parameters and choose your preferred messaging method to dispatch your enquiry directly to Paawan Bhargava.
+          </p>
+
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <a
+              id="send-email"
+              href={mailtoUrl}
+              className="button"
+              style={{ fontSize: '13px', padding: '12px 20px', minHeight: '44px' }}
+            >
+              Open in Email (info@vspias.in) ↗
+            </a>
+            <a
+              id="send-whatsapp"
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="button secondary"
+              style={{ fontSize: '13px', padding: '12px 20px', minHeight: '44px' }}
+            >
+              Open in WhatsApp (+91 97831 33333) ↗
+            </a>
           </div>
-        )}
-      </form>
+
+          <details style={{ marginTop: '16px', fontSize: '12px' }}>
+            <summary style={{ cursor: 'pointer', color: 'var(--ink)', fontWeight: 600 }}>
+              View Draft Text Preview
+            </summary>
+            <pre style={{ marginTop: '8px', padding: '12px', background: '#ffffff', borderRadius: '4px', whiteSpace: 'pre-wrap', fontSize: '11px', color: 'var(--ink)', border: '1px solid var(--line)' }}>
+              {draftSummary}
+            </pre>
+          </details>
+        </div>
+      )}
+    </form>
   );
 }
 

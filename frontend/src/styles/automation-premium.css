@@ -221,6 +221,8 @@ html{scroll-padding-top:96px}
 .panel-photo-frame{border-radius:12px;background:var(--paper);overflow:hidden;aspect-ratio:1.65;position:relative}
 .panel-photo-frame img{width:100%;height:100%;object-fit:contain;object-position:center;transition:transform .6s var(--ease)}
 .panel-art[data-photo=panels] .panel-photo-frame{aspect-ratio:1.65}
+.panel-art[data-photo=panels] .panel-photo-frame img,
+.panel-art[data-photo=scada] .panel-photo-frame img{object-fit:cover}
 .panel-photo-frame:hover img{transform:scale(1.015)}
 .panel-photo-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
 .panel-photo-tabs button{border:1px solid #ffffff30;background:transparent;color:#d8e1d2;padding:9px 13px;border-radius:99px;font-size:13px;min-height:44px}

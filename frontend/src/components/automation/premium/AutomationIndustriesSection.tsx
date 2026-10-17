@@ -62,11 +62,11 @@ export function AutomationIndustriesSection({
                     {ind.name}
                   </strong>
                   <span className="industry-desc">{ind.description}</span>
-                  <span className="industry-arrow">
+                  {/* <span className="industry-arrow">
                     <svg className="icon" aria-hidden="true">
                       <use href="#i-arrow" />
                     </svg>
-                  </span>
+                  </span> */}
                 </button>
 
                 <div

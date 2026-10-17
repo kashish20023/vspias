@@ -78,7 +78,7 @@ export default function SiteFooter(): JSX.Element {
       <div className="wrap">
         <div className="footer-top">
           <div className="footer-brand-col">
-            <Link href="/" className="footer-brand-link" aria-label="VSPIAS Ecoautomation Homepage" style={{ display: 'inline-block', marginBottom: '14px' }}>
+            <Link href="/" className="footer-brand-link" aria-label="VSPIAS Ecoautomation Homepage" style={{ marginBottom: '14px' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={ASSETS.logoWhite}

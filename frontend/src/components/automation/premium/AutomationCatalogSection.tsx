@@ -33,7 +33,7 @@ export function AutomationCatalogSection({
   onOpenProduct,
   externalCategory,
 }: AutomationCatalogSectionProps) {
-  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
+  const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(9);
@@ -45,11 +45,7 @@ export function AutomationCatalogSection({
   // Sync external category if selected from hero or rail
   useEffect(() => {
     if (externalCategory !== undefined) {
-      if (!externalCategory) {
-        setSelectedGroups(new Set());
-      } else {
-        setSelectedGroups(new Set([externalCategory]));
-      }
+      setSelectedGroup(externalCategory || '');
       setLimit(9);
     }
   }, [externalCategory]);
@@ -81,8 +77,8 @@ export function AutomationCatalogSection({
   const matchingProducts = useMemo(() => {
     const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
     return AUTOMATION_PRODUCTS.filter((p) => {
-      // Group check
-      if (selectedGroups.size > 0 && !selectedGroups.has(p.group)) {
+      // Group check (single-select mutual exclusion)
+      if (selectedGroup && p.group !== selectedGroup) {
         return false;
       }
       // Brand check
@@ -98,22 +94,19 @@ export function AutomationCatalogSection({
       }
       return true;
     });
-  }, [selectedGroups, selectedBrands, query]);
+  }, [selectedGroup, selectedBrands, query]);
 
   const visibleProducts = useMemo(() => {
     return matchingProducts.slice(0, limit);
   }, [matchingProducts, limit]);
 
   const handleCategoryToggle = (groupId: string) => {
-    const next = new Set(selectedGroups);
-    if (!groupId) {
-      next.clear();
-    } else if (next.has(groupId)) {
-      next.delete(groupId);
+    // Mutually exclusive: selecting a category deselects any previously selected one
+    if (!groupId || selectedGroup === groupId) {
+      setSelectedGroup('');
     } else {
-      next.add(groupId);
+      setSelectedGroup(groupId);
     }
-    setSelectedGroups(next);
     setLimit(9);
   };
 
@@ -129,7 +122,7 @@ export function AutomationCatalogSection({
   };
 
   const handleResetFilters = () => {
-    setSelectedGroups(new Set());
+    setSelectedGroup('');
     setSelectedBrands(new Set());
     setQuery('');
     setLimit(9);
@@ -137,7 +130,7 @@ export function AutomationCatalogSection({
   };
 
   const hasActiveFilters =
-    selectedGroups.size > 0 || selectedBrands.size > 0 || query.trim() !== '';
+    Boolean(selectedGroup) || selectedBrands.size > 0 || query.trim() !== '';
 
   const brandFilterLabel =
     selectedBrands.size === 0
@@ -172,8 +165,8 @@ export function AutomationCatalogSection({
           >
             {CATEGORY_GROUPS.map((g) => {
               const isPressed = g.id
-                ? selectedGroups.has(g.id)
-                : selectedGroups.size === 0;
+                ? selectedGroup === g.id
+                : !selectedGroup;
               return (
                 <button
                   key={g.id}

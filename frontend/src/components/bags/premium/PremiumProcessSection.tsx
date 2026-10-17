@@ -30,10 +30,18 @@ export default function PremiumProcessSection() {
 
         <div className="process-grid">
           <ol className="process-list" id="processList">
-            <li className={`process-step ${currentStep === 0 ? 'active' : ''} ${currentStep > 0 ? 'done' : ''}`} data-step="0">
+            <li
+              className={`process-step ${currentStep === 0 ? 'active' : ''} ${currentStep > 0 ? 'done' : ''}`}
+              data-step="0"
+              onClick={() => setCurrentStep(0)}
+              style={{ cursor: 'pointer' }}
+            >
               <button
                 type="button"
-                onClick={() => setCurrentStep(0)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentStep(0);
+                }}
                 aria-label="Show step 1: Paper and format"
                 aria-pressed={currentStep === 0}
               >
@@ -41,16 +49,20 @@ export default function PremiumProcessSection() {
               </button>
               <h3>Start with the right paper.</h3>
               <p>Choose a paper, weight and format around the product you want to carry and the finish you have in mind.</p>
-              <div className="process-tags">
-                <span>Paper selection</span>
-                <span>Size & format</span>
-              </div>
             </li>
 
-            <li className={`process-step ${currentStep === 1 ? 'active' : ''} ${currentStep > 1 ? 'done' : ''}`} data-step="1">
+            <li
+              className={`process-step ${currentStep === 1 ? 'active' : ''} ${currentStep > 1 ? 'done' : ''}`}
+              data-step="1"
+              onClick={() => setCurrentStep(1)}
+              style={{ cursor: 'pointer' }}
+            >
               <button
                 type="button"
-                onClick={() => setCurrentStep(1)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentStep(1);
+                }}
                 aria-label="Show step 2: Brand artwork"
                 aria-pressed={currentStep === 1}
               >
@@ -58,16 +70,20 @@ export default function PremiumProcessSection() {
               </button>
               <h3>Give your brand its space.</h3>
               <p>Bring together the artwork, print placement and colours so the finished bag feels distinctly yours.</p>
-              <div className="process-tags">
-                <span>Brand imprint</span>
-                <span>Print placement</span>
-              </div>
             </li>
 
-            <li className={`process-step ${currentStep === 2 ? 'active' : ''} ${currentStep > 2 ? 'done' : ''}`} data-step="2">
+            <li
+              className={`process-step ${currentStep === 2 ? 'active' : ''} ${currentStep > 2 ? 'done' : ''}`}
+              data-step="2"
+              onClick={() => setCurrentStep(2)}
+              style={{ cursor: 'pointer' }}
+            >
               <button
                 type="button"
-                onClick={() => setCurrentStep(2)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentStep(2);
+                }}
                 aria-label="Show step 3: Form and finish"
                 aria-pressed={currentStep === 2}
               >
@@ -75,16 +91,20 @@ export default function PremiumProcessSection() {
               </button>
               <h3>Bring the shape together.</h3>
               <p>The chosen format takes shape, with the base, folds and handle style considered as a complete product.</p>
-              <div className="process-tags">
-                <span>Bag forming</span>
-                <span>Handle finish</span>
-              </div>
             </li>
 
-            <li className={`process-step ${currentStep === 3 ? 'active' : ''}`} data-step="3">
+            <li
+              className={`process-step ${currentStep === 3 ? 'active' : ''}`}
+              data-step="3"
+              onClick={() => setCurrentStep(3)}
+              style={{ cursor: 'pointer' }}
+            >
               <button
                 type="button"
-                onClick={() => setCurrentStep(3)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentStep(3);
+                }}
                 aria-label="Show step 4: Review details"
                 aria-pressed={currentStep === 3}
               >
@@ -92,17 +112,12 @@ export default function PremiumProcessSection() {
               </button>
               <h3>Finish with the finer details.</h3>
               <p>Review the dimensions, artwork and construction against the agreed specification before the final handover.</p>
-              <div className="process-tags">
-                <span>Specification review</span>
-                <span>Final presentation</span>
-              </div>
             </li>
           </ol>
 
           <figure className="process-visual">
             <div className="process-visual-top">
               <span>Paper-to-bag · A visual guide</span>
-              <svg className="icon" aria-hidden="true"><use href="#i-arrow" /></svg>
             </div>
 
             <svg

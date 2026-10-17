@@ -878,8 +878,8 @@ export function AutomationWorkingDemosSection({
           <text x="40" y="50" className="svg-small" style={{ textAnchor: 'start' }}>
             ACTIVE POWER — USEFUL LOAD
           </text>
-          <rect x="40" y="65" width="290" height="20" rx="5" fill="#4d7139" />
-          <text x="354" y="80" className="svg-title">100 kW</text>
+          <rect x="40" y="65" width="280" height="20" rx="5" fill="#4d7139" />
+          <text x="335" y="80" className="svg-title" style={{ textAnchor: 'start' }}>100 kW</text>
           <text x="40" y="126" className="svg-small" style={{ textAnchor: 'start' }}>
             APPARENT POWER — SUPPLY DEMAND
           </text>
@@ -965,9 +965,9 @@ export function AutomationWorkingDemosSection({
                   <span className="num">0{i + 1}</span>
                   <strong>{m.title}</strong>
                   <small>{m.short}</small>
-                  <svg className="icon" aria-hidden="true">
+                  {/* <svg className="icon" aria-hidden="true">
                     <use href="#i-ne" />
-                  </svg>
+                  </svg> */}
                 </button>
               ))}
             </div>

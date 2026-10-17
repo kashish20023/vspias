@@ -233,12 +233,6 @@ export default function AutomationHeroSection({
                   <strong>Altivar drives · Modicon PLC · Harmony HMI</strong>
                   <small>Original brochure photography · Schneider Electric</small>
                 </div>
-                <div className="signal-mark" aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                  <i />
-                </div>
               </figcaption>
             </figure>
           </div>

@@ -55,6 +55,17 @@ export default function ProductRangeRail({
   const spanRef = useRef(0);
   const durationRef = useRef(0);
 
+  // Ensure the base group has enough items to span wide/ultrawide displays seamlessly
+  const repeatedProducts = React.useMemo(() => {
+    if (!products.length) return [];
+    let list = [...products];
+    // Tile sequence until at least 16 cards so width is >= 4400px (fills up to 4K displays with 0 gaps)
+    while (list.length < 16) {
+      list = [...list, ...products];
+    }
+    return list;
+  }, [products]);
+
   const canPlay = useCallback(() => {
     return (
       !userPausedRef.current &&
@@ -138,6 +149,14 @@ export default function ProductRangeRail({
     };
     document.addEventListener('visibilitychange', handleVisibility);
 
+    let ro: ResizeObserver | null = null;
+    if (groupRef.current && typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        updateRailAnimation();
+      });
+      ro.observe(groupRef.current);
+    }
+
     let io: IntersectionObserver | null = null;
     if (viewportRef.current) {
       io = new IntersectionObserver(([entry]) => {
@@ -153,10 +172,11 @@ export default function ProductRangeRail({
     return () => {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibility);
+      ro?.disconnect();
       io?.disconnect();
       animationRef.current?.cancel();
     };
-  }, [updateRailAnimation, syncAnimationState]);
+  }, [updateRailAnimation, syncAnimationState, repeatedProducts]);
 
   // Pointer drag & touch scrubbing
   const dragInfoRef = useRef<{
@@ -328,9 +348,9 @@ export default function ProductRangeRail({
         >
         <div className="range-track" ref={trackRef} aria-hidden="true">
           <div className="range-group" ref={groupRef}>
-            {products.map((p) => (
+            {repeatedProducts.map((p, idx) => (
               <button
-                key={p.id}
+                key={`${p.id}-${idx}`}
                 type="button"
                 className="range-card"
                 tabIndex={-1}
@@ -359,9 +379,9 @@ export default function ProductRangeRail({
 
           {/* Cloned group for seamless wrap */}
           <div className="range-group" aria-hidden="true">
-            {products.map((p) => (
+            {repeatedProducts.map((p, idx) => (
               <button
-                key={`clone-${p.id}`}
+                key={`clone-${p.id}-${idx}`}
                 type="button"
                 className="range-card"
                 tabIndex={-1}

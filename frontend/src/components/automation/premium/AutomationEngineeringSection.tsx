@@ -84,7 +84,7 @@ export function AutomationEngineeringSection({
           </div>
         </div>
 
-        <figure className="panel-art reveal" id="panelArt" data-step={activeStep}>
+        <figure className="panel-art reveal" id="panelArt" data-step={activeStep} data-photo={activePhotoKey}>
           <div className="panel-art-top">
             <strong>Inside the control system</strong>
           </div>
