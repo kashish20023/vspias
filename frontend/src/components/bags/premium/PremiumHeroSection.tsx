@@ -35,7 +35,7 @@ export default function PremiumHeroSection(): JSX.Element {
                 Explore the collection <svg className="icon" aria-hidden="true"><use href="#i-arrow"></use></svg>
               </span>
             </a>
-            <a className="btn sec" href="#studio">
+            <a className="btn sec hero-btn-make-3d" href="#studio" id="hero-make-3d-btn">
               <span className="magnetic-content">
                 Make it in 3D <svg className="icon" aria-hidden="true"><use href="#i-cube"></use></svg>
               </span>
@@ -72,7 +72,7 @@ export default function PremiumHeroSection(): JSX.Element {
                 decoding="async"
               />
               <button
-                className="photo-inspect"
+                className="photo-inspect hero-tactile-badge"
                 type="button"
                 data-inspect-photo="heroStudyImage"
                 data-viewer-title="Paper bag styling concepts"
@@ -96,15 +96,6 @@ export default function PremiumHeroSection(): JSX.Element {
                 <small>Natural &amp; bleached kraft options</small>
               </div>
             </div>
-
-            <a className="hero-seal" href="#studio" aria-label="Create your bag in the 3D studio">
-              <svg className="icon">
-                <use href="#i-cube"></use>
-              </svg>
-              Design
-              <br />
-              in 3D &nearr;
-            </a>
 
             <figcaption className="hero-art-foot">
               <div>
