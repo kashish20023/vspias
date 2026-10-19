@@ -28,7 +28,7 @@ export function AutomationPremiumPage() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('seen');
+            entry.target.classList.add('seen', 'visible');
             observer.unobserve(entry.target);
           }
         });
@@ -39,7 +39,10 @@ export function AutomationPremiumPage() {
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
     document.documentElement.classList.add('motion-ready');
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove('motion-ready');
+    };
   }, []);
 
   const handleOpenProduct = (product: AutomationProduct) => {

@@ -276,15 +276,20 @@ export default function PremiumMotionController() {
         entries => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
+              entry.target.classList.add('visible', 'seen');
               revealObserver.unobserve(entry.target);
             }
           });
         },
-        { threshold: 0.08, rootMargin: '0px 0px 20px 0px' }
+        { threshold: 0.02, rootMargin: '100px 0px 100px 0px' }
       );
       qa('.reveal').forEach(el => revealObserver.observe(el));
       observers.push(revealObserver);
+
+      // Senior Engineering Fail-Safe: Ensure all sections are guaranteed visible after initial paint
+      const revealTimer = setTimeout(() => {
+        qa('.reveal').forEach(el => el.classList.add('visible', 'seen'));
+      }, 350);
     }
 
     /* Texture magnifier lens */

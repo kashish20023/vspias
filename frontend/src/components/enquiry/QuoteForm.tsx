@@ -345,7 +345,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
             setErrorMessage('');
           }}
         />
-        <span>
+        <span style={{ color: '#000000' }}>
           I agree to be contacted by VSPIAS regarding this enquiry. My details are prepared into a reviewed draft and only sent when I choose email or WhatsApp below.
         </span>
       </label>

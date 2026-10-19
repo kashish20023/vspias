@@ -23,7 +23,7 @@ export default function ContactPage(): JSX.Element {
 
         <div className="quote-grid">
           <div className="quote-copy">
-            <div className="eyebrow">Let&apos;s make it happen</div>
+            <div>Let&apos;s make it happen</div>
             <h1>
               Good things<br />start with a<br />conversation.
             </h1>
