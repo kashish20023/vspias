@@ -1,0 +1,6 @@
+@tailwind utilities;
+
+/* Additional utility and component styles scoped to the admin workspace */
+.admin-scroll {
+  scrollbar-width: thin;
+}

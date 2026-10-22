@@ -61,9 +61,9 @@ export default function AutomationHeroSection({
 
       if (
         Math.abs(spring.x - spring.tx) +
-          Math.abs(spring.y - spring.ty) +
-          Math.abs(spring.vx) +
-          Math.abs(spring.vy) >
+        Math.abs(spring.y - spring.ty) +
+        Math.abs(spring.vx) +
+        Math.abs(spring.vy) >
         0.025
       ) {
         heroFrame = requestAnimationFrame(heroTick);
@@ -211,7 +211,7 @@ export default function AutomationHeroSection({
                     <span>Harmony HMI</span>
                   </button>
                 </div>
-                <button
+                {/* <button
                   className="view-image-btn"
                   id="viewHero"
                   type="button"
@@ -226,7 +226,7 @@ export default function AutomationHeroSection({
                   <svg className="icon" aria-hidden="true">
                     <use href="#i-expand" />
                   </svg>
-                </button>
+                </button> */}
               </div>
               <figcaption className="equipment-foot">
                 <div>

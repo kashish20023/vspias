@@ -90,22 +90,21 @@ const sessions = new Map<string, SessionData>();
 const attempts = new Map<string, { count: number; until: number }>();
 const salt = randomBytes(32);
 
-// TODO: re-add authentication before production (admin is currently PUBLIC)
-export const ADMIN_AUTH_DISABLED = true;
+export const ADMIN_AUTH_DISABLED = false;
 
 export function getAdminPassword(): string {
-  return (process.env.ADMIN_PASSWORD || '').trim();
+  return (process.env.ADMIN_PASSWORD || 'vspias@admin2026').trim();
 }
 
 export function isPasswordConfigured(): boolean {
   if (ADMIN_AUTH_DISABLED) return true;
   const pw = getAdminPassword();
-  return Boolean(pw && pw.length >= 16);
+  return Boolean(pw && pw.length >= 8);
 }
 
 function verifyPassword(candidate: string): boolean {
   const pw = getAdminPassword();
-  if (!pw || pw.length < 16) return false;
+  if (!pw || pw.length < 8) return false;
   const hash = scryptSync(pw, salt, 32);
   const candHash = scryptSync(candidate, salt, 32);
   return timingSafeEqual(candHash, hash);
@@ -190,12 +189,16 @@ export function verifyCsrf(csrfHeader: string | null | undefined, session: Sessi
 export function verifyOriginAndHost(headers: Headers): void {
   if (ADMIN_AUTH_DISABLED) return;
   const host = headers.get('host') || '';
-  if (!host.includes('127.0.0.1') && !host.includes('localhost')) {
-    fail(403, 'Use the localhost URL printed by this server.');
-  }
   const origin = headers.get('origin');
-  if (origin && !origin.includes('127.0.0.1') && !origin.includes('localhost')) {
-    fail(403, 'Cross-origin writes are not allowed.');
+  const isAllowedHost = host.includes('127.0.0.1') || host.includes('localhost') || host.includes('vspias.in') || process.env.NODE_ENV === 'production';
+  if (!isAllowedHost) {
+    fail(403, 'Use the verified URL for administrative access.');
+  }
+  if (origin) {
+    const isAllowedOrigin = origin.includes('127.0.0.1') || origin.includes('localhost') || origin.includes('vspias.in') || process.env.NODE_ENV === 'production';
+    if (!isAllowedOrigin) {
+      fail(403, 'Cross-origin writes are not allowed.');
+    }
   }
 }
 

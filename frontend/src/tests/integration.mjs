@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-const BASE = 'http://localhost:4173';
+const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const TEST_PASSWORD = 'TestAdminPassword1234!';
 process.env.ADMIN_PASSWORD = TEST_PASSWORD;
 

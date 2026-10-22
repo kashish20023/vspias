@@ -7,7 +7,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/admin',
+        source: '/admin-legacy',
         destination: '/admin.html'
       }
     ];

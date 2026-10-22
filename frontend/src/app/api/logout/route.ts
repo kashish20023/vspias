@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { handleLogout, requireSession, verifyCsrf, verifyOriginAndHost } from '@/lib/catalog-service';
+import { getSession, handleLogout, verifyOriginAndHost } from '@/lib/catalog-service';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
     verifyOriginAndHost(req.headers);
-    const session = requireSession(req.headers.get('cookie'));
-    verifyCsrf(req.headers.get('x-csrf-token'), session);
-    handleLogout(session);
+    const session = getSession(req.headers.get('cookie'));
+    if (session) {
+      handleLogout(session);
+    }
 
     const res = NextResponse.json(
       { ok: true },

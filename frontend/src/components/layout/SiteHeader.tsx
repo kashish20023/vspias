@@ -9,6 +9,10 @@ export default function SiteHeader(): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  if (pathname?.startsWith('/admin')) {
+    return <></>;
+  }
+
   const isHome = pathname === '/';
   const isAutomation = pathname.startsWith('/automation') || pathname.startsWith('/industrial-solutions');
   const isPaper = pathname.startsWith('/paper-bags');

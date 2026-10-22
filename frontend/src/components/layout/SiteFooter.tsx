@@ -8,6 +8,11 @@ import { buildWhatsAppUrl } from '@/lib/whatsapp';
 
 export default function SiteFooter(): JSX.Element {
   const pathname = usePathname();
+
+  if (pathname?.startsWith('/admin')) {
+    return <></>;
+  }
+
   const isHome = pathname === '/';
   const isAutomation = pathname.startsWith('/automation') || pathname.startsWith('/industrial-solutions');
   const isPaper = pathname.startsWith('/paper-bags');

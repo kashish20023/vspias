@@ -1,5 +1,5 @@
 async function verify() {
-  const BASE = 'http://localhost:4173';
+  const BASE = process.env.BASE_URL || 'http://localhost:3000';
   
   // 1. Routes
   const routes = ['/', '/paper-bags', '/automation', '/contact'];
