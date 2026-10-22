@@ -25,7 +25,7 @@ export default function SiteFooter(): JSX.Element {
             <Link href="/" className="home-footer-brand" aria-label="VSPIAS Ecoautomation Homepage">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={ASSETS.logoWhite}
+                src={ASSETS.logo}
                 alt="VSPIAS Ecoautomation"
                 width={184}
                 height={58}
@@ -86,7 +86,7 @@ export default function SiteFooter(): JSX.Element {
             <Link href="/" className="footer-brand-link" aria-label="VSPIAS Ecoautomation Homepage">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={ASSETS.logoWhite}
+                src={ASSETS.logo}
                 alt="VSPIAS Ecoautomation"
                 width={174}
                 height={48}

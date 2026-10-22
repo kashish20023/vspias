@@ -5,14 +5,19 @@ export default function CompanyHero(): JSX.Element {
   return (
     <section className="company-hero-section" id="company-hero" aria-label="VSPIAS Ecoautomation Overview">
       <div className="company-hero-bg-stage" aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/assets/approved-hero-composite.png"
-          alt=""
-          className="company-hero-bg-img"
-          loading="eager"
-          decoding="async"
-        />
+        <picture>
+          <source type="image/webp" srcSet="/assets/approved-hero-composite.webp" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/approved-hero-composite.png"
+            alt=""
+            className="company-hero-bg-img"
+            loading="eager"
+            decoding="async"
+            width={2400}
+            height={720}
+          />
+        </picture>
       </div>
 
       <div className="wrap company-hero-wrap">
