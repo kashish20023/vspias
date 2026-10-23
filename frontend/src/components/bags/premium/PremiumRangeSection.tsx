@@ -100,9 +100,10 @@ export default function PremiumRangeSection(): JSX.Element {
                   <button
                     type="button"
                     className="btn pri mini-btn"
+                    style={{ color: '#ffffff' }}
                     onClick={() => handleSelectFamily(0, 'quote')}
                   >
-                    Request quote for this family &rarr;
+                    <span style={{ color: '#ffffff' }}>Request quote for this family &rarr;</span>
                   </button>
                   <button
                     type="button"
@@ -154,9 +155,10 @@ export default function PremiumRangeSection(): JSX.Element {
                   <button
                     type="button"
                     className="btn pri mini-btn"
+                    style={{ color: '#ffffff' }}
                     onClick={() => handleSelectFamily(1, 'quote')}
                   >
-                    Request quote for this family &rarr;
+                    <span style={{ color: '#ffffff' }}>Request quote for this family &rarr;</span>
                   </button>
                   <button
                     type="button"
@@ -208,9 +210,10 @@ export default function PremiumRangeSection(): JSX.Element {
                   <button
                     type="button"
                     className="btn pri mini-btn"
+                    style={{ color: '#ffffff' }}
                     onClick={() => handleSelectFamily(2, 'quote')}
                   >
-                    Request quote for this family &rarr;
+                    <span style={{ color: '#ffffff' }}>Request quote for this family &rarr;</span>
                   </button>
                   <button
                     type="button"
@@ -262,9 +265,10 @@ export default function PremiumRangeSection(): JSX.Element {
                   <button
                     type="button"
                     className="btn pri mini-btn"
+                    style={{ color: '#ffffff' }}
                     onClick={() => handleSelectFamily(3, 'quote')}
                   >
-                    Request quote for this family &rarr;
+                    <span style={{ color: '#ffffff' }}>Request quote for this family &rarr;</span>
                   </button>
                   <button
                     type="button"
@@ -316,9 +320,10 @@ export default function PremiumRangeSection(): JSX.Element {
                   <button
                     type="button"
                     className="btn pri mini-btn"
+                    style={{ color: '#ffffff' }}
                     onClick={() => handleSelectFamily(4, 'quote')}
                   >
-                    Request quote for this family &rarr;
+                    <span style={{ color: '#ffffff' }}>Request quote for this family &rarr;</span>
                   </button>
                   <button
                     type="button"

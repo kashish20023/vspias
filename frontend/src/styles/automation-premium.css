@@ -784,3 +784,38 @@ html[data-motion=paused] .product-card,html[data-motion=paused] .model-transitio
   }
 }
 
+/* Ensure lime CTA buttons have crisp black text and icon */
+.automation-premium-page .btn-lime,
+.contact .btn-lime,
+.contact-copy .btn-lime {
+  color: #000000 !important;
+}
+
+.automation-premium-page .btn-lime span,
+.contact .btn-lime span,
+.contact-copy .btn-lime span {
+  color: #000000 !important;
+}
+
+.automation-premium-page .btn-lime .icon,
+.contact .btn-lime .icon,
+.contact-copy .btn-lime .icon {
+  stroke: #000000 !important;
+  color: #000000 !important;
+}
+
+/* Ensure dark buttons (.btn-dark) have crisp solid white text */
+.automation-premium-page .btn-dark,
+.automation-premium-page button.btn-dark,
+.btn-dark,
+button.btn-dark {
+  color: #ffffff !important;
+}
+
+.automation-premium-page .btn-dark *,
+.automation-premium-page button.btn-dark * {
+  color: #ffffff !important;
+}
+
+
+

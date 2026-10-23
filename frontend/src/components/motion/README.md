@@ -13,7 +13,7 @@ Copy the three components into the project’s appropriate component folders and
   <form onSubmit={existingSubmitHandler}>
     {/* Keep the existing labelled fields, prefill, errors and consent. */}
     <AnimatedEnquiryButton type="submit" busy={isPreparing}>
-      Prepare My Enquiry Draft
+      Submit Enquiry
     </AnimatedEnquiryButton>
     {/* Keep the actual email/WhatsApp draft actions and status messaging. */}
   </form>

@@ -3,8 +3,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
-import { EnquirySurface } from '@/components/motion/EnquirySurface';
 import { AnimatedEnquiryButton } from '@/components/motion/AnimatedEnquiryButton';
+
+// Direct Google Apps Script Web App Endpoint
+// Reads from NEXT_PUBLIC_GOOGLE_SCRIPT_URL (set in .env.local and hosting environment variables)
+const GOOGLE_SCRIPT_URL =
+  process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL ||
+  'https://script.google.com/macros/s/AKfycbxWv5k0lPgpeeSep6nsaSrtWCFRTnOcNY-2K3f9SOZMIGDgC4vMiQEwM5m_eeHkwIQUPQ/exec';
+
+// RFC-compatible email regex for strict client-side validation
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
 
 export function QuoteForm(): JSX.Element {
   const searchParams = useSearchParams();
@@ -23,7 +31,9 @@ export function QuoteForm(): JSX.Element {
   const [brandName, setBrandName] = useState<string>('');
   const [industrySector, setIndustrySector] = useState<string>('');
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [referenceId, setReferenceId] = useState<string>('');
   const [mailtoUrl, setMailtoUrl] = useState<string>('#');
   const [whatsappUrl, setWhatsappUrl] = useState<string>('#');
   const [draftSummary, setDraftSummary] = useState<string>('');
@@ -94,11 +104,15 @@ export function QuoteForm(): JSX.Element {
   const handleInterestChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setInterest(e.target.value);
     setSubmitted(false);
+    setReferenceId('');
     setErrorMessage('');
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Prevent duplicate in-flight requests
+    if (isSubmitting) return;
 
     if (!interest) {
       setErrorMessage('Please select what you are interested in.');
@@ -108,7 +122,7 @@ export function QuoteForm(): JSX.Element {
       setErrorMessage('Please enter your full name.');
       return;
     }
-    if (!email.trim() || !email.includes('@')) {
+    if (!email.trim() || !EMAIL_REGEX.test(email.trim())) {
       setErrorMessage('Please enter a valid email address.');
       return;
     }
@@ -121,7 +135,15 @@ export function QuoteForm(): JSX.Element {
       return;
     }
 
+    if (!GOOGLE_SCRIPT_URL) {
+      setErrorMessage(
+        'Google Apps Script endpoint is not configured. Please set NEXT_PUBLIC_GOOGLE_SCRIPT_URL in your environment.'
+      );
+      return;
+    }
+
     setErrorMessage('');
+    setIsSubmitting(true);
 
     let contextLines = '';
     if (isPaper) {
@@ -131,8 +153,8 @@ export function QuoteForm(): JSX.Element {
       contextLines += `Target Industrial Sector: ${industrySector}\n`;
     }
 
-    const subject = `VSPIAS Enquiry: ${interest}${industrySector ? ` — ${industrySector}` : ''}`;
-    const body = `Name: ${name.trim()}
+    const initialSubject = `VSPIAS Enquiry: ${interest}${industrySector ? ` — ${industrySector}` : ''}`;
+    const initialBody = `Name: ${name.trim()}
 Company: ${company.trim() || 'N/A'}
 Email: ${email.trim()}
 Phone / WhatsApp: ${phone.trim() || 'N/A'}
@@ -145,46 +167,73 @@ ${requirements.trim()}
 ---
 Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Bengaluru' : 'Peenya, Bengaluru'})`;
 
-    const mailto = `mailto:info@vspias.in?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    const whatsapp = buildWhatsAppUrl(subject + '\n\n' + body);
-
-    setMailtoUrl(mailto);
-    setWhatsappUrl(whatsapp);
-    setDraftSummary(body);
+    setDraftSummary(initialBody);
 
     try {
-      const res = await fetch('/api/enquiries', {
+      /**
+       * CROSS-ORIGIN APPS SCRIPT SUBMISSION:
+       * Sending 'Content-Type': 'application/json' cross-origin triggers an HTTP OPTIONS preflight,
+       * which Google Apps Script Web Apps do not respond to.
+       * We use 'text/plain;charset=utf-8' (a simple CORS request with no preflight).
+       * Google Apps Script reads the string in e.postData.contents, parses JSON, and responds
+       * with a 302 redirect to script.googleusercontent.com which serves Access-Control-Allow-Origin: *.
+       */
+      const payload = {
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        company: company.trim(),
+        division: interest,
+        quantity: quantity.trim(),
+        requirements: requirements.trim(),
+        bagFinish,
+        brandName,
+        industrySector,
+        consent: true,
+        hp: '' // Honeypot spam defense
+      };
+
+      const res = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'text/plain;charset=utf-8'
         },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
-          message: requirements.trim(),
-          company: company.trim(),
-          division: interest,
-          quantity: quantity.trim(),
-          bagFinish,
-          brandName,
-          industrySector,
-          hp: ''
-        })
+        body: JSON.stringify(payload)
       });
 
-      const data = await res.json().catch(() => ({}));
+      const data = await res.json().catch(() => null);
 
-      if (res.ok && data.ok) {
+      if (res.ok && data && data.ok) {
+        const assignedRef = data.referenceId || '';
+        setReferenceId(assignedRef);
         setSubmitted(true);
         setErrorMessage('');
+
+        const refPrefix = assignedRef ? `[Ref: ${assignedRef}] ` : '';
+        const updatedSubject = `VSPIAS Enquiry ${refPrefix}: ${interest}${industrySector ? ` — ${industrySector}` : ''}`;
+        const updatedBody = (assignedRef ? `Reference ID: ${assignedRef}\n\n` : '') + initialBody;
+
+        setMailtoUrl(`mailto:info@vspias.in?subject=${encodeURIComponent(updatedSubject)}&body=${encodeURIComponent(updatedBody)}`);
+        setWhatsappUrl(buildWhatsAppUrl(updatedSubject + '\n\n' + updatedBody));
+        setDraftSummary(updatedBody);
       } else {
         setSubmitted(false);
-        setErrorMessage(data.error || 'Unable to save enquiry to server. You can still reach us directly via email or WhatsApp below.');
+        const errText =
+          (data && data.error) ||
+          'Unable to record enquiry to Google Sheets. You can still reach us directly via WhatsApp or email below.';
+        setErrorMessage(errText);
+        setMailtoUrl(`mailto:info@vspias.in?subject=${encodeURIComponent(initialSubject)}&body=${encodeURIComponent(initialBody)}`);
+        setWhatsappUrl(buildWhatsAppUrl(initialSubject + '\n\n' + initialBody));
       }
     } catch {
       setSubmitted(false);
-      setErrorMessage('Unable to connect to server. You can still reach us directly via email or WhatsApp below.');
+      setErrorMessage(
+        'Connection error reaching Google Apps Script. Please verify your network or connect with us directly via WhatsApp or email below.'
+      );
+      setMailtoUrl(`mailto:info@vspias.in?subject=${encodeURIComponent(initialSubject)}&body=${encodeURIComponent(initialBody)}`);
+      setWhatsappUrl(buildWhatsAppUrl(initialSubject + '\n\n' + initialBody));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -194,7 +243,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
       <input type="text" name="hp" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" aria-hidden="true" />
       <h3>Your next step, made simple.</h3>
       <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: '20px' }}>
-        Configure your specifications below. We will generate a structured draft for your review.
+        Configure your specifications below. Your request will be directly registered and confirmed with our engineering desk.
       </p>
 
       {errorMessage && (
@@ -252,6 +301,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
             onChange={(e) => {
               setName(e.target.value);
               setSubmitted(false);
+              setReferenceId('');
             }}
           />
         </label>
@@ -265,6 +315,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
             onChange={(e) => {
               setCompany(e.target.value);
               setSubmitted(false);
+              setReferenceId('');
             }}
           />
         </label>
@@ -285,6 +336,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
             onChange={(e) => {
               setEmail(e.target.value);
               setSubmitted(false);
+              setReferenceId('');
             }}
           />
         </label>
@@ -299,6 +351,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
             onChange={(e) => {
               setPhone(e.target.value);
               setSubmitted(false);
+              setReferenceId('');
             }}
           />
         </label>
@@ -314,6 +367,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
           onChange={(e) => {
             setQuantity(e.target.value);
             setSubmitted(false);
+            setReferenceId('');
           }}
         />
       </label>
@@ -331,6 +385,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
           onChange={(e) => {
             setRequirements(e.target.value);
             setSubmitted(false);
+            setReferenceId('');
           }}
         />
       </label>
@@ -346,7 +401,7 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
           }}
         />
         <span style={{ color: '#000000' }}>
-          I agree to be contacted by VSPIAS regarding this enquiry. My details are prepared into a reviewed draft and only sent when I choose email or WhatsApp below.
+          I agree to be contacted by VSPIAS regarding this enquiry and receive an automated confirmation email.
         </span>
       </label>
 
@@ -354,49 +409,66 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
         <AnimatedEnquiryButton
           type="submit"
           id="prepare-enquiry-btn"
+          disabled={isSubmitting}
+          busy={isSubmitting}
+          busyLabel="Submitting enquiry..."
           style={{ width: '100%', justifyContent: 'center' }}
         >
-          Prepare My Enquiry Draft
+          {submitted ? 'Enquiry Submitted' : 'Submit Enquiry & Request Quote'}
         </AnimatedEnquiryButton>
       </div>
 
       <p className="form-info" style={{ marginTop: '14px', fontSize: '11px', color: 'var(--muted)' }}>
-        <strong>Transparent workflow:</strong> This system prepares an email or WhatsApp draft containing your exact specifications. You retain full control to review the text before sending it to our {interest === 'Paper bags' ? 'Bengaluru' : 'Peenya'} office.
+        <strong>Direct registry:</strong> Your specifications are recorded directly in our Google Workspace communication desk. You will immediately receive a confirmation email with a unique Reference ID for follow-up.
       </p>
 
       {submitted && (
         <div className="success" id="enquiry-success" aria-live="polite" style={{ marginTop: '24px', padding: '20px', background: 'var(--sage)', borderRadius: '4px', border: '1px solid var(--line)' }}>
-          <strong style={{ fontSize: '16px', display: 'block', color: 'var(--ink)' }}>
-            Your enquiry draft is ready for review.
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#059669' }} />
+            <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--ink)' }}>
+              Enquiry Received &amp; Logged
+            </span>
+          </div>
+
+          <strong style={{ fontSize: '18px', display: 'block', color: 'var(--ink)', marginBottom: '6px' }}>
+            Thank you, {name.trim()}.
           </strong>
-          <p style={{ fontSize: '13px', margin: '8px 0 16px', color: 'var(--muted)' }}>
-            Review the drafted parameters and choose your preferred messaging method to dispatch your enquiry directly to Paawan Bhargava.
+
+          {referenceId && (
+            <div style={{ margin: '8px 0 12px', padding: '6px 14px', background: '#ffffff', borderRadius: '4px', display: 'inline-block', border: '1px solid var(--line)', fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+              Reference ID: <span style={{ fontFamily: 'monospace', color: '#173b30', letterSpacing: '0.5px' }}>{referenceId}</span>
+            </div>
+          )}
+
+          <p style={{ fontSize: '13px', margin: '4px 0 16px', color: 'var(--muted)', lineHeight: 1.5 }}>
+            Your requirements have been securely recorded in our client registry and a confirmation email has been dispatched to <strong>{email.trim()}</strong>. Paawan Bhargava and our technical team will review your specifications.
           </p>
 
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            <a
-              id="send-email"
-              href={mailtoUrl}
-              className="button"
-              style={{ fontSize: '13px', padding: '12px 20px', minHeight: '44px' }}
-            >
-              Open in Email (info@vspias.in) ↗
-            </a>
             <a
               id="send-whatsapp"
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="button secondary"
+              className="button"
               style={{ fontSize: '13px', padding: '12px 20px', minHeight: '44px' }}
             >
               Open in WhatsApp (+91 97831 33333) ↗
+            </a>
+            <a
+              id="send-email"
+              href={mailtoUrl}
+              className="button secondary"
+              style={{ fontSize: '13px', padding: '12px 20px', minHeight: '44px' }}
+            >
+              Open in Email (info@vspias.in) ↗
             </a>
           </div>
 
           <details style={{ marginTop: '16px', fontSize: '12px' }}>
             <summary style={{ cursor: 'pointer', color: 'var(--ink)', fontWeight: 600 }}>
-              View Draft Text Preview
+              View Submitted Specification Summary
             </summary>
             <pre style={{ marginTop: '8px', padding: '12px', background: '#ffffff', borderRadius: '4px', whiteSpace: 'pre-wrap', fontSize: '11px', color: 'var(--ink)', border: '1px solid var(--line)' }}>
               {draftSummary}

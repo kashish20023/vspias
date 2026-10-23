@@ -24,6 +24,7 @@ export function AnimatedEnquiryButton({
       {...props}
       type={type}
       className={`vsp-enquiry-button ${className}`.trim()}
+      style={{ color: '#ffffff', ...props.style }}
       disabled={disabled || busy}
       aria-busy={busy || undefined}
     >
@@ -38,7 +39,9 @@ export function AnimatedEnquiryButton({
           <span className="paper" />
         </span>
       </span>
-      <span className="vsp-enquiry-label">{busy ? busyLabel : children}</span>
+      <span className="vsp-enquiry-label" style={{ color: '#ffffff', display: 'inline-block' }}>
+        {busy ? busyLabel : children}
+      </span>
     </button>
   );
 }
