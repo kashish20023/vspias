@@ -149,11 +149,11 @@ function doPost(e) {
       });
     }
 
-    // 6. Generate Single Unique Reference ID
-    // Format: VSP-YYYYMMDD-XXXX (e.g. VSP-20261023-7482)
-    var dateStamp = Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyyMMdd');
-    var randomSuffix = ('0000' + Math.floor(Math.random() * 10000)).slice(-4);
-    var referenceId = 'VSP-' + dateStamp + '-' + randomSuffix;
+    // 6. Unique Reference ID
+    // If client supplied a valid referenceId (e.g. VS-XXXXXXXX), preserve it so frontend and sheet match
+    var referenceId = (rawData.referenceId && /^VS-[A-Z0-9]{6,12}$/i.test(rawData.referenceId))
+      ? rawData.referenceId.toUpperCase()
+      : ('VS-' + Math.random().toString(36).substring(2, 10).toUpperCase());
     var timestampStr = Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyy-MM-dd HH:mm:ss');
 
     // 7. Write record to the Google Sheet tab

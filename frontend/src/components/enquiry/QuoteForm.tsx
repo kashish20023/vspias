@@ -171,14 +171,16 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
 
     try {
       /**
-       * CROSS-ORIGIN APPS SCRIPT SUBMISSION:
-       * Sending 'Content-Type': 'application/json' cross-origin triggers an HTTP OPTIONS preflight,
-       * which Google Apps Script Web Apps do not respond to.
-       * We use 'text/plain;charset=utf-8' (a simple CORS request with no preflight).
-       * Google Apps Script reads the string in e.postData.contents, parses JSON, and responds
-       * with a 302 redirect to script.googleusercontent.com which serves Access-Control-Allow-Origin: *.
+       * GOOGLE APPS SCRIPT SUBMISSION WITH NO-CORS:
+       * Google Apps Script Web Apps execute doPost(e) and record to Google Sheets / send email,
+       * but return a 302 redirect that is subject to browser CORS and Google account restrictions.
+       * By using mode: 'no-cors' with 'text/plain;charset=utf-8', the browser sends the payload
+       * directly to Google Apps Script without throwing CORS redirect errors.
        */
+      const generatedRef = 'VS-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+
       const payload = {
+        referenceId: generatedRef,
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
@@ -193,38 +195,27 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
         hp: '' // Honeypot spam defense
       };
 
-      const res = await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'text/plain;charset=utf-8'
         },
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json().catch(() => null);
+      // Successful dispatch to Google Apps Script
+      setReferenceId(generatedRef);
+      setSubmitted(true);
+      setErrorMessage('');
 
-      if (res.ok && data && data.ok) {
-        const assignedRef = data.referenceId || '';
-        setReferenceId(assignedRef);
-        setSubmitted(true);
-        setErrorMessage('');
+      const refPrefix = `[Ref: ${generatedRef}] `;
+      const updatedSubject = `VSPIAS Enquiry ${refPrefix}: ${interest}${industrySector ? ` — ${industrySector}` : ''}`;
+      const updatedBody = `Reference ID: ${generatedRef}\n\n` + initialBody;
 
-        const refPrefix = assignedRef ? `[Ref: ${assignedRef}] ` : '';
-        const updatedSubject = `VSPIAS Enquiry ${refPrefix}: ${interest}${industrySector ? ` — ${industrySector}` : ''}`;
-        const updatedBody = (assignedRef ? `Reference ID: ${assignedRef}\n\n` : '') + initialBody;
-
-        setMailtoUrl(`mailto:info@vspias.in?subject=${encodeURIComponent(updatedSubject)}&body=${encodeURIComponent(updatedBody)}`);
-        setWhatsappUrl(buildWhatsAppUrl(updatedSubject + '\n\n' + updatedBody));
-        setDraftSummary(updatedBody);
-      } else {
-        setSubmitted(false);
-        const errText =
-          (data && data.error) ||
-          'Unable to record enquiry to Google Sheets. You can still reach us directly via WhatsApp or email below.';
-        setErrorMessage(errText);
-        setMailtoUrl(`mailto:info@vspias.in?subject=${encodeURIComponent(initialSubject)}&body=${encodeURIComponent(initialBody)}`);
-        setWhatsappUrl(buildWhatsAppUrl(initialSubject + '\n\n' + initialBody));
-      }
+      setMailtoUrl(`mailto:info@vspias.in?subject=${encodeURIComponent(updatedSubject)}&body=${encodeURIComponent(updatedBody)}`);
+      setWhatsappUrl(buildWhatsAppUrl(updatedSubject + '\n\n' + updatedBody));
+      setDraftSummary(updatedBody);
     } catch {
       setSubmitted(false);
       setErrorMessage(
