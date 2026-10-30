@@ -151,3 +151,116 @@ export const AUTOMATION_CATALOGUE_ITEMS = [
     alt: 'Switchgear product examples from brochure'
   }
 ] as const;
+
+export interface PartnerBrand {
+  id: string;
+  name: string;
+  logo: string;
+  alt: string;
+  url?: string;
+  scale?: number;
+  isAvailable?: boolean;
+}
+
+export const PARTNER_BRANDS: PartnerBrand[] = [
+  {
+    id: 'schneider',
+    name: 'Schneider Electric',
+    logo: '/assets/brands/schneider-electric.svg',
+    alt: 'Schneider Electric logo',
+    scale: 1.0,
+    isAvailable: false
+  },
+  {
+    id: 'abb',
+    name: 'ABB',
+    logo: '/assets/brands/abb.svg',
+    alt: 'ABB logo',
+    scale: 0.92,
+    isAvailable: false
+  },
+  {
+    id: 'siemens',
+    name: 'SIEMENS',
+    logo: '/assets/brands/siemens.svg',
+    alt: 'SIEMENS logo',
+    scale: 0.88,
+    isAvailable: false
+  },
+  {
+    id: 'lt',
+    name: 'Larsen & Toubro',
+    logo: '/assets/brands/larsen-toubro.svg',
+    alt: 'Larsen & Toubro logo',
+    scale: 0.95,
+    isAvailable: false
+  }
+];
+
+export interface AutomationPortfolioCard {
+  id: string;
+  title: string;
+  subtitle: string;
+  imageKey: string;
+  href: string;
+  ariaLabel: string;
+  targetCategoryGroup?: string;
+}
+
+export const AUTOMATION_PORTFOLIO_CARDS: AutomationPortfolioCard[] = [
+  {
+    id: 'plc-io',
+    title: 'PLC & I/O',
+    subtitle: 'Control & interfaces',
+    imageKey: 'schneider-plc',
+    href: '/automation#category-control',
+    ariaLabel: 'View PLC & I/O control systems in our catalog',
+    targetCategoryGroup: 'control'
+  },
+  {
+    id: 'vfd-drives',
+    title: 'VFD & drives',
+    subtitle: 'Motor & motion',
+    imageKey: 'schneider-drives',
+    href: '/automation#category-drives',
+    ariaLabel: 'View VFD & drives in our catalog',
+    targetCategoryGroup: 'drives'
+  },
+  {
+    id: 'hmi-interfaces',
+    title: 'HMI interfaces',
+    subtitle: 'Operator visualisation',
+    imageKey: 'schneider-hmi',
+    href: '/automation#category-control',
+    ariaLabel: 'View HMI operator interfaces in our catalog',
+    targetCategoryGroup: 'control'
+  },
+  {
+    id: 'switchgear',
+    title: 'Switchgear',
+    subtitle: 'Power & protection',
+    imageKey: 'schneider-mccb',
+    href: '/automation#category-protection',
+    ariaLabel: 'View switchgear & protection in our catalog',
+    targetCategoryGroup: 'protection'
+  },
+  {
+    id: 'control-panels',
+    title: 'Control panels',
+    subtitle: 'Engineered assemblies',
+    imageKey: 'industrial-panels',
+    href: '/automation#category-panels',
+    ariaLabel: 'View engineered control panels in our catalog',
+    targetCategoryGroup: 'panels'
+  },
+  {
+    id: 'scada',
+    title: 'SCADA',
+    subtitle: 'Supervisory control',
+    imageKey: 'scada',
+    href: '/automation#category-control',
+    ariaLabel: 'View SCADA supervisory control in our catalog',
+    targetCategoryGroup: 'control'
+  }
+];
+

@@ -86,11 +86,18 @@ interface SessionData {
   expires: number;
 }
 
-const sessions = new Map<string, SessionData>();
-const attempts = new Map<string, { count: number; until: number }>();
-const salt = randomBytes(32);
+const globalState = globalThis as unknown as {
+  __vspias_sessions?: Map<string, SessionData>;
+  __vspias_attempts?: Map<string, { count: number; until: number }>;
+  __vspias_salt?: Buffer;
+};
 
-export const ADMIN_AUTH_DISABLED = false;
+const sessions = globalState.__vspias_sessions ?? (globalState.__vspias_sessions = new Map<string, SessionData>());
+const attempts = globalState.__vspias_attempts ?? (globalState.__vspias_attempts = new Map<string, { count: number; until: number }>());
+const salt = globalState.__vspias_salt ?? (globalState.__vspias_salt = randomBytes(32));
+
+// Re-configurable via environment variable (defaults to false for production security & tests)
+export const ADMIN_AUTH_DISABLED = process.env.ADMIN_AUTH_DISABLED === 'true';
 
 export function getAdminPassword(): string {
   return (process.env.ADMIN_PASSWORD || 'vspias@admin2026').trim();

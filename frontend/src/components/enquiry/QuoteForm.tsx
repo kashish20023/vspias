@@ -33,12 +33,17 @@ export function QuoteForm(): JSX.Element {
 
   useEffect(() => {
     const rawInterest = searchParams.get('interest');
-    if (rawInterest) {
-      if (rawInterest.toLowerCase().includes('machine') || rawInterest.toLowerCase().includes('print')) {
+    const rawDivision = searchParams.get('division');
+    const rawTopic = searchParams.get('topic');
+
+    const effectiveInterest = rawInterest || rawDivision;
+    if (effectiveInterest) {
+      const lower = effectiveInterest.toLowerCase();
+      if (lower.includes('machine') || lower.includes('print')) {
         setInterest('Machinery & printing');
-      } else if (rawInterest.toLowerCase().includes('auto') || rawInterest.toLowerCase().includes('elect')) {
+      } else if (lower.includes('auto') || lower.includes('elect')) {
         setInterest('Electrical & automation');
-      } else {
+      } else if (lower.includes('paper') || lower.includes('bag')) {
         setInterest('Paper bags');
       }
     }
@@ -55,6 +60,8 @@ export function QuoteForm(): JSX.Element {
     const rawReq = searchParams.get('requirements');
     if (rawReq) {
       setRequirements(rawReq);
+    } else if (rawTopic) {
+      setRequirements(`Enquiry for ${rawTopic}.`);
     }
 
     const handleDesignSelected = (e: Event) => {

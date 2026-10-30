@@ -212,7 +212,7 @@ export function AutomationModals({
                     )}
                   </ul>
 
-                  <div className="detail-actions">
+                  {/* <div className="detail-actions">
                     <button
                       className="btn btn-dark"
                       type="button"
@@ -232,7 +232,7 @@ export function AutomationModals({
                     >
                       Request datasheet
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 

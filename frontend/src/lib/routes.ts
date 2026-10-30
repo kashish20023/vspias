@@ -9,8 +9,15 @@ export const ROUTES = {
   bagDetail: (slug: string) => `/paper-bags/${slug}`,
   printing: '/printing',
   automation: '/automation',
+  automationCategory: (category: string) => `/automation#category-${category}`,
   contact: '/contact',
   contactWithInterest: (interest: string) => `/contact?interest=${encodeURIComponent(interest)}`,
+  contactWithEnquiry: (division?: string, topic?: string) => {
+    const params = new URLSearchParams();
+    if (division) params.set('division', division);
+    if (topic) params.set('topic', topic);
+    return `/contact?${params.toString()}`;
+  },
   brochure: '/downloads/vspias-company-brochure.pdf'
 } as const;
 
