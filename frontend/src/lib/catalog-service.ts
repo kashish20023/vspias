@@ -197,15 +197,26 @@ export function verifyOriginAndHost(headers: Headers): void {
   if (ADMIN_AUTH_DISABLED) return;
   const host = headers.get('host') || '';
   const origin = headers.get('origin');
-  const isAllowedHost = host.includes('127.0.0.1') || host.includes('localhost') || host.includes('vspias.in') || process.env.NODE_ENV === 'production';
-  if (!isAllowedHost) {
+
+  let siteHost = '';
+  try {
+    if (process.env.NEXT_PUBLIC_SITE_URL) {
+      siteHost = new URL(process.env.NEXT_PUBLIC_SITE_URL).host;
+    }
+  } catch {}
+
+  const isAllowed = (val: string) =>
+    val.includes('127.0.0.1') ||
+    val.includes('localhost') ||
+    val.includes('vspias.in') ||
+    (siteHost && val.includes(siteHost)) ||
+    (process.env.VERCEL_URL && val.includes(process.env.VERCEL_URL));
+
+  if (!isAllowed(host)) {
     fail(403, 'Use the verified URL for administrative access.');
   }
-  if (origin) {
-    const isAllowedOrigin = origin.includes('127.0.0.1') || origin.includes('localhost') || origin.includes('vspias.in') || process.env.NODE_ENV === 'production';
-    if (!isAllowedOrigin) {
-      fail(403, 'Cross-origin writes are not allowed.');
-    }
+  if (origin && !isAllowed(origin)) {
+    fail(403, 'Cross-origin writes are not allowed.');
   }
 }
 

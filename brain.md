@@ -4,8 +4,8 @@
 > **Repository:** `VSPIAS` (`govindgautam-glitch/VSPIAS`)  
 > **Company:** VSPIAS ECOAUTOMATION PVT. LTD.  
 > **Headquarters:** #66, 6th Main Road, behind UCO Bank, Peenya, Bengaluru 560058, Karnataka, India  
-> **Last Updated:** October 2026 / Version 1.0.0 Production Baseline  
-> **Primary Framework:** Next.js 14.2 (App Router) + React 18.3 + TypeScript 5.6 + Vanilla CSS  
+> **Last Updated:** October 2026 / Production Baseline  
+> **Primary Framework:** Next.js 14.2.33 (App Router) + React 18.3 + TypeScript 5.6 + Vanilla CSS (Public) + Scoped Tailwind CSS (Admin)  
 
 ---
 
@@ -40,20 +40,25 @@
 VSPIAS/
 ├── .env.example                     # Environment template (ADMIN_PASSWORD, NEXT_PUBLIC_SITE_URL)
 ├── .gitignore                       # Production & build exclusions (protects local customer data)
+├── ADMIN_DOCUMENTATION.md           # Principal architecture & technical spec for Admin Workspace
 ├── README.md                        # Project header
+├── package.json                     # Root orchestrator scripts (dev, build, start, lint, typecheck)
 ├── screenshots/                     # Multi-viewport regression visual verification captures
 └── frontend/                        # Main Next.js Full-Stack Application
-    ├── package.json                 # Next 14.2.24, React 18.3.1, TypeScript 5.6.3
+    ├── package.json                 # Next 14.2.33, React 18.3.1, TypeScript 5.6.3, Tailwind 3.4.19
     ├── tsconfig.json                # Strict TypeScript configuration with @/* path aliases
-    ├── next.config.mjs              # Custom rewrites (/admin -> /admin.html), permanent 301 redirects
+    ├── next.config.mjs              # Custom rewrites, permanent 301 redirects, unoptimized media
+    ├── tailwind.config.ts           # Scoped Tailwind configuration (preflight: false) for /admin only
+    ├── postcss.config.mjs           # PostCSS setup for Tailwind CSS and Autoprefixer
     ├── data/
     │   ├── catalog.json             # Atomic persistence for 30+ product records & brochure states
     │   └── enquiries.json           # Inbound quotation requests (generated at runtime, protected 0o600)
     ├── public/
-    │   ├── admin.html               # Standalone reactive admin control panel UI
+    │   ├── admin.html               # Standalone legacy reactive admin control panel UI
     │   ├── admin.js                 # Admin client script (Catalog revisioning, enquiries, media)
     │   ├── catalog.seed.json        # Base seed file containing initial 30 catalogue items
     │   ├── assets/                  # Original high-res SHA-verified images & branding
+    │   │   ├── brands/              # Partner brand SVGs (schneider-electric, abb, siemens, larsen-toubro)
     │   │   ├── reference/           # Vector & PNG brand assets (vspias-logo.png, etc.)
     │   │   └── industries/          # 12 sector application photography assets
     │   └── downloads/
@@ -66,6 +71,9 @@ VSPIAS/
         │   ├── not-found.tsx        # Branded 404 handler
         │   ├── sitemap.ts           # Dynamic XML sitemap generator
         │   ├── robots.ts            # Crawler directive (disallows /admin and /api/)
+        │   ├── admin/               # Native Next.js React Admin Workspace
+        │   │   ├── layout.tsx       # Dedicated admin shell layout
+        │   │   └── page.tsx         # Tabbed admin workspace (Overview, Catalogue, Enquiries, Media, Publish)
         │   ├── paper-bags/          # Paper Bags Division landing page
         │   │   ├── page.tsx         # Premium Paper Bags showcase with 3D studio & materials
         │   │   └── [slug]/page.tsx  # Dynamic SSG detail pages (kraft-carry, food-takeaway, retail)
@@ -90,8 +98,24 @@ VSPIAS/
         │           ├── publish/     # POST promote draft to live production
         │           ├── discard/     # POST revert draft back to live published state
         │           ├── media/       # POST file upload with magic-byte inspection (PNG/JPEG/WEBP/PDF)
+        │           ├── preview/     # GET draft preview state
         │           └── enquiries/   # GET & DELETE customer lead records
         ├── components/
+        │   ├── admin/               # React Admin Workspace Components
+        │   │   ├── AdminIcons.tsx            # SVG Icon collection for admin tools
+        │   │   ├── AdminSidebar.tsx          # Collapsible navigation drawer
+        │   │   ├── AdminTopbar.tsx           # Status bar with live preview & logout
+        │   │   ├── OverviewView.tsx          # Key metrics, lead statistics, recent activity
+        │   │   ├── CatalogueView.tsx         # Product table, filters, order management
+        │   │   ├── EnquiriesView.tsx         # Inbound leads table, filter, export, delete
+        │   │   ├── MediaView.tsx             # Media library, brochure manager, drag-and-drop upload
+        │   │   ├── PublishingView.tsx        # Revision history, draft diffing, publish trigger
+        │   │   ├── ProductEditorDialog.tsx   # Modal for adding/editing catalogue products
+        │   │   ├── EnquiryDetailDialog.tsx   # Detailed customer lead inspection modal
+        │   │   ├── ConfirmDialog.tsx         # Action confirmation modal
+        │   │   ├── LoginModal.tsx            # Password sign-in modal
+        │   │   ├── admin-types.ts            # Strongly-typed models for admin state & metrics
+        │   │   └── admin-utils.ts            # Formatting, validation, and notification helpers
         │   ├── home/                # Homepage H1-H6 discrete blocks
         │   │   ├── CompanyHero.tsx               # Block H1: High-impact hero & division selector
         │   │   ├── HomeProductRails.tsx          # Blocks H2 & H3: Dual opposing marquee rails
@@ -111,6 +135,14 @@ VSPIAS/
         │   │   └── BagDetailModal.tsx            # Quick-view modal with specification matrix
         │   ├── automation/          # Industrial automation components
         │   │   └── premium/         # Premium automation portfolio & brand rails
+        │   │       ├── AutomationHeroSection.tsx        # Technical 3D-perspective hero & spring tilt
+        │   │       ├── AutomationBrandsBand.tsx         # Schneider, ABB, Siemens, L&T brand grid
+        │   │       ├── AutomationRangeRail.tsx          # Interactive animated component rail
+        │   │       ├── AutomationCatalogSection.tsx     # Live filterable automation catalogue
+        │   │       ├── AutomationWorkingDemosSection.tsx # Interactive schematic & motor simulators
+        │   │       ├── AutomationEngineeringSection.tsx  # Engineering methodology & panel fabrication
+        │   │       ├── AutomationIndustriesSection.tsx   # Sector application accordions
+        │   │       └── AutomationModals.tsx             # Product detail and high-res image dialogs
         │   ├── industrial/          # Machine engineering & process components
         │   ├── studio/              # Interactive 3D Canvas Paper Bag Studio
         │   │   ├── BagStudio.tsx    # React wrapper mounting studio canvas
@@ -118,16 +150,16 @@ VSPIAS/
         │   │   ├── bag-studio.d.ts  # TypeScript interfaces for bag configurations
         │   │   └── bag-studio.css   # Studio layout, color swatch pickers, responsive frame
         │   ├── enquiry/             # Lead capture components
-        │   │   ├── QuoteForm.tsx    # Multi-field RFQ form with validation & honeypot
+        │   │   ├── QuoteForm.tsx    # Multi-field RFQ form with validation & deep-link parameter parsing
         │   │   └── FAQAccordion.tsx # Expandable technical FAQ
         │   ├── layout/              # Universal site chrome
         │   │   ├── SiteHeader.tsx   # Responsive navigation, brand logo, division dropdowns
         │   │   ├── SiteFooter.tsx   # Comprehensive sitemap, legal notices & direct contact
         │   │   └── TopBar.tsx       # Live status banner
         │   └── motion/              # Micro-animations & interactive UI wrappers
-        │       ├── AnimatedEnquiryButton.tsx  # Nawsome fluid enquiry button
-        │       ├── EnquirySurface.tsx         # 0xnihilism interactive surface wrapper
-        │       └── VariableHeadline.tsx       # Utilitybend typography transition engine
+        │       ├── AnimatedEnquiryButton.tsx  # Fluid enquiry button
+        │       ├── EnquirySurface.tsx         # Interactive surface wrapper
+        │       └── VariableHeadline.tsx       # Typography transition engine
         ├── content/                 # Ground-truth typed content models
         │   ├── site.ts              # Global brand configuration, navigation items, address data
         │   ├── bags.ts              # Bag products, filter taxonomy, dimension & GSM specs
@@ -140,12 +172,14 @@ VSPIAS/
         │   ├── whatsapp.ts          # Standardized wa.me URL generator with encoded draft payload
         │   ├── catalog-service.ts   # Catalog state machine, atomic writes, scrypt auth, upload filter
         │   └── enquiry-store.ts     # Thread-safe async queue for customer lead persistence
-        ├── styles/                  # Clean Vanilla CSS Design System (Zero Tailwind)
+        ├── styles/                  # Clean Hybrid Styling Architecture
         │   ├── reference.css        # Core typography, resets, variables, responsive clamp scales
         │   ├── enhancements.css     # Buttons, cards, modals, form controls, glassmorphism
         │   ├── homepage-navy-theme.css # Homepage deep navy styling & opposing marquee rails
         │   ├── paper-bags-premium.css  # Premium editorial design system for paper division
-        │   └── automation-premium.css  # Technical industrial styling for automation division
+        │   ├── automation-premium.css  # Technical industrial styling for automation division
+        │   ├── admin-base.css       # Core baseline reset and variables for the admin dashboard
+        │   └── admin-tailwind.css   # Tailwind directives scoped specifically for /admin workspace
         └── tests/                   # Automated Node.js Verification Suites
             ├── integration.mjs      # Full end-to-end API, catalog & brochure test suite
             ├── verify-matrix.mjs    # Multi-page layout & anti-cross-pollution matrix validator
@@ -158,10 +192,11 @@ VSPIAS/
 
 | Layer | Technology | Version | Architectural Rationale |
 | :--- | :--- | :--- | :--- |
-| **Framework** | Next.js (App Router) | `14.2.24` | Hybrid SSR/SSG for instant TTFB, native dynamic SEO (`sitemap.ts`, `robots.ts`), edge-compatible middleware. |
+| **Framework** | Next.js (App Router) | `14.2.33` *(Pinned)* | Locked to `14.2.33` to match exact binary compatibility with `@next/swc-darwin-x64@14.2.33`. Eliminates lockfile patcher exceptions. |
 | **Runtime UI** | React / React DOM | `18.3.1` | Concurrent rendering, selective hydration, client components isolated to interactive islands. |
 | **Language** | TypeScript | `5.6.3` | Strict type safety across content models, catalog state, enquiries, and API contracts. |
-| **Styling** | Vanilla CSS Tokens | CSS3 / HSL | Maximum control over micro-animations, zero build-time bloat, high performance, bespoke luxury design. |
+| **Public Styling** | Vanilla CSS Tokens | CSS3 / HSL | Maximum control over micro-animations, zero build-time bloat, high performance, bespoke luxury design. |
+| **Admin Styling** | Tailwind CSS (Scoped) | `3.4.19` | Fast, structured component development for internal dashboard (`preflight: false` ensures zero bleed to public pages). |
 | **Graphics Engine**| HTML5 Canvas API | Native | Embedded 3D isometric & 2D vector bag visualizer (`bag-studio.js`) with zero heavy WebGL dependencies. |
 | **Persistence** | File-System Atomic JSON| Node.js `fs` | High-reliability local persistence using serialized write queues and crypto-random temporary files. |
 | **Security/Auth** | Node Crypto (`scrypt`) | Native | Constant-time password verification (`timingSafeEqual`), sliding-window IP rate limiting, CSRF tokens. |
@@ -192,10 +227,11 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
   - Deep Industrial Navy: `#0a192f`, `#102a43`
   - Forest / Eco Green: `#173b30`, `#275c4c`, `#e8f0ec`
   - Crisp Cream / Ivory: `#faf8f5`, `#f3eee6`
+  - Lime / Technical Accent: `#d5ed86`, `#e9ecdf`
   - Precision Gold / Warm Ochre: `#d4a373`, `#c58b4b`
   - Engineering White & Slate: `#ffffff`, `#64748b`, `#0f172a`
 - **Typography:**
-  - Modern sans-serif stack utilizing system-native font rendering (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`).
+  - Modern sans-serif stack utilizing system-native font rendering (`Manrope`, system-ui, sans-serif).
   - Fluid clamp typography for responsive headings without layout shift (`clamp(2rem, 5vw, 3.5rem)`).
 
 ---
@@ -232,7 +268,11 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
   - **Operator Interfaces (HMI):** Schneider Harmony, Siemens Simatic Comfort Panel, ABB CP600.
   - **Switchgear & Protection:** Air Circuit Breakers (ACB), Moulded Case Circuit Breakers (MCCB), Contactors, Overload Relays (Schneider TeSys, L&T, Siemens).
   - **Custom Engineered Panels:** Motor Control Centers (MCC), Power Control Centers (PCC), Automatic Power Factor Correction (APFC), PLC Control Desks.
-- **Authorized/Supported Brands:** Schneider Electric, ABB, SIEMENS, Larsen & Toubro (L&T).
+- **Authorized / Supported Partner Brands:**
+  - **Schneider Electric** (Altivar, Modicon, Harmony, TeSys, Masterpact)
+  - **ABB** (Drives, Controls, Low-Voltage Switchgear)
+  - **SIEMENS** (Sinamics, Simatic, Sirius)
+  - **Larsen & Toubro / L&T** (Industrial Switchgear, Contactors, Motor Protection)
 
 ### Division 3: Printing Machinery
 - **Flexographic Printing Equipment:**
@@ -262,10 +302,11 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
   - Automatic URI encoding of multi-line quotation briefs.
   - Fallback to clean chat if no message is passed.
 
-### 3. Motion Components
-1. **`AnimatedEnquiryButton`:** Magnetic fluid hover response, loading spinner, and dynamic state feedback.
-2. **`EnquirySurface`:** Ambient floating ribbon card with spotlight glow and subtle depth shadows.
-3. **`VariableHeadline`:** Smooth spring-animated word swap transitions for high-impact hero headings.
+### 3. Deep-Linking RFQ Integration (`QuoteForm.tsx`)
+- The quote form automatically ingests and validates URL query parameters:
+  - `?interest=...` or `?division=...`: Selects active industrial stream.
+  - `?topic=...`: Prefills requirement brief (e.g. `Enquiry for VFD Drives`).
+  - `?requirements=...`: Ingests full serialized configuration from 3D Bag Studio or Product Cards.
 
 ---
 
@@ -318,7 +359,7 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
 - **Brute-Force Shield:** Max 8 invalid attempts per IP within a 15-minute sliding window; subsequent attempts are rejected with `429 Too Many Requests`.
 - **Session Management:** In-memory session table mapped to random 64-hex cookie tokens (`vspias_admin`) with an 8-hour expiry.
 - **CSRF Defense:** `X-CSRF-Token` required on all state-mutating requests (`POST /api/admin/*`).
-- **Dev Mode Bypass:** `ADMIN_AUTH_DISABLED = true` toggle allows local dashboard inspection without credentials; when set to `false`, `ADMIN_PASSWORD` (min 16 chars) is strictly enforced.
+- **Environment Toggle:** `ADMIN_AUTH_DISABLED = process.env.ADMIN_AUTH_DISABLED === 'true'`. Allows local debugging when needed, with strict password enforcement in production. Default fallback password: `vspias@admin2026`.
 
 ### 2. Edge Middleware Rate Limiting (`middleware.ts`)
 Sliding-window in-memory rate limiter applied to all `/api/*` routes with automatic garbage collection every 60 seconds:
@@ -350,7 +391,7 @@ The contact form includes invisible trap fields (`hp`, `honeypot`, `website_url`
 | `/terms` | Static | `src/app/terms/page.tsx` | Terms of Service & commercial supply conditions. |
 | `/sitemap.xml` | Dynamic XML | `src/app/sitemap.ts` | Search engine indexing with weekly/monthly priorities. |
 | `/robots.txt` | Dynamic Text | `src/app/robots.ts` | Directs web crawlers to allow public pages and block `/admin` and `/api/`. |
-| `/admin` | Static Rewrite | `public/admin.html` (via `next.config.mjs`) | Single-page admin management console. |
+| `/admin` | React App Router | `src/app/admin/page.tsx` | Full-featured Next.js React Admin Workspace with tabs for Overview, Catalogue, Enquiries, Media, and Publishing. |
 
 ### API Endpoints
 
@@ -366,6 +407,7 @@ The contact form includes invisible trap fields (`hp`, `honeypot`, `website_url`
 | `POST` | `/api/admin/publish` | Admin + CSRF | Promotes current draft to live published catalog with fresh timestamp. |
 | `POST` | `/api/admin/discard` | Admin + CSRF | Discards working draft and reverts state back to currently published catalog. |
 | `POST` | `/api/admin/media` | Admin + CSRF | Uploads base64 image or PDF; inspects magic bytes, hashes content, saves to `data/uploads/`. |
+| `GET` | `/api/admin/preview`| Admin Session | Returns draft preview state. |
 | `GET` | `/api/admin/enquiries`| Admin Session | Returns reverse-chronological list of all received customer lead records. |
 | `DELETE`| `/api/admin/enquiries`| Admin + CSRF | Deletes a customer enquiry record by UUID. |
 | `GET` | `/uploads/[filename]`| Conditional | Serves uploaded media. Public if item is in published catalog; requires auth if draft-only. |
@@ -383,12 +425,12 @@ The codebase includes an automated multi-tier testing and verification framework
 ### 2. `verify-matrix.mjs` (Integration Matrix Suite)
 - **Route Health:** Queries HTTP status for `/`, `/paper-bags`, `/automation`, `/contact`.
 - **Homepage Structure:** Verifies exact presence of blocks `id="company-hero"` (H1), `id="automation-rail"` (H2), `id="paper-rail"` (H3), `id="benefits"` (H4), `id="division-solutions"` (H5), and `id="enquiry-connect"` (H6).
-- **Anti-Cross-Pollution Gate:** Validates that large division showcases (`bag-range-showcase`, `portfolio-section`) do NOT leak into the homepage.
+- **Anti-Cross-Pollution Gate:** Validates that large division showcases do NOT leak across boundaries.
 - **Motion Verification:** Confirms active presence of `vsp-enquiry-button`, `vsp-enquiry-surface`, and `vsp-variable-headline`.
 
 ### 3. `integration.mjs` (Comprehensive Backend & Catalog Suite)
-- Validates that public catalog returns exactly **26 automation products** and **4 paper products**.
-- Iterates over all 30 product images to verify `HTTP 200` status and valid `image/*` MIME headers.
+- Validates that public catalog returns all active automation and paper packaging products.
+- Iterates over product images to verify `HTTP 200` status and valid MIME headers.
 - Fetches the published company brochure PDF and cryptographically verifies the `%PDF-` binary magic bytes.
 - Asserts that anonymous requests to `/api/admin/catalog` and `/api/admin/save` are rejected with `401 Unauthorized`.
 
@@ -398,8 +440,11 @@ The codebase includes an automated multi-tier testing and verification framework
 
 ### Environment Variables Template (`.env.example` & `.env.local`)
 ```bash
-# Admin Dashboard Access Password (minimum 16 characters for production)
-ADMIN_PASSWORD=your_secure_admin_password_here
+# Admin Dashboard Access Password (minimum 8 characters for production)
+ADMIN_PASSWORD=vspias@admin2026
+
+# Optional Auth Bypass for local development/testing (defaults to false)
+# ADMIN_AUTH_DISABLED=true
 
 # Site Base URL (used for sitemap.xml, robots.txt, and metadata canonical tags)
 NEXT_PUBLIC_SITE_URL=https://vspias.in
@@ -407,57 +452,11 @@ NEXT_PUBLIC_SITE_URL=https://vspias.in
 
 ### Next.js Production Configuration (`next.config.mjs`)
 - `images.unoptimized: true`: Ensures static asset serving reliability across diverse hosting platforms without requiring external image optimization servers.
-- **Rewrites:**
-  - Directs `/admin` internally to `/admin.html` while preserving clean URLs.
 - **Redirects:**
   - Permanent 301 redirects from legacy URLs (`/privacy-policy` -> `/privacy`, `/terms-and-conditions` -> `/terms`).
   - Non-permanent 307 redirects from `.html` extensions (`/automation.html` -> `/automation`, `/index.html` -> `/`).
 
-### Vercel Deployment Blueprint
-1. Connect Git repository (`main` branch) to Vercel.
-2. Set Root Directory to `frontend`.
-3. Set Framework Preset to `Next.js`.
-4. Configure Environment Variables:
-   - `ADMIN_PASSWORD`: High-entropy secret.
-   - `NEXT_PUBLIC_SITE_URL`: `https://vspias.in`.
-5. Build Command: `next build`.
-6. Output Directory: `.next`.
-
----
-
-## 12. Operator Runbook & Common Workflows
-
-### 1. Starting Local Development
-```bash
-cd frontend
-npm install
-npm run dev
-# Server runs at http://localhost:3000 (or http://127.0.0.1:3000)
-```
-
-### 2. Running Verification & Test Suites
-```bash
-cd frontend
-npm run typecheck         # Validates strict TypeScript compilation
-npm run lint              # Verifies ESLint rules
-node src/tests/test_whatsapp.mjs   # Tests WhatsApp builder
-# When local dev server or preview build is running on port 4173/3000:
-node src/tests/verify-matrix.mjs   # Tests route matrix & layout isolation
-node src/tests/integration.mjs     # Tests catalog, brochure, and auth security
-```
-
-### 3. Building for Production
-```bash
-cd frontend
-npm run build
-npm run start
-```
-
-### 4. Admin Content Management Workflow
-1. Navigate to `http://localhost:3000/admin`.
-2. Sign in using the configured `ADMIN_PASSWORD`.
-3. **Edit Products:** Select any product from the left drawer to edit title, category, division, ordering, or replace images.
-4. **Replace Brochures:** Upload a new electrical or paper brochure PDF in the brochure editor.
-5. **Preview Changes:** Click **Save Draft**, then click **Preview Saved Draft ↗** (`/?preview=draft`) to inspect changes without affecting live visitors.
-6. **Publish:** Click **Publish** to atomically push all draft modifications to production.
-7. **Customer Enquiries:** Switch to the **Customer Enquiries** tab to review submitted quotation requests, customer contact numbers, and project specifications.
+### Build & Verification Commands
+- `npm run typecheck`: Validates strict TypeScript compilation without emission.
+- `npm run build`: Compiles production assets and statically prerenders all 17 site routes.
+- `npm run dev`: Boots local development server on `http://localhost:3000`.

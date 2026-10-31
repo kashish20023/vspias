@@ -35,11 +35,12 @@ async function run() {
   const catRes = await call('/api/catalog');
   assert.equal(catRes.status, 200);
   const publicData = await catRes.json();
+  const initialTotalCount = publicData.products.length;
   const autoCount = publicData.products.filter(p => p.division === 'automation').length;
   const paperCount = publicData.products.filter(p => p.division === 'paper').length;
   assert.equal(autoCount, 26, 'Should have 26 automation products');
-  assert.equal(paperCount, 4, 'Should have 4 paper products');
-  console.log(`   Passed (26 automation, 4 paper products).`);
+  assert.equal(paperCount, 9, 'Should have 9 paper products');
+  console.log(`   Passed (26 automation, ${paperCount} paper products).`);
 
   // 2. All published media and real PDF resolve with correct types
   console.log('2. Verifying published images and company brochure PDF...');
@@ -113,12 +114,12 @@ async function run() {
   // Verify public catalog is untouched
   const publicCheck = await (await call('/api/catalog', { auth: false })).json();
   assert.notEqual(publicCheck.products[0].name, 'QA Verified Dynamic Title', 'Public catalog should not be updated yet');
-  assert.equal(publicCheck.products.length, 30, 'Public count should still be 30');
+  assert.equal(publicCheck.products.length, initialTotalCount, `Public count should still be ${initialTotalCount}`);
 
   // Verify preview returns draft changes
   const previewCheck = await (await call('/api/admin/preview')).json();
   assert.equal(previewCheck.products[0].name, 'QA Verified Dynamic Title');
-  assert.equal(previewCheck.products.length, 29, 'Draft preview should reflect hidden product');
+  assert.equal(previewCheck.products.length, initialTotalCount - 1, 'Draft preview should reflect hidden product');
   console.log('   Passed (draft isolated from public; stale save rejected with 409).');
 
   // 8. Publish draft
@@ -129,7 +130,7 @@ async function run() {
 
   const publishedPublic = await (await call('/api/catalog', { auth: false })).json();
   assert.equal(publishedPublic.products[0].name, 'QA Verified Dynamic Title');
-  assert.equal(publishedPublic.products.length, 29);
+  assert.equal(publishedPublic.products.length, initialTotalCount - 1);
   console.log('   Passed (publication updated public API and hid inactive item).');
 
   // 9. Media upload
