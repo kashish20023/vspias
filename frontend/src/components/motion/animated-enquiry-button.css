@@ -224,6 +224,13 @@
   text-align: left;
   vertical-align: middle;
   text-decoration: none;
+  color: #ffffff !important;
+}
+
+.vsp-enquiry-button .vsp-enquiry-label {
+  color: #ffffff !important;
+  display: inline-block;
+  vertical-align: middle;
 }
 .vsp-enquiry-button > .vsp-enquiry-icon { border-radius: 10px 0 0 10px; }
 .vsp-enquiry-button > .vsp-enquiry-icon .folder { top: calc(50% - 13.5px); }

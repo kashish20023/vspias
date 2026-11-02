@@ -390,4 +390,23 @@ html[data-motion="paused"] .photo-viewer,html[data-motion="paused"] .photo-viewe
   }
 }
 
+/* Ensure dark primary buttons (.btn.pri) have crisp solid white text */
+.pb-premium-page .btn.pri,
+.pb-premium-page button.btn.pri,
+.pb-premium-page button.pri,
+.btn.pri,
+button.btn.pri,
+.btn.pri.mini-btn,
+button.btn.pri.mini-btn {
+  color: #ffffff !important;
+}
+
+.pb-premium-page .btn.pri *,
+.pb-premium-page button.btn.pri *,
+.btn.pri *,
+button.btn.pri * {
+  color: #ffffff !important;
+}
+
+
 

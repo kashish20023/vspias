@@ -171,7 +171,8 @@ export const VERIFIED_SOURCE_ASSETS: AssetMeta[] = [
 export const ASSETS = {
   // Brand & Document
   logo: '/assets/reference/vspias-logo.png',
-  logoWhite: '/assets/reference/vspias-logo-white.png',
+  logoWhite: '/assets/reference/vspias-logo.png',
+  logoDarkBg: '/assets/reference/vspias-logo-white.png',
   companyBrochurePdf: '/downloads/vspias-company-brochure.pdf',
   paperBrochurePdf: '/assets/paper-bags-brochure.pdf',
 

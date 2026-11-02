@@ -36,11 +36,12 @@ export function AutomationCompanyContactSection({
             <button
               className="btn btn-lime"
               type="button"
+              style={{ color: '#000000' }}
               data-enquiry="Electrical & industrial automation"
               onClick={scrollToForm}
             >
-              Start a conversation
-              <svg className="icon" aria-hidden="true">
+              <span style={{ color: '#000000' }}>Start a conversation</span>
+              <svg className="icon" aria-hidden="true" style={{ stroke: '#000000' }}>
                 <use href="#i-ne" />
               </svg>
             </button>

@@ -217,10 +217,11 @@ export function AutomationModals({
                       className="btn btn-dark"
                       type="button"
                       id="enquireProduct"
+                      style={{ color: '#ffffff' }}
                       onClick={() => onEnquireProduct(selectedProduct, false)}
                     >
-                      Enquire about this product
-                      <svg className="icon" aria-hidden="true">
+                      <span style={{ color: '#ffffff' }}>Enquire about this product</span>
+                      <svg className="icon" aria-hidden="true" style={{ stroke: '#ffffff' }}>
                         <use href="#i-ne" />
                       </svg>
                     </button>

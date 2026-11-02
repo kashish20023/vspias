@@ -1,10 +1,10 @@
 # BRAIN.MD: VSPIAS ECOAUTOMATION SYSTEM BLUEPRINT & ARCHITECTURE MEMORY
 
 > **System Memory & Technical Architecture Dossier**  
-> **Repository:** `VSPIAS` (`govindgautam-glitch/VSPIAS`)  
+> **Repository:** `VSPIAS` (`kashish20023/vspias` & `govindgautam-glitch/VSPIAS`)  
 > **Company:** VSPIAS ECOAUTOMATION PVT. LTD.  
 > **Headquarters:** #66, 6th Main Road, behind UCO Bank, Peenya, Bengaluru 560058, Karnataka, India  
-> **Last Updated:** October 2026 / Production Baseline  
+> **Last Updated:** November 2026 / Production Baseline  
 > **Primary Framework:** Next.js 14.2.33 (App Router) + React 18.3 + TypeScript 5.6 + Vanilla CSS (Public) + Scoped Tailwind CSS (Admin)  
 
 ---
@@ -38,152 +38,154 @@
 
 ```
 VSPIAS/
-├── .env.example                     # Environment template (ADMIN_PASSWORD, NEXT_PUBLIC_SITE_URL)
-├── .gitignore                       # Production & build exclusions (protects local customer data)
-├── ADMIN_DOCUMENTATION.md           # Principal architecture & technical spec for Admin Workspace
-├── README.md                        # Project header
-├── package.json                     # Root orchestrator scripts (dev, build, start, lint, typecheck)
-├── screenshots/                     # Multi-viewport regression visual verification captures
-└── frontend/                        # Main Next.js Full-Stack Application
-    ├── package.json                 # Next 14.2.33, React 18.3.1, TypeScript 5.6.3, Tailwind 3.4.19
-    ├── tsconfig.json                # Strict TypeScript configuration with @/* path aliases
-    ├── next.config.mjs              # Custom rewrites, permanent 301 redirects, unoptimized media
-    ├── tailwind.config.ts           # Scoped Tailwind configuration (preflight: false) for /admin only
-    ├── postcss.config.mjs           # PostCSS setup for Tailwind CSS and Autoprefixer
+├── brain.md                        # Master systems architecture & knowledge base (this file)
+├── ADMIN_DOCUMENTATION.md          # Principal architecture & technical spec for Admin Workspace
+├── README.md                       # Project header
+├── package.json                    # Root orchestrator scripts (dev, build, start, lint, typecheck)
+├── screenshots/                    # Multi-viewport regression visual verification captures
+├── google-apps-script/             # Google Apps Script Web App for lead notifications
+│   └── Code.gs                     # Webhook endpoint writing to Google Sheets and sending emails
+└── frontend/                       # Main Next.js Full-Stack Application
+    ├── package.json                # Next 14.2.33, React 18.3.1, TypeScript 5.6.3, Tailwind 3.4.19
+    ├── tsconfig.json               # Strict TypeScript configuration with @/* path aliases
+    ├── next.config.mjs             # Custom rewrites, permanent 301 redirects, unoptimized media
+    ├── tailwind.config.ts          # Scoped Tailwind configuration (preflight: false) for /admin only
+    ├── postcss.config.mjs          # PostCSS setup for Tailwind CSS and Autoprefixer
     ├── data/
-    │   ├── catalog.json             # Atomic persistence for 30+ product records & brochure states
-    │   └── enquiries.json           # Inbound quotation requests (generated at runtime, protected 0o600)
+    │   ├── catalog.json            # Atomic persistence for 35 product records & brochure states
+    │   └── enquiries.json          # Inbound quotation requests (generated at runtime, protected 0o600)
     ├── public/
-    │   ├── admin.html               # Standalone legacy reactive admin control panel UI
-    │   ├── admin.js                 # Admin client script (Catalog revisioning, enquiries, media)
-    │   ├── catalog.seed.json        # Base seed file containing initial 30 catalogue items
-    │   ├── assets/                  # Original high-res SHA-verified images & branding
-    │   │   ├── brands/              # Partner brand SVGs (schneider-electric, abb, siemens, larsen-toubro)
-    │   │   ├── reference/           # Vector & PNG brand assets (vspias-logo.png, etc.)
-    │   │   └── industries/          # 12 sector application photography assets
+    │   ├── admin.html              # Standalone legacy reactive admin control panel UI
+    │   ├── admin.js                # Admin client script (Catalog revisioning, enquiries, media)
+    │   ├── catalog.seed.json       # Base seed file containing catalogue items
+    │   ├── assets/                 # Original high-res SHA-verified images & branding
+    │   │   ├── brands/             # Partner brand SVGs (schneider-electric, abb, siemens, larsen-toubro)
+    │   │   ├── reference/          # Vector & PNG brand assets (vspias-logo.png, etc.)
+    │   │   └── industries/         # 12 sector application photography assets
+    │   ├── favicon.ico             # Brand favicon set (16x16, 32x32, 192, apple-touch-icon)
     │   └── downloads/
     │       └── vspias-company-brochure.pdf  # Verified 12-page industrial automation brochure
     └── src/
-        ├── middleware.ts            # Sliding-window rate limiter for /api/* routes (DDoS & anti-spam)
-        ├── app/                     # Next.js 14 App Router
-        │   ├── layout.tsx           # Global root layout with metadata, CSS loading, header & footer
-        │   ├── page.tsx             # Curated 6-block Homepage (H1-H6)
-        │   ├── not-found.tsx        # Branded 404 handler
-        │   ├── sitemap.ts           # Dynamic XML sitemap generator
-        │   ├── robots.ts            # Crawler directive (disallows /admin and /api/)
-        │   ├── admin/               # Native Next.js React Admin Workspace
-        │   │   ├── layout.tsx       # Dedicated admin shell layout
-        │   │   └── page.tsx         # Tabbed admin workspace (Overview, Catalogue, Enquiries, Media, Publish)
-        │   ├── paper-bags/          # Paper Bags Division landing page
-        │   │   ├── page.tsx         # Premium Paper Bags showcase with 3D studio & materials
-        │   │   └── [slug]/page.tsx  # Dynamic SSG detail pages (kraft-carry, food-takeaway, retail)
-        │   ├── automation/          # Industrial Automation & Electricals portal
-        │   │   └── page.tsx         # Automation catalog, technical specs, brand showcase
+        ├── middleware.ts           # Sliding-window rate limiter for /api/* routes (DDoS & anti-spam)
+        ├── app/                    # Next.js 14 App Router
+        │   ├── layout.tsx          # Global root layout with metadata, CSS loading, header & footer
+        │   ├── page.tsx            # Curated 6-block Homepage (H1-H6)
+        │   ├── not-found.tsx       # Branded 404 handler
+        │   ├── sitemap.ts          # Dynamic XML sitemap generator
+        │   ├── robots.ts           # Crawler directive (disallows /admin and /api/)
+        │   ├── admin/              # Native Next.js React Admin Workspace
+        │   │   ├── layout.tsx      # Dedicated admin shell layout
+        │   │   └── page.tsx        # Tabbed admin workspace (Overview, Catalogue, Enquiries, Media, Publish)
+        │   ├── paper-bags/         # Paper Bags Division landing page
+        │   │   ├── page.tsx        # Premium Paper Bags showcase with 3D studio & materials
+        │   │   └── [slug]/page.tsx # Dynamic SSG detail pages (kraft-carry, food-takeaway, retail)
+        │   ├── automation/         # Industrial Automation & Electricals portal
+        │   │   └── page.tsx        # Automation catalog, technical specs, brand showcase
         │   ├── industrial-solutions/# Alias portal routing to automation
         │   │   └── page.tsx
-        │   ├── printing/            # 2-Colour Flexographic Printing Machinery showcase
+        │   ├── printing/           # 2-Colour Flexographic Printing Machinery showcase
         │   │   └── page.tsx
-        │   ├── contact/             # Quotation desk, WhatsApp integration, contact metadata
+        │   ├── contact/            # Quotation desk, WhatsApp integration, contact metadata
         │   │   └── page.tsx
-        │   ├── privacy/ & terms/    # Compliance, data handling & privacy documentation
-        │   ├── uploads/[filename]/  # Content-addressed media streaming route with MIME detection
-        │   └── api/                 # RESTful Serverless Endpoints
-        │       ├── catalog/         # GET public catalog
-        │       ├── enquiries/       # POST customer quote requests with honeypot validation
-        │       ├── login/ & logout/ # Admin session lifecycle & scrypt password verification
-        │       ├── session/         # Auth status check & CSRF token issuer
-        │       └── admin/           # Protected admin backend
-        │           ├── catalog/     # GET full draft + published state
-        │           ├── save/        # POST atomic draft update with revision locking
-        │           ├── publish/     # POST promote draft to live production
-        │           ├── discard/     # POST revert draft back to live published state
-        │           ├── media/       # POST file upload with magic-byte inspection (PNG/JPEG/WEBP/PDF)
-        │           ├── preview/     # GET draft preview state
-        │           └── enquiries/   # GET & DELETE customer lead records
+        │   ├── privacy/ & terms/   # Compliance, data handling & privacy documentation
+        │   ├── uploads/[filename]/ # Content-addressed media streaming route with MIME detection
+        │   └── api/                # RESTful Serverless Endpoints
+        │       ├── catalog/        # GET public catalog
+        │       ├── enquiries/      # POST customer quote requests with honeypot validation
+        │       ├── login/ & logout/# Admin session lifecycle & scrypt password verification
+        │       ├── session/        # Auth status check & CSRF token issuer
+        │       └── admin/          # Protected admin backend
+        │           ├── catalog/    # GET full draft + published state
+        │           ├── save/       # POST atomic draft update with revision locking
+        │           ├── publish/    # POST promote draft to live production
+        │           ├── discard/    # POST revert draft back to live published state
+        │           ├── media/      # POST file upload with magic-byte inspection (PNG/JPEG/WEBP/PDF)
+        │           ├── preview/    # GET draft preview state
+        │           └── enquiries/  # GET & DELETE customer lead records
         ├── components/
-        │   ├── admin/               # React Admin Workspace Components
-        │   │   ├── AdminIcons.tsx            # SVG Icon collection for admin tools
-        │   │   ├── AdminSidebar.tsx          # Collapsible navigation drawer
-        │   │   ├── AdminTopbar.tsx           # Status bar with live preview & logout
-        │   │   ├── OverviewView.tsx          # Key metrics, lead statistics, recent activity
-        │   │   ├── CatalogueView.tsx         # Product table, filters, order management
-        │   │   ├── EnquiriesView.tsx         # Inbound leads table, filter, export, delete
-        │   │   ├── MediaView.tsx             # Media library, brochure manager, drag-and-drop upload
-        │   │   ├── PublishingView.tsx        # Revision history, draft diffing, publish trigger
-        │   │   ├── ProductEditorDialog.tsx   # Modal for adding/editing catalogue products
-        │   │   ├── EnquiryDetailDialog.tsx   # Detailed customer lead inspection modal
-        │   │   ├── ConfirmDialog.tsx         # Action confirmation modal
-        │   │   ├── LoginModal.tsx            # Password sign-in modal
-        │   │   ├── admin-types.ts            # Strongly-typed models for admin state & metrics
-        │   │   └── admin-utils.ts            # Formatting, validation, and notification helpers
-        │   ├── home/                # Homepage H1-H6 discrete blocks
-        │   │   ├── CompanyHero.tsx               # Block H1: High-impact hero & division selector
-        │   │   ├── HomeProductRails.tsx          # Blocks H2 & H3: Dual opposing marquee rails
-        │   │   ├── CompanyBenefitsSection.tsx    # Block H4: 5 core enterprise advantages
-        │   │   ├── DivisionSolutionCards.tsx     # Block H5: Direct division portal entry cards
-        │   │   └── CompactEnquiryBand.tsx        # Block H6: Streamlined consultation action band
-        │   ├── bags/                # Paper packaging components
-        │   │   ├── premium/         # Premium paper page redesign components
-        │   │   │   ├── PremiumHeroSection.tsx    # Editorial hero
-        │   │   │   ├── PremiumRangeSection.tsx   # 5-family product accordion
-        │   │   │   ├── PremiumStudioSection.tsx  # 3D Bag Studio container
+        │   ├── admin/              # React Admin Workspace Components
+        │   │   ├── AdminIcons.tsx           # SVG Icon collection for admin tools
+        │   │   ├── AdminSidebar.tsx         # Collapsible navigation drawer
+        │   │   ├── AdminTopbar.tsx          # Status bar with live preview & logout
+        │   │   ├── OverviewView.tsx         # Key metrics, lead statistics, recent activity
+        │   │   ├── CatalogueView.tsx        # Product table, filters, order management
+        │   │   ├── EnquiriesView.tsx        # Inbound leads table, filter, export, delete
+        │   │   ├── MediaView.tsx            # Media library, brochure manager, drag-and-drop upload
+        │   │   ├── PublishingView.tsx       # Revision history, draft diffing, publish trigger
+        │   │   ├── ProductEditorDialog.tsx  # Modal for adding/editing catalogue products
+        │   │   ├── EnquiryDetailDialog.tsx  # Detailed customer lead inspection modal
+        │   │   ├── ConfirmDialog.tsx        # Action confirmation modal
+        │   │   ├── LoginModal.tsx           # Password sign-in modal
+        │   │   ├── admin-types.ts           # Strongly-typed models for admin state & metrics
+        │   │   └── admin-utils.ts           # Formatting, validation, and notification helpers
+        │   ├── home/               # Homepage H1-H6 discrete blocks
+        │   │   ├── CompanyHero.tsx              # Block H1: High-impact hero & division selector
+        │   │   ├── HomeProductRails.tsx         # Blocks H2 & H3: Dual opposing marquee rails
+        │   │   ├── CompanyBenefitsSection.tsx   # Block H4: 5 core enterprise advantages
+        │   │   ├── DivisionSolutionCards.tsx    # Block H5: Direct division portal entry cards
+        │   │   └── CompactEnquiryBand.tsx       # Block H6: Streamlined consultation action band
+        │   ├── bags/               # Paper packaging components
+        │   │   ├── premium/        # Premium paper page redesign components
+        │   │   │   ├── PremiumHeroSection.tsx   # Editorial hero
+        │   │   │   ├── PremiumRangeSection.tsx  # 5-family product accordion
+        │   │   │   ├── PremiumStudioSection.tsx # 3D Bag Studio container
         │   │   │   ├── PremiumIndustriesSection.tsx # 8-sector bento grid with spotlight
-        │   │   │   ├── PremiumProcessSection.tsx # 4-step manufacturing timeline + SVG flexo schematic
+        │   │   │   ├── PremiumProcessSection.tsx# 4-step manufacturing timeline + SVG flexo schematic
         │   │   │   ├── PremiumMaterialsSection.tsx # GSM slider & tactile material inspection
-        │   │   │   ├── PremiumEnquirySection.tsx # Protected RFQ commercial contact desk
-        │   │   │   └── PremiumPhotoViewer.tsx    # Native HTML5 <dialog> modal viewer
-        │   │   └── BagDetailModal.tsx            # Quick-view modal with specification matrix
-        │   ├── automation/          # Industrial automation components
-        │   │   └── premium/         # Premium automation portfolio & brand rails
-        │   │       ├── AutomationHeroSection.tsx        # Technical 3D-perspective hero & spring tilt
-        │   │       ├── AutomationBrandsBand.tsx         # Schneider, ABB, Siemens, L&T brand grid
-        │   │       ├── AutomationRangeRail.tsx          # Interactive animated component rail
-        │   │       ├── AutomationCatalogSection.tsx     # Live filterable automation catalogue
+        │   │   │   ├── PremiumEnquirySection.tsx# Protected RFQ commercial contact desk
+        │   │   │   └── PremiumPhotoViewer.tsx   # Native HTML5 <dialog> modal viewer
+        │   │   └── BagDetailModal.tsx           # Quick-view modal with specification matrix
+        │   ├── automation/         # Industrial automation components
+        │   │   └── premium/        # Premium automation portfolio & brand rails
+        │   │       ├── AutomationHeroSection.tsx       # Technical 3D-perspective hero & spring tilt
+        │   │       ├── AutomationBrandsBand.tsx        # Schneider, ABB, Siemens, L&T brand grid
+        │   │       ├── AutomationRangeRail.tsx         # Interactive animated component rail
+        │   │       ├── AutomationCatalogSection.tsx    # Live filterable automation catalogue
         │   │       ├── AutomationWorkingDemosSection.tsx # Interactive schematic & motor simulators
-        │   │       ├── AutomationEngineeringSection.tsx  # Engineering methodology & panel fabrication
-        │   │       ├── AutomationIndustriesSection.tsx   # Sector application accordions
-        │   │       └── AutomationModals.tsx             # Product detail and high-res image dialogs
-        │   ├── industrial/          # Machine engineering & process components
-        │   ├── studio/              # Interactive 3D Canvas Paper Bag Studio
-        │   │   ├── BagStudio.tsx    # React wrapper mounting studio canvas
-        │   │   ├── bag-studio.js    # Canvas 2D/3D renderer, vector rasterizer & geometry engine
-        │   │   ├── bag-studio.d.ts  # TypeScript interfaces for bag configurations
-        │   │   └── bag-studio.css   # Studio layout, color swatch pickers, responsive frame
-        │   ├── enquiry/             # Lead capture components
-        │   │   ├── QuoteForm.tsx    # Multi-field RFQ form with validation & deep-link parameter parsing
-        │   │   └── FAQAccordion.tsx # Expandable technical FAQ
-        │   ├── layout/              # Universal site chrome
-        │   │   ├── SiteHeader.tsx   # Responsive navigation, brand logo, division dropdowns
-        │   │   ├── SiteFooter.tsx   # Comprehensive sitemap, legal notices & direct contact
-        │   │   └── TopBar.tsx       # Live status banner
-        │   └── motion/              # Micro-animations & interactive UI wrappers
-        │       ├── AnimatedEnquiryButton.tsx  # Fluid enquiry button
-        │       ├── EnquirySurface.tsx         # Interactive surface wrapper
-        │       └── VariableHeadline.tsx       # Typography transition engine
-        ├── content/                 # Ground-truth typed content models
-        │   ├── site.ts              # Global brand configuration, navigation items, address data
-        │   ├── bags.ts              # Bag products, filter taxonomy, dimension & GSM specs
-        │   ├── industrial.ts        # Automation categories, partner brands, manufacturing steps
-        │   ├── industries.ts        # 12 specific industry applications (Supermarkets, Bakery, etc.)
-        │   ├── enquiry.ts           # RFQ form presets, FAQs, placeholders
-        │   └── assets.ts            # Cryptographic SHA-256 asset registry & approved image map
-        ├── lib/                     # Core backend & application services
-        │   ├── routes.ts            # Central route constants & slug validators
-        │   ├── whatsapp.ts          # Standardized wa.me URL generator with encoded draft payload
-        │   ├── catalog-service.ts   # Catalog state machine, atomic writes, scrypt auth, upload filter
-        │   └── enquiry-store.ts     # Thread-safe async queue for customer lead persistence
-        ├── styles/                  # Clean Hybrid Styling Architecture
-        │   ├── reference.css        # Core typography, resets, variables, responsive clamp scales
-        │   ├── enhancements.css     # Buttons, cards, modals, form controls, glassmorphism
+        │   │       ├── AutomationEngineeringSection.tsx # Engineering methodology & panel fabrication
+        │   │       ├── AutomationIndustriesSection.tsx  # Sector application accordions
+        │   │       └── AutomationModals.tsx            # Product detail and high-res image dialogs
+        │   ├── industrial/         # Machine engineering & process components
+        │   ├── studio/             # Interactive 3D Canvas Paper Bag Studio
+        │   │   ├── BagStudio.tsx   # React wrapper mounting studio canvas
+        │   │   ├── bag-studio.js   # Canvas 2D/3D renderer, vector rasterizer & geometry engine
+        │   │   ├── bag-studio.d.ts # TypeScript interfaces for bag configurations
+        │   │   └── bag-studio.css  # Studio layout, color swatch pickers, responsive frame
+        │   ├── enquiry/            # Lead capture components
+        │   │   ├── QuoteForm.tsx   # Multi-field RFQ form with validation & deep-link parameter parsing
+        │   │   └── FAQAccordion.tsx# Expandable technical FAQ
+        │   ├── layout/             # Universal site chrome
+        │   │   ├── SiteHeader.tsx  # Responsive navigation, brand logo, division dropdowns
+        │   │   ├── SiteFooter.tsx  # Comprehensive sitemap, legal notices & direct contact
+        │   │   └── TopBar.tsx      # Live status banner
+        │   └── motion/             # Micro-animations & interactive UI wrappers
+        │       ├── AnimatedEnquiryButton.tsx # Fluid enquiry button
+        │       ├── EnquirySurface.tsx        # Interactive surface wrapper
+        │       └── VariableHeadline.tsx      # Typography transition engine
+        ├── content/                # Ground-truth typed content models
+        │   ├── site.ts             # Global brand configuration, navigation items, address data
+        │   ├── bags.ts             # Bag products, filter taxonomy, dimension & GSM specs
+        │   ├── industrial.ts       # Automation categories, partner brands, manufacturing steps
+        │   ├── industries.ts       # 12 specific industry applications (Supermarkets, Bakery, etc.)
+        │   ├── enquiry.ts          # RFQ form presets, FAQs, placeholders
+        │   └── assets.ts           # Cryptographic SHA-256 asset registry & approved image map
+        ├── lib/                    # Core backend & application services
+        │   ├── routes.ts           # Central route constants & slug validators
+        │   ├── whatsapp.ts         # Standardized wa.me URL generator with encoded draft payload
+        │   ├── catalog-service.ts  # Catalog state machine, atomic writes, scrypt auth, upload filter
+        │   └── enquiry-store.ts    # Thread-safe async queue for customer lead persistence
+        ├── styles/                 # Clean Hybrid Styling Architecture
+        │   ├── reference.css       # Core typography, resets, variables, responsive clamp scales
+        │   ├── enhancements.css    # Buttons, cards, modals, form controls, glassmorphism
         │   ├── homepage-navy-theme.css # Homepage deep navy styling & opposing marquee rails
-        │   ├── paper-bags-premium.css  # Premium editorial design system for paper division
-        │   ├── automation-premium.css  # Technical industrial styling for automation division
-        │   ├── admin-base.css       # Core baseline reset and variables for the admin dashboard
-        │   └── admin-tailwind.css   # Tailwind directives scoped specifically for /admin workspace
-        └── tests/                   # Automated Node.js Verification Suites
-            ├── integration.mjs      # Full end-to-end API, catalog & brochure test suite
-            ├── verify-matrix.mjs    # Multi-page layout & anti-cross-pollution matrix validator
-            └── test_whatsapp.mjs    # WhatsApp URL format and query parameter unit tests
+        │   ├── paper-bags-premium.css # Premium editorial design system for paper division
+        │   ├── automation-premium.css # Technical industrial styling for automation division
+        │   ├── admin-base.css      # Core baseline reset and variables for the admin dashboard
+        │   └── admin-tailwind.css  # Tailwind directives scoped specifically for /admin workspace
+        └── tests/                  # Automated Node.js Verification Suites
+            ├── integration.mjs     # Full end-to-end API, catalog & brochure test suite
+            ├── verify-matrix.mjs   # Multi-page layout & anti-cross-pollution matrix validator
+            └── test_whatsapp.mjs   # WhatsApp URL format and query parameter unit tests
 ```
 
 ---
@@ -201,6 +203,19 @@ VSPIAS/
 | **Persistence** | File-System Atomic JSON| Node.js `fs` | High-reliability local persistence using serialized write queues and crypto-random temporary files. |
 | **Security/Auth** | Node Crypto (`scrypt`) | Native | Constant-time password verification (`timingSafeEqual`), sliding-window IP rate limiting, CSRF tokens. |
 
+### Color Palette & Design Tokens
+
+| Token Name | CSS Custom Property | Value | Semantic Role |
+| :--- | :--- | :--- | :--- |
+| **Deep Forest Ink** | `--ink` | `#173b30` | Primary brand color, sidebar background, headings, primary buttons |
+| **Tactile Warm Paper** | `--paper` | `#f5f3eb` | Primary page canvas, card backgrounds, natural craft aesthetic |
+| **Pure White** | `--white` | `#fffef9` | Card surfaces, dialog backgrounds, input canvas |
+| **Subtle Border Line** | `--line` | `#d8ddd3` | Structural dividers, card borders, table row separators |
+| **Eco Lime Accent** | `--lime` | `#dbe999` | Active navigation pill, brand status dots, accent metric indicators |
+| **Muted Forest Green** | `--muted` | `#5c6a60` | Secondary copy, metadata captions, inactive icons |
+| **Soft Surface** | `--soft` | `#edf0e7` | Hover states, search inputs, subtle chip backgrounds |
+| **Safety / Error** | `--error` | `#742e27` | Form validation errors, destructive button states |
+
 ---
 
 ## 4. Key Architectural Pillars & Design Rules
@@ -214,7 +229,7 @@ VSPIAS/
 
 ### 2. Homepage Architecture (The 6-Block Doctrine)
 The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused blocks:
-- **Block H1 (`CompanyHero`):** Direct B2B headline, dual division callout, hero CTA.
+- **Block H1 (`CompanyHero`):** Full-bleed panoramic hero featuring high-resolution composite (`/assets/approved-hero-composite.webp`), dual division callout, and hero CTA.
 - **Blocks H2 & H3 (`HomeProductRails`):** Two opposing continuously animated rails:
   - Rail 1 (Top, Left-to-Right): Industrial Automation products (PLCs, VFDs, HMIs).
   - Rail 2 (Bottom, Right-to-Left): Sustainable Paper Bags (Kraft, Food bags, Luxury shopping bags).
@@ -222,44 +237,25 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
 - **Block H5 (`DivisionSolutionCards`):** Two equal high-contrast portals leading directly to `/paper-bags` and `/automation`.
 - **Block H6 (`CompactEnquiryBand`):** Minimalist direct consultation bar connecting directly to the quote desk.
 
-### 3. Responsive Design & Aesthetic Hierarchy
-- **Primary Color Palette:**
-  - Deep Industrial Navy: `#0a192f`, `#102a43`
-  - Forest / Eco Green: `#173b30`, `#275c4c`, `#e8f0ec`
-  - Crisp Cream / Ivory: `#faf8f5`, `#f3eee6`
-  - Lime / Technical Accent: `#d5ed86`, `#e9ecdf`
-  - Precision Gold / Warm Ochre: `#d4a373`, `#c58b4b`
-  - Engineering White & Slate: `#ffffff`, `#64748b`, `#0f172a`
-- **Typography:**
-  - Modern sans-serif stack utilizing system-native font rendering (`Manrope`, system-ui, sans-serif).
-  - Fluid clamp typography for responsive headings without layout shift (`clamp(2rem, 5vw, 3.5rem)`).
-
 ---
 
 ## 5. Division Taxonomies & Product Catalogs
 
 ### Division 1: Paper Bags & Packaging
-- **Live Products in Published Catalog:**
-  1. `kraft-carry-bags`: Natural brown kraft carry bags, twisted paper cord handle, 80–140 GSM virgin/recycled kraft.
-  2. `food-takeaway`: Cafes, bakeries, food delivery, flat fold-in handle, grease-resistant barrier, 70–120 GSM.
-  3. `retail-custom-print`: Luxury lifestyle boutique shopping bags, reinforced twisted cord, 100–160 GSM premium ivory.
+- **9 Live Products in Published Catalog:**
+  1. `kraft-bags`: Natural brown kraft carry bags.
+  2. `custom-bags`: Custom brand printed boutique carriers.
+  3. `gift-bags`: Luxury premium finish packaging.
+  4. `food-bags`: Grease-resistant block-bottom takeaway sacks.
+  5. `delivery-grocery-bags`: High-volume grocery bags.
+  6. `bakery-pinch-bags`: Pinch bottom bakery packaging.
+  7. `luxury-boutique-bags`: Boutique lifestyle carry bags.
+  8. `white-shopping-bags`: Virgin white kraft shopping bags.
+  9. `artisan-patisserie-bags`: Artisan confectionery bags.
 - **Specification Ranges:**
-  - **GSM Range:** 70 GSM to 160 GSM.
+  - **GSM Range:** 70 GSM to 220 GSM.
   - **Handle Options:** Twisted paper loop, flat paper tape handle, luxury cotton-feel rope, punch-out/die-cut handle, handle-less pinch bottom.
   - **Inks:** 100% water-based, non-toxic, food-grade compliant flexographic inks.
-- **12 Targeted Industry Sectors:**
-  1. Agriculture & Produce (Heavyweight breathable kraft)
-  2. Supermarkets (High-capacity reinforced carry)
-  3. Bakery (Grease-resistant pinch bottom)
-  4. Travel & Hospitality (Boutique gift carriers)
-  5. E-Commerce (Gusseted mailer bags)
-  6. Electronics & Tech (Rigid base structured bags)
-  7. Fashion & Lifestyle Retail (Brand-led flexo printing)
-  8. Books & Stationery (Durable flat base)
-  9. Healthcare & Pharmaceuticals (Counter dispensing pouches)
-  10. Groceries (Volume self-standing sacks)
-  11. Quick-Service Restaurants (Wide gusset hot food carriers)
-  12. Food & Beverages (Beverage counter carriers)
 
 ### Division 2: Electrical & Industrial Automation
 - **26 Live Verified Catalog Products:**
@@ -292,17 +288,17 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
   - `handle`: `'rope'` | `'flat'` | `'none'`
   - `pattern`: `'plain'` | `'dots'` | `'stripes'`
   - `brand`: Custom user text rendered directly onto the bag surface with perspective warping.
-- **Workflow:** Real-time 360-degree rotation drag, live lighting simulation, instant design brief export, and direct link into the quote desk.
 
 ### 2. WhatsApp Lead Engine (`whatsapp.ts`)
 - **Phone:** `+91 97831 33333` (`919783133333`)
 - **Standard:** Clean URL generation using official WhatsApp API (`https://wa.me/919783133333?text=...`).
-- **Features:**
-  - Strips non-digits from phone inputs.
-  - Automatic URI encoding of multi-line quotation briefs.
-  - Fallback to clean chat if no message is passed.
 
-### 3. Deep-Linking RFQ Integration (`QuoteForm.tsx`)
+### 3. Google Apps Script Webhook & Email Notification (`google-apps-script/Code.gs`)
+- Direct integration via `NEXT_PUBLIC_GOOGLE_SCRIPT_URL`.
+- Submissions write into the "VSPIAS Customer Enquiries" Google Sheet tab with timestamp, reference ID, and formatted contact details.
+- Dispatches automated confirmation emails with enquiry reference IDs to prospective clients.
+
+### 4. Deep-Linking RFQ Integration (`QuoteForm.tsx`)
 - The quote form automatically ingests and validates URL query parameters:
   - `?interest=...` or `?division=...`: Selects active industrial stream.
   - `?topic=...`: Prefills requirement brief (e.g. `Enquiry for VFD Drives`).
@@ -332,23 +328,6 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
 ### 2. Customer Enquiry Storage (`enquiries.json` & `enquiry-store.ts`)
 - **Data Location:** `data/enquiries.json` (filesystem mode `0o600`, directory mode `0o700`).
 - **Thread Safety:** All writes are piped through a Promise queue (`serialize()`) preventing race conditions during concurrent submissions.
-- **Record Structure:**
-  - `id`: UUIDv4
-  - `createdAt`: ISO 8601 Timestamp
-  - `name`: string (max 100 chars)
-  - `email`: string (validated email regex)
-  - `phone`: string (max 20 chars)
-  - `message`: string (max 2000 chars)
-  - `division`: `'Paper bags'` | `'Machinery & printing'` | `'Electrical & automation'`
-  - Optional: `company`, `quantity`, `bagFinish`, `brandName`, `industrySector`
-
-### 3. Media Upload Pipeline (`uploads/[filename]` & `uploadMedia()`)
-- **Storage Directory:** `data/uploads/`
-- **Security & Integrity Checks:**
-  - **Magic-Byte Sniffing:** Verifies binary headers for PNG (`89 50 4E 47`), JPEG (`FF D8 FF`), WebP (`RIFF...WEBP`), and PDF (`%PDF-`). Rejects any mismatched extension.
-  - **SHA-256 Content Addressing:** Filename is strictly `sha256(fileBytes) + ext` to prevent overwrites, path traversals, or duplicate storage.
-  - **Size Guardrails:** 10 MB maximum for images; 18 MB maximum for PDF brochures.
-- **Access Governance:** Files linked in the published catalogue are publicly accessible; unlinked draft files require an active admin session.
 
 ---
 
@@ -359,6 +338,7 @@ The Homepage (`frontend/src/app/page.tsx`) is strictly structured into 6 focused
 - **Brute-Force Shield:** Max 8 invalid attempts per IP within a 15-minute sliding window; subsequent attempts are rejected with `429 Too Many Requests`.
 - **Session Management:** In-memory session table mapped to random 64-hex cookie tokens (`vspias_admin`) with an 8-hour expiry.
 - **CSRF Defense:** `X-CSRF-Token` required on all state-mutating requests (`POST /api/admin/*`).
+- **Origin / Host Verification**: Host and origin headers are strictly validated against verified domains (`localhost`, `127.0.0.1`, `vspias.in`, `NEXT_PUBLIC_SITE_URL`, `VERCEL_URL`) to prevent cross-site request forgery.
 - **Environment Toggle:** `ADMIN_AUTH_DISABLED = process.env.ADMIN_AUTH_DISABLED === 'true'`. Allows local debugging when needed, with strict password enforcement in production. Default fallback password: `vspias@admin2026`.
 
 ### 2. Edge Middleware Rate Limiting (`middleware.ts`)
@@ -367,10 +347,6 @@ Sliding-window in-memory rate limiter applied to all `/api/*` routes with automa
 - **`/api/enquiries`:** 30 requests / minute (anti-spam / lead flooding).
 - **`/api/admin/*`:** 60 requests / minute.
 - **General API:** 120 requests / minute.
-- **Response Headers:** Exposes `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `Retry-After`.
-
-### 3. Form Anti-Spam (Honeypot)
-The contact form includes invisible trap fields (`hp`, `honeypot`, `website_url`). If populated by automated spam bots, submissions are silently rejected with `400 Bad Request`.
 
 ---
 
@@ -426,10 +402,9 @@ The codebase includes an automated multi-tier testing and verification framework
 - **Route Health:** Queries HTTP status for `/`, `/paper-bags`, `/automation`, `/contact`.
 - **Homepage Structure:** Verifies exact presence of blocks `id="company-hero"` (H1), `id="automation-rail"` (H2), `id="paper-rail"` (H3), `id="benefits"` (H4), `id="division-solutions"` (H5), and `id="enquiry-connect"` (H6).
 - **Anti-Cross-Pollution Gate:** Validates that large division showcases do NOT leak across boundaries.
-- **Motion Verification:** Confirms active presence of `vsp-enquiry-button`, `vsp-enquiry-surface`, and `vsp-variable-headline`.
 
 ### 3. `integration.mjs` (Comprehensive Backend & Catalog Suite)
-- Validates that public catalog returns all active automation and paper packaging products.
+- Validates that public catalog returns all active automation and paper packaging products (35 total: 26 automation, 9 paper).
 - Iterates over product images to verify `HTTP 200` status and valid MIME headers.
 - Fetches the published company brochure PDF and cryptographically verifies the `%PDF-` binary magic bytes.
 - Asserts that anonymous requests to `/api/admin/catalog` and `/api/admin/save` are rejected with `401 Unauthorized`.
@@ -446,15 +421,12 @@ ADMIN_PASSWORD=vspias@admin2026
 # Optional Auth Bypass for local development/testing (defaults to false)
 # ADMIN_AUTH_DISABLED=true
 
-# Site Base URL (used for sitemap.xml, robots.txt, and metadata canonical tags)
+# Canonical Public Domain URL
 NEXT_PUBLIC_SITE_URL=https://vspias.in
-```
 
-### Next.js Production Configuration (`next.config.mjs`)
-- `images.unoptimized: true`: Ensures static asset serving reliability across diverse hosting platforms without requiring external image optimization servers.
-- **Redirects:**
-  - Permanent 301 redirects from legacy URLs (`/privacy-policy` -> `/privacy`, `/terms-and-conditions` -> `/terms`).
-  - Non-permanent 307 redirects from `.html` extensions (`/automation.html` -> `/automation`, `/index.html` -> `/`).
+# Google Apps Script Web App Endpoint for Enquiry Notifications
+NEXT_PUBLIC_GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/AKfycbxWv5k0lPgpeeSep6nsaSrtWCFRTnOcNY-2K3f9SOZMIGDgC4vMiQEwM5m_eeHkwIQUPQ/exec
+```
 
 ### Build & Verification Commands
 - `npm run typecheck`: Validates strict TypeScript compilation without emission.

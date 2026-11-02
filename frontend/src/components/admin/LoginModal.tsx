@@ -41,10 +41,10 @@ export default function LoginModal({ adminConfigured, onLogin }: LoginModalProps
             width={165}
             height={38}
           />
-          <div className="adm-login-tag" aria-label="Status: Workspace Protected">
+          {/* <div className="adm-login-tag" aria-label="Status: Workspace Protected">
             <span className="adm-login-tag-dot" />
             <span>Workspace</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Heading & Intro */}
