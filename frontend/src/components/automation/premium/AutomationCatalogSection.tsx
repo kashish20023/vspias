@@ -50,6 +50,24 @@ export function AutomationCatalogSection({
     }
   }, [externalCategory]);
 
+  // Sync hash category if present or on hashchange
+  useEffect(() => {
+    function syncHash() {
+      if (typeof window === 'undefined') return;
+      const hash = window.location.hash;
+      if (hash.startsWith('#category-')) {
+        const cat = hash.replace('#category-', '');
+        if (CATEGORY_GROUPS.some((g) => g.id === cat)) {
+          setSelectedGroup(cat);
+          setLimit(9);
+        }
+      }
+    }
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+    return () => window.removeEventListener('hashchange', syncHash);
+  }, []);
+
   // Handle click outside brand menu
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -170,6 +188,7 @@ export function AutomationCatalogSection({
               return (
                 <button
                   key={g.id}
+                  id={g.id ? `category-${g.id}` : 'category-all'}
                   className="chip"
                   type="button"
                   data-category={g.id}

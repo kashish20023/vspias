@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { AUTOMATION_IMAGES, AUTOMATION_PRODUCT_FAMILIES } from './data';
+import Link from 'next/link';
+import { AUTOMATION_IMAGES } from './data';
+import { AUTOMATION_PORTFOLIO_CARDS, AutomationPortfolioCard } from '@/content/industrial';
 
 interface AutomationRangeRailProps {
   onSelectFamily?: (categoryGroup: string) => void;
@@ -15,6 +17,10 @@ export function AutomationRangeRail({ onSelectFamily }: AutomationRangeRailProps
 
   const [isPaused, setIsPaused] = useState(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
+
+  // Track pointer movement distance to distinguish clean clicks from drags
+  const dragDistanceRef = useRef<number>(0);
+  const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
 
   // References to keep animation state stable across renders
   const animRef = useRef<{
@@ -197,12 +203,14 @@ export function AutomationRangeRail({ onSelectFamily }: AutomationRangeRailProps
     const onVisibilityChange = () => syncRail();
     document.addEventListener('visibilitychange', onVisibilityChange);
 
+    const animInstance = animRef.current;
+
     return () => {
       cancelCoast();
       if (resizeFrame) cancelAnimationFrame(resizeFrame);
-      if (animRef.current.rail) {
-        animRef.current.rail.cancel();
-        animRef.current.rail = null;
+      if (animInstance.rail) {
+        animInstance.rail.cancel();
+        animInstance.rail = null;
       }
       railObserver?.disconnect();
       window.removeEventListener('resize', onResize);
@@ -241,6 +249,8 @@ export function AutomationRangeRail({ onSelectFamily }: AutomationRangeRailProps
     const a = animRef.current;
     if (!a.rail || a.drag || e.button !== 0 || isReducedMotion) return;
     cancelCoast();
+    dragStartPosRef.current = { x: e.clientX, y: e.clientY };
+    dragDistanceRef.current = 0;
     a.drag = {
       id: e.pointerId,
       startX: e.clientX,
@@ -248,7 +258,6 @@ export function AutomationRangeRail({ onSelectFamily }: AutomationRangeRailProps
       history: [{ x: e.clientX, t: performance.now() }],
       moved: false,
     };
-    viewportRef.current?.setPointerCapture(e.pointerId);
     a.rail.pause();
   };
 
@@ -256,7 +265,21 @@ export function AutomationRangeRail({ onSelectFamily }: AutomationRangeRailProps
     const a = animRef.current;
     if (!a.drag || e.pointerId !== a.drag.id || !a.rail) return;
     const dx = e.clientX - a.drag.startX;
-    if (Math.abs(dx) > 8) a.drag.moved = true;
+    if (dragStartPosRef.current) {
+      const dist = Math.hypot(
+        e.clientX - dragStartPosRef.current.x,
+        e.clientY - dragStartPosRef.current.y
+      );
+      if (dist > dragDistanceRef.current) {
+        dragDistanceRef.current = dist;
+      }
+    }
+    if (Math.abs(dx) > 6) {
+      if (!a.drag.moved) {
+        a.drag.moved = true;
+        viewportRef.current?.setPointerCapture(e.pointerId);
+      }
+    }
     if (!a.drag.moved) return;
 
     viewportRef.current?.classList.add('dragging');
@@ -289,6 +312,12 @@ export function AutomationRangeRail({ onSelectFamily }: AutomationRangeRailProps
     if (viewportRef.current?.hasPointerCapture(e.pointerId)) {
       viewportRef.current.releasePointerCapture(e.pointerId);
     }
+    // Allow pending click event to read dragDistance before clearing
+    setTimeout(() => {
+      dragDistanceRef.current = 0;
+      dragStartPosRef.current = null;
+    }, 60);
+
     if (moved && !cancelled && mayPlay() && Math.abs(velocity) > 70) {
       a.coastVelocity = Math.max(-900, Math.min(900, velocity));
       a.coastTime = 0;
@@ -318,66 +347,65 @@ export function AutomationRangeRail({ onSelectFamily }: AutomationRangeRailProps
     }
   };
 
+  const handleCardClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    card: AutomationPortfolioCard
+  ) => {
+    // If pointer moved more than 6px, treat as drag and prevent navigation
+    if (dragDistanceRef.current > 6) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    // Clean click / tap: select the catalog category
+    if (card.targetCategoryGroup) {
+      onSelectFamily?.(card.targetCategoryGroup);
+    }
+  };
+
   const renderCards = (isClone = false) => (
     <div
       className="rail-set"
       ref={isClone ? cloneRef : setRef}
       aria-hidden={isClone ? 'true' : undefined}
     >
-      {AUTOMATION_PRODUCT_FAMILIES.map((f, i) => (
-        <div
-          key={i}
-          className="range-card"
-          role="button"
-          tabIndex={isClone ? -1 : 0}
-          onClick={() => {
-            const groupMap: Record<string, string> = {
-              'PLC & I/O': 'control',
-              'VFD & drives': 'drives',
-              'HMI interfaces': 'control',
-              Switchgear: 'protection',
-              'Control panels': 'panels',
-              SCADA: 'panels',
-            };
-            onSelectFamily?.(groupMap[f.title] || '');
-            const catalog = document.getElementById('automation-catalog');
-            catalog?.scrollIntoView({ behavior: 'smooth' });
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              const groupMap: Record<string, string> = {
-                'PLC & I/O': 'control',
-                'VFD & drives': 'drives',
-                'HMI interfaces': 'control',
-                Switchgear: 'protection',
-                'Control panels': 'panels',
-                SCADA: 'panels',
-              };
-              onSelectFamily?.(groupMap[f.title] || '');
-              const catalog = document.getElementById('automation-catalog');
-              catalog?.scrollIntoView({ behavior: 'smooth' });
-            }
-          }}
-        >
-          <span>
-            <img
-              src={AUTOMATION_IMAGES[f.imageKey] || f.imageKey}
-              alt=""
-              width={67}
-              height={56}
-              draggable={false}
-            />
-          </span>
-          <div>
-            <b>{f.title}</b>
-            <small>{f.subtitle}</small>
-          </div>
-          <svg className="icon" aria-hidden="true">
-            <use href="#i-ne" />
-          </svg>
-        </div>
-      ))}
+      {AUTOMATION_PORTFOLIO_CARDS.map((f) => {
+        const hasValidDestination = Boolean(f.href && f.href !== '#');
+        return (
+          <Link
+            key={f.id}
+            href={f.href}
+            className="range-card"
+            tabIndex={isClone ? -1 : 0}
+            aria-hidden={isClone ? 'true' : undefined}
+            aria-label={isClone ? undefined : f.ariaLabel}
+            draggable={false}
+            onClick={(e) => handleCardClick(e, f)}
+            onFocus={isClone ? undefined : handleFocusIn}
+            onBlur={isClone ? undefined : handleFocusOut}
+          >
+            <span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={AUTOMATION_IMAGES[f.imageKey] || f.imageKey}
+                alt=""
+                width={67}
+                height={56}
+                draggable={false}
+              />
+            </span>
+            <div className="range-label">
+              <b>{f.title}</b>
+              <small>{f.subtitle}</small>
+            </div>
+            {/* {hasValidDestination && (
+              <svg className="icon" aria-hidden="true">
+                <use href="#i-ne" />
+              </svg>
+            )} */}
+          </Link>
+        );
+      })}
     </div>
   );
 

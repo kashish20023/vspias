@@ -9,15 +9,6 @@ export default function SiteHeader(): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  if (pathname?.startsWith('/admin')) {
-    return <></>;
-  }
-
-  const isHome = pathname === '/';
-  const isAutomation = pathname.startsWith('/automation') || pathname.startsWith('/industrial-solutions');
-  const isPaper = pathname.startsWith('/paper-bags');
-  const isContact = pathname.startsWith('/contact');
-
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
@@ -45,6 +36,15 @@ export default function SiteHeader(): JSX.Element {
   useEffect(() => {
     closeMenu();
   }, [pathname]);
+
+  if (pathname?.startsWith('/admin')) {
+    return <></>;
+  }
+
+  const isHome = pathname === '/';
+  const isAutomation = pathname.startsWith('/automation') || pathname.startsWith('/industrial-solutions');
+  const isPaper = pathname.startsWith('/paper-bags');
+  const isContact = pathname.startsWith('/contact');
 
   return (
     <header className="claude-sticky-header">

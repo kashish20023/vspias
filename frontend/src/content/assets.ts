@@ -209,7 +209,13 @@ export const ASSETS = {
   automationHardware: '/images/automation/automation-hardware-premium.webp',
   paperBagsCollection: '/images/paper-bags/paper-bags-collection-premium.webp',
   paperHandlesDetail: '/images/paper-bags/paper-handles-detail-premium.webp',
-  kraftCarryBags: '/images/paper-bags/kraft-carry-bags-premium.webp'
+  kraftCarryBags: '/images/paper-bags/kraft-carry-bags-premium.webp',
+
+  // Partner Brand Logos
+  brandSchneider: '/assets/brands/schneider-electric.svg',
+  brandAbb: '/assets/brands/abb.svg',
+  brandSiemens: '/assets/brands/siemens.svg',
+  brandLt: '/assets/brands/larsen-toubro.svg'
 } as const;
 
 export const APPROVED_ASSETS = {
@@ -224,6 +230,12 @@ export const APPROVED_ASSETS = {
   paperBagsCollectionPng: '/assets/approved/paper-bags-collection-premium.png',
   paperHandlesDetailPng: '/assets/approved/paper-handles-detail-premium.png',
   kraftCarryBagsPng: '/assets/approved/kraft-carry-bags-premium.png',
+  brands: {
+    schneider: '/assets/brands/schneider-electric.svg',
+    abb: '/assets/brands/abb.svg',
+    siemens: '/assets/brands/siemens.svg',
+    lt: '/assets/brands/larsen-toubro.svg'
+  },
   highlightTiles: {
     kraftBags: '/assets/approved/05-highlight-tile-kraft-bags.png',
     pouch: '/assets/approved/05-highlight-tile-pouch.png',

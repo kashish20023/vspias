@@ -86,11 +86,18 @@ interface SessionData {
   expires: number;
 }
 
-const sessions = new Map<string, SessionData>();
-const attempts = new Map<string, { count: number; until: number }>();
-const salt = randomBytes(32);
+const globalState = globalThis as unknown as {
+  __vspias_sessions?: Map<string, SessionData>;
+  __vspias_attempts?: Map<string, { count: number; until: number }>;
+  __vspias_salt?: Buffer;
+};
 
-export const ADMIN_AUTH_DISABLED = false;
+const sessions = globalState.__vspias_sessions ?? (globalState.__vspias_sessions = new Map<string, SessionData>());
+const attempts = globalState.__vspias_attempts ?? (globalState.__vspias_attempts = new Map<string, { count: number; until: number }>());
+const salt = globalState.__vspias_salt ?? (globalState.__vspias_salt = randomBytes(32));
+
+// Re-configurable via environment variable (defaults to false for production security & tests)
+export const ADMIN_AUTH_DISABLED = process.env.ADMIN_AUTH_DISABLED === 'true';
 
 export function getAdminPassword(): string {
   return (process.env.ADMIN_PASSWORD || 'vspias@admin2026').trim();
@@ -190,15 +197,26 @@ export function verifyOriginAndHost(headers: Headers): void {
   if (ADMIN_AUTH_DISABLED) return;
   const host = headers.get('host') || '';
   const origin = headers.get('origin');
-  const isAllowedHost = host.includes('127.0.0.1') || host.includes('localhost') || host.includes('vspias.in') || process.env.NODE_ENV === 'production';
-  if (!isAllowedHost) {
+
+  let siteHost = '';
+  try {
+    if (process.env.NEXT_PUBLIC_SITE_URL) {
+      siteHost = new URL(process.env.NEXT_PUBLIC_SITE_URL).host;
+    }
+  } catch {}
+
+  const isAllowed = (val: string) =>
+    val.includes('127.0.0.1') ||
+    val.includes('localhost') ||
+    val.includes('vspias.in') ||
+    (siteHost && val.includes(siteHost)) ||
+    (process.env.VERCEL_URL && val.includes(process.env.VERCEL_URL));
+
+  if (!isAllowed(host)) {
     fail(403, 'Use the verified URL for administrative access.');
   }
-  if (origin) {
-    const isAllowedOrigin = origin.includes('127.0.0.1') || origin.includes('localhost') || origin.includes('vspias.in') || process.env.NODE_ENV === 'production';
-    if (!isAllowedOrigin) {
-      fail(403, 'Cross-origin writes are not allowed.');
-    }
+  if (origin && !isAllowed(origin)) {
+    fail(403, 'Cross-origin writes are not allowed.');
   }
 }
 
