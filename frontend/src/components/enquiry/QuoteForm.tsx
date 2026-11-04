@@ -9,7 +9,7 @@ import { AnimatedEnquiryButton } from '@/components/motion/AnimatedEnquiryButton
 // Reads from NEXT_PUBLIC_GOOGLE_SCRIPT_URL (set in .env.local and hosting environment variables)
 const GOOGLE_SCRIPT_URL =
   process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL ||
-  'https://script.google.com/macros/s/AKfycbxWv5k0lPgpeeSep6nsaSrtWCFRTnOcNY-2K3f9SOZMIGDgC4vMiQEwM5m_eeHkwIQUPQ/exec';
+  'https://script.google.com/macros/s/AKfycbzw6yW6eiEnHNh2syY1ewDZxUnYpoKCxTOF5yMKc0BGosDXCfSPP5VXEqKO2YeZ4MtRPw/exec';
 
 // RFC-compatible email regex for strict client-side validation
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
@@ -203,6 +203,24 @@ Enquiry initiated from VSPIAS web showcase (${interest === 'Paper bags' ? 'Benga
         },
         body: JSON.stringify(payload)
       });
+
+      // Internal admin store backup (non-blocking)
+      fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          company: company.trim(),
+          division: interest,
+          quantity: quantity.trim(),
+          message: requirements.trim(),
+          bagFinish,
+          brandName,
+          industrySector
+        })
+      }).catch(() => {});
 
       // Successful dispatch to Google Apps Script
       setReferenceId(generatedRef);

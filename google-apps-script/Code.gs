@@ -1,514 +1,601 @@
-/**
- * VSPIAS ECOAUTOMATION — GOOGLE APPS SCRIPT WEB APP INTEGRATION
- * Target Sheet: "VSPIAS Customer Enquiries" (Tab: "Enquiries")
- *
- * Description:
- * Receives direct website enquiry submissions via doPost(e), validates and sanitizes all inputs,
- * prevents duplicates and race conditions using LockService, writes structured records to the
- * "Enquiries" sheet tab, and dispatches a branded confirmation email to the customer with
- * their unique enquiry Reference ID.
- */
+// WEBSITE ENQUIRY INTEGRATION & AUTOMATION
+// VSPIAS Ecoautomation Pvt. Ltd.
 
-// Configuration constants
-var CONFIG = {
-  SPREADSHEET_NAME: 'VSPIAS Customer Enquiries',
-  SHEET_TAB_NAME: 'Enquiries',
-  OFFICIAL_EMAIL: 'info@vspias.in',
-  OFFICIAL_PHONE: '+91 97831 33333',
-  SENDER_NAME: 'VSPIAS Ecoautomation',
-  TIMEZONE: 'Asia/Kolkata',
-  DEDUPLICATION_WINDOW_MS: 3 * 60 * 1000 // 3 minutes
+const WEBSITE_CONFIG = {
+  SHEET_ID: "1oOEB3vGQdl7W7Ri2L5mdm83MXaMA_BzmVEEo0xvUHio",
+  SHEET_NAME: "VSPIAS Customer Enquiries",
+  BUSINESS_EMAIL: "info@vspias.in",
+  BUSINESS_NAME: "VSPIAS Ecoautomation Pvt. Ltd."
 };
 
-// Standard column headers for the Enquiries tab
-var STANDARD_HEADERS = [
-  'Reference ID',
-  'Timestamp (IST)',
-  'Full Name',
-  'Email Address',
-  'Phone / WhatsApp',
-  'Company',
-  'Division',
-  'Quantity / Capacity',
-  'Requirements',
-  'Bag Finish',
-  'Brand Imprint',
-  'Industry Sector',
-  'Status'
-];
-
-/**
- * Handle GET requests (Health check / verification in browser)
- */
-function doGet(e) {
-  var output = {
-    status: 'online',
-    service: 'VSPIAS Customer Enquiries Webhook',
-    timestamp: Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyy-MM-dd HH:mm:ss z'),
-    message: 'Google Apps Script endpoint is ready to receive POST submissions.'
-  };
-  return createJsonResponse(output);
-}
-
-/**
- * Handle POST requests from the website form
- */
 function doPost(e) {
-  var lock = LockService.getScriptLock();
-  var lockAcquired = false;
+  let rowNumber = 0;
+  let referenceId = "";
+  let sheet;
 
   try {
-    // Acquire lock (wait up to 15 seconds) to prevent concurrent write clashes and duplicate rows
-    lockAcquired = lock.tryLock(15000);
-    if (!lockAcquired) {
-      return createJsonResponse({
-        ok: false,
-        error: 'The server is currently busy processing other requests. Please try again in a moment.'
-      });
-    }
-
-    // 1. Parse incoming payload
     if (!e || !e.postData || !e.postData.contents) {
-      return createJsonResponse({
-        ok: false,
-        error: 'No payload received in submission request.'
-      });
+      throw new Error("No enquiry data received.");
     }
 
-    var rawData;
+    const data = JSON.parse(e.postData.contents);
+
+    // Optional spam honeypot: hidden field should remain empty.
+    if (data.website || data.hp) {
+      return jsonResponse({ success: true });
+    }
+
+    const name = cleanWebsiteValue(data.name || data.customerName);
+    const email = cleanWebsiteValue(data.email || data.customerEmail).toLowerCase();
+    const company = cleanWebsiteValue(data.company);
+    const phone = cleanWebsiteValue(data.phone);
+    const division = cleanWebsiteValue(
+      data.division || data.interest || data.productOrService
+    );
+    const product = cleanWebsiteValue(
+      data.product || data.model || data.quantity
+    );
+    const message = cleanWebsiteValue(
+      data.message || data.requirements || data.enquiryMessage
+    );
+    const bagFinish = cleanWebsiteValue(data.bagFinish);
+    const brandName = cleanWebsiteValue(data.brandName);
+    const industrySector = cleanWebsiteValue(data.industrySector);
+
+    if (!name || !email || !message) {
+      throw new Error("Name, valid email, and requirements are required.");
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error("Invalid customer email address.");
+    }
+
+    const lock = LockService.getScriptLock();
+    lock.waitLock(15000);
+
     try {
-      rawData = JSON.parse(e.postData.contents);
-    } catch (parseErr) {
-      return createJsonResponse({
-        ok: false,
-        error: 'Malformed request: payload is not valid JSON.'
-      });
-    }
+      const ss = SpreadsheetApp.openById(WEBSITE_CONFIG.SHEET_ID);
+      sheet = ss.getSheetByName(WEBSITE_CONFIG.SHEET_NAME) || ss.getSheets()[0];
 
-    // 2. Honeypot check for automated bot spam
-    if (rawData.hp || rawData.honeypot || rawData.website_url) {
-      // Silently accept without logging or emailing to frustrate bots
-      return createJsonResponse({
-        ok: true,
-        referenceId: 'VSP-SPAM-FILTERED',
-        message: 'Enquiry received.'
-      });
-    }
+      if (!sheet) {
+        throw new Error(
+          'Sheet tab "' + WEBSITE_CONFIG.SHEET_NAME + '" was not found.'
+        );
+      }
 
-    // 3. Extract, sanitize, and validate fields
-    var name = sanitizeString(rawData.name, 100);
-    var email = sanitizeString(rawData.email, 150);
-    var phone = sanitizeString(rawData.phone, 25);
-    var company = sanitizeString(rawData.company, 150);
-    var division = sanitizeString(rawData.division || rawData.interest, 100);
-    var quantity = sanitizeString(rawData.quantity, 100);
-    var requirements = sanitizeString(rawData.requirements || rawData.message, 3000);
-    var bagFinish = sanitizeString(rawData.bagFinish, 150);
-    var brandName = sanitizeString(rawData.brandName, 150);
-    var industrySector = sanitizeString(rawData.industrySector, 150);
-    var consent = rawData.consent === true || rawData.consent === 'true';
+      referenceId =
+        (data.referenceId && /^VS-[A-Z0-9]{6,12}$/i.test(data.referenceId))
+          ? data.referenceId.toUpperCase()
+          : ("VS-" + Utilities.getUuid().split("-")[0].toUpperCase());
 
-    // Strict validation
-    if (!name) {
-      return createJsonResponse({ ok: false, error: 'Full name is required.' });
-    }
+      const subject =
+        "Website Enquiry - " + (division || "General") + " - " + referenceId;
 
-    if (!email || !isValidEmail(email)) {
-      return createJsonResponse({ ok: false, error: 'A valid email address is required.' });
-    }
+      const enquiryMessage = [
+        "Reference ID: " + referenceId,
+        "Company: " + company,
+        "Phone: " + phone,
+        "Product / Model / Quantity: " + product,
+        bagFinish ? ("Bag Finish: " + bagFinish) : "",
+        brandName ? ("Brand Imprint: " + brandName) : "",
+        industrySector ? ("Target Sector: " + industrySector) : "",
+        "Division: " + division,
+        "Requirements: " + message
+      ].filter(Boolean).join("\n");
 
-    if (!division) {
-      return createJsonResponse({ ok: false, error: 'Please select an area of interest.' });
-    }
+      // Existing sheet columns:
+      // A Received At, B Customer Name, C Customer Email, D Subject,
+      // E Enquiry Message, F Division, G Auto-Reply Status, H Gmail Message ID.
+      sheet.appendRow([
+        new Date(),
+        safeWebsiteCell(name),
+        safeWebsiteCell(email),
+        safeWebsiteCell(subject),
+        safeWebsiteCell(enquiryMessage),
+        safeWebsiteCell(division || "Other / Review"),
+        "Pending",
+        "WEB-" + referenceId
+      ]);
 
-    if (!requirements) {
-      return createJsonResponse({ ok: false, error: 'Please provide your enquiry requirements.' });
-    }
+      rowNumber = sheet.getLastRow();
 
-    if (!consent) {
-      return createJsonResponse({ ok: false, error: 'Consent to be contacted is required.' });
-    }
+      // =========================================================================
+      // 1. SEND LEAD NOTIFICATION TO info@vspias.in (ADMIN DESK)
+      // =========================================================================
+      try {
+        const adminSubject = "🔔 New Website Enquiry [" + referenceId + "]: " + name + " - " + (division || "General");
+        
+        const adminPlainBody =
+          "NEW WEBSITE ENQUIRY RECEIVED\n" +
+          "============================\n\n" +
+          "Reference ID: " + referenceId + "\n" +
+          "Date / Time:  " + new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " (IST)\n\n" +
+          "CLIENT DETAILS:\n" +
+          "• Full Name:       " + name + "\n" +
+          "• Email Address:   " + email + "\n" +
+          "• Phone / WhatsApp:" + (phone || "N/A") + "\n" +
+          "• Company / Org:   " + (company || "N/A") + "\n\n" +
+          "PROJECT SPECIFICATIONS:\n" +
+          "• Division:        " + (division || "General") + "\n" +
+          "• Target Quantity: " + (product || "To be discussed") + "\n" +
+          (bagFinish ? ("• Bag Finish:      " + bagFinish + "\n") : "") +
+          (brandName ? ("• Brand Imprint:   " + brandName + "\n") : "") +
+          (industrySector ? ("• Target Sector:   " + industrySector + "\n") : "") +
+          "\nREQUIREMENTS / MESSAGE:\n" +
+          message + "\n\n" +
+          "---\n" +
+          "Direct Reply: Reply to this email to contact " + name + " directly (" + email + ").\n" +
+          "Delivered by VSPIAS Website Webhook.";
 
-    // 4. Locate or initialize the Google Sheet & tab
-    var sheet = getOrInitEnquiriesSheet();
-    if (!sheet) {
-      return createJsonResponse({
-        ok: false,
-        error: 'Unable to access the "VSPIAS Customer Enquiries" spreadsheet. Please verify sheet access.'
-      });
-    }
+        const phoneClean = String(phone || "").replace(/[^0-9+]/g, "");
+        const waNumber = phoneClean.replace(/^\+/, "");
 
-    // 5. Duplicate Submission Defense
-    // Check if an identical submission was logged within the last 3 minutes
-    var duplicateCheck = checkRecentDuplicate(sheet, email, requirements);
-    if (duplicateCheck.isDuplicate) {
-      return createJsonResponse({
-        ok: true,
-        referenceId: duplicateCheck.referenceId,
-        message: 'Your enquiry was already successfully received. Reference ID: ' + duplicateCheck.referenceId
-      });
-    }
+        const adminHtmlBody =
+          '<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173b30;background:#f5f3eb;padding:24px;">' +
+            '<div style="background:#173b30;color:#fffef9;padding:20px 24px;border-radius:8px;">' +
+              '<p style="color:#dbe999;font-size:11px;letter-spacing:1.5px;margin:0 0 6px;text-transform:uppercase;font-weight:700;">VSPIAS ECOAUTOMATION — NEW LEAD</p>' +
+              '<h2 style="margin:0;font-size:20px;color:#fffef9;">New Website Customer Enquiry</h2>' +
+            '</div>' +
+            '<div style="padding:24px;background:#fffef9;margin-top:12px;border-radius:8px;line-height:1.7;">' +
+              '<div style="background:#eef4f0;border-left:4px solid #173b30;padding:12px 16px;border-radius:0 4px 4px 0;margin-bottom:18px;">' +
+                '<div style="font-size:11px;color:#527163;font-weight:700;text-transform:uppercase;">Reference ID</div>' +
+                '<div style="font-size:18px;font-weight:700;color:#173b30;font-family:monospace;">' + escapeWebsiteHtml(referenceId) + '</div>' +
+              '</div>' +
+              '<h3 style="margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;color:#173b30;border-bottom:1px solid #e1e7e3;padding-bottom:4px;">Client Contact Information</h3>' +
+              '<p style="margin:6px 0;font-size:13px;">' +
+                '<strong>Name:</strong> ' + escapeWebsiteHtml(name) + '<br>' +
+                '<strong>Email:</strong> <a href="mailto:' + escapeWebsiteHtml(email) + '" style="color:#0f5132;font-weight:600;">' + escapeWebsiteHtml(email) + '</a><br>' +
+                '<strong>Phone / WhatsApp:</strong> <a href="tel:' + escapeWebsiteHtml(phone) + '" style="color:#0f5132;">' + escapeWebsiteHtml(phone || "N/A") + '</a>' +
+                (waNumber ? ' &middot; <a href="https://wa.me/' + waNumber + '" style="color:#128c7e;font-weight:600;" target="_blank">Open WhatsApp ↗</a>' : '') + '<br>' +
+                '<strong>Company:</strong> ' + escapeWebsiteHtml(company || "N/A") +
+              '</p>' +
+              '<h3 style="margin:18px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;color:#173b30;border-bottom:1px solid #e1e7e3;padding-bottom:4px;">Enquiry Specifications</h3>' +
+              '<p style="margin:6px 0;font-size:13px;">' +
+                '<strong>Division / Interest:</strong> ' + escapeWebsiteHtml(division || "General") + '<br>' +
+                '<strong>Quantity / Capacity:</strong> ' + escapeWebsiteHtml(product || "To be discussed") + '<br>' +
+                (bagFinish ? ('<strong>Bag Finish:</strong> ' + escapeWebsiteHtml(bagFinish) + '<br>') : '') +
+                (brandName ? ('<strong>Brand Imprint:</strong> ' + escapeWebsiteHtml(brandName) + '<br>') : '') +
+                (industrySector ? ('<strong>Target Sector:</strong> ' + escapeWebsiteHtml(industrySector) + '<br>') : '') +
+              '</p>' +
+              '<h3 style="margin:18px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;color:#173b30;">Requirements & Message</h3>' +
+              '<div style="background:#fafbf9;border:1px solid #e2e8f0;border-radius:6px;padding:14px 16px;font-size:13px;line-height:1.6;white-space:pre-wrap;color:#173b30;">' +
+                escapeWebsiteHtml(message) +
+              '</div>' +
+              '<div style="text-align:center;margin-top:20px;padding:12px;background:#f5f3eb;border-radius:6px;">' +
+                '<a href="mailto:' + escapeWebsiteHtml(email) + '?subject=' + encodeURIComponent("Re: VSPIAS Enquiry [" + referenceId + "]") + '" style="display:inline-block;background:#173b30;color:#ffffff;text-decoration:none;padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;margin-right:8px;">Reply to Customer ↗</a>' +
+                (waNumber ? '<a href="https://wa.me/' + waNumber + '" style="display:inline-block;background:#25d366;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:4px;font-size:13px;font-weight:600;" target="_blank">Chat on WhatsApp ↗</a>' : '') +
+              '</div>' +
+              '<p style="margin-top:16px;font-size:11px;color:#6b7280;text-align:center;">' +
+                'Tip: Client ko reply dene ke liye bas is email par direct <strong>Reply</strong> karein.' +
+              '</p>' +
+            '</div>' +
+          '</div>';
 
-    // 6. Unique Reference ID
-    // If client supplied a valid referenceId (e.g. VS-XXXXXXXX), preserve it so frontend and sheet match
-    var referenceId = (rawData.referenceId && /^VS-[A-Z0-9]{6,12}$/i.test(rawData.referenceId))
-      ? rawData.referenceId.toUpperCase()
-      : ('VS-' + Math.random().toString(36).substring(2, 10).toUpperCase());
-    var timestampStr = Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyy-MM-dd HH:mm:ss');
+        MailApp.sendEmail({
+          to: WEBSITE_CONFIG.BUSINESS_EMAIL,
+          subject: adminSubject,
+          body: adminPlainBody,
+          htmlBody: adminHtmlBody,
+          name: "VSPIAS Website Form",
+          replyTo: email
+        });
+      } catch (adminMailError) {
+        console.error("Admin notification email error:", adminMailError);
+      }
 
-    // 7. Write record to the Google Sheet tab
-    var recordData = {
-      referenceId: referenceId,
-      timestamp: timestampStr,
-      name: name,
-      email: email,
-      phone: phone || 'N/A',
-      company: company || 'N/A',
-      division: division,
-      quantity: quantity || 'To be discussed',
-      requirements: requirements,
-      bagFinish: bagFinish || '—',
-      brandName: brandName || '—',
-      industrySector: industrySector || '—',
-      status: 'New'
-    };
+      // =========================================================================
+      // 2. SEND CONFIRMATION TO CUSTOMER (to: email)
+      // =========================================================================
+      const plainBody =
+        "Dear " + name + ",\n\n" +
+        "Thank you for reaching out to VSPIAS Ecoautomation Pvt. Ltd.\n\n" +
+        "We have successfully received your enquiry. Our team will review " +
+        "your requirements and get in touch with you regarding the most " +
+        "suitable solution for your business.\n\n" +
+        "Your Enquiry Summary\n" +
+        "Reference ID: " + referenceId + "\n" +
+        "Requirement: " + (product || message) + "\n" +
+        "Division: " + (division || "Other / Review") + "\n\n" +
+        "How can we help you?\n" +
+        "Whether you need industrial automation products and control " +
+        "solutions or customised, sustainable paper packaging, our team " +
+        "is here to help you explore the right options.\n\n" +
+        "You can reply to this email with additional specifications, " +
+        "quantities, technical details, or project requirements.\n\n" +
+        "Explore our solutions:\n" +
+        "Industrial Automation: https://vspias.in/automation\n" +
+        "Paper Packaging: https://vspias.in/paper-bags\n\n" +
+        "Thank you for considering VSPIAS as your business partner.\n\n" +
+        "Best regards,\nTeam VSPIAS\n" +
+        "VSPIAS Ecoautomation Pvt. Ltd.\n" +
+        "Industrial Automation | Sustainable Paper Packaging\n" +
+        "https://vspias.in/\n\n" +
+        "This is an automated confirmation that your enquiry has been received.";
 
-    appendRecordToSheet(sheet, recordData);
+      const htmlBody =
+        "<p>Dear " + escapeWebsiteHtml(name) + ",</p>" +
+        "<p>Thank you for reaching out to <strong>VSPIAS Ecoautomation Pvt. Ltd.</strong></p>" +
+        "<p>We have successfully received your enquiry. Our team will review your requirements and get in touch with you regarding the most suitable solution for your business.</p>" +
+        "<h3>Your Enquiry Summary</h3>" +
+        "<p><strong>Reference ID:</strong> " + referenceId + "<br>" +
+        "<strong>Requirement:</strong> " + escapeWebsiteHtml(product || message) + "<br>" +
+        "<strong>Division:</strong> " + escapeWebsiteHtml(division || "Other / Review") + "</p>" +
+        "<h3>How can we help you?</h3>" +
+        "<p>Whether you need industrial automation products and control solutions or customised, sustainable paper packaging, our team is here to help you explore the right options for your requirements.</p>" +
+        "<p>You can reply to this email with any additional specifications, quantities, technical details, or project requirements.</p>" +
+        "<p>Explore our solutions:<br>" +
+        '<a href="https://vspias.in/automation">Industrial Automation</a><br>' +
+        '<a href="https://vspias.in/paper-bags">Paper Packaging</a></p>' +
+        "<p>Thank you for considering VSPIAS as your business partner. We look forward to connecting with you.</p>" +
+        "<p>Best regards,<br>Team VSPIAS<br>" +
+        "VSPIAS Ecoautomation Pvt. Ltd.<br>" +
+        "Industrial Automation | Sustainable Paper Packaging<br>" +
+        '<a href="https://vspias.in/">https://vspias.in/</a></p>' +
+        "<small>This is an automated confirmation that your enquiry has been received. You can reply directly to this email to share additional details.</small>";
 
-    // 8. Send Branded Confirmation Email to Customer
-    var emailStatus = 'Sent';
-    try {
-      sendConfirmationEmail(email, name, referenceId, recordData);
-    } catch (mailErr) {
-      Logger.log('Confirmation email error: ' + mailErr.toString());
-      emailStatus = 'Email Failed: ' + mailErr.message;
-      // Update sheet status note if email failed, but do not fail the overall submission
-      updateLastRowStatus(sheet, emailStatus);
-    }
+      try {
+        MailApp.sendEmail({
+          to: email,
+          subject: "We received your enquiry | VSPIAS - " + referenceId,
+          body: plainBody,
+          htmlBody: htmlBody,
+          name: WEBSITE_CONFIG.BUSINESS_NAME,
+          replyTo: WEBSITE_CONFIG.BUSINESS_EMAIL
+        });
 
-    return createJsonResponse({
-      ok: true,
-      referenceId: referenceId,
-      message: 'Enquiry submitted successfully. Confirmation email sent to ' + email + '.'
-    });
+        sheet.getRange(rowNumber, 7).setValue("Sent");
+      } catch (mailError) {
+        sheet.getRange(rowNumber, 7).setValue(
+          "Failed - " + String(mailError.message || mailError).slice(0, 180)
+        );
+      }
 
-  } catch (err) {
-    Logger.log('doPost fatal error: ' + err.toString());
-    return createJsonResponse({
-      ok: false,
-      error: 'Server error processing enquiry: ' + err.message
-    });
-  } finally {
-    if (lockAcquired) {
+    } finally {
       lock.releaseLock();
     }
+
+    return jsonResponse({
+      success: true,
+      referenceId: referenceId
+    });
+
+  } catch (error) {
+    console.error("Website enquiry error:", error);
+
+    return jsonResponse({
+      success: false,
+      message: "The enquiry could not be processed. Please try again."
+    });
   }
 }
 
-/**
- * Returns JSON response with proper CORS-friendly headers for Google Apps Script Web Apps
- */
-function createJsonResponse(data) {
-  return ContentService
-    .createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
+function cleanWebsiteValue(value) {
+  return String(value == null ? "" : value)
+    .trim()
+    .slice(0, 5000);
 }
 
-/**
- * Sanitizes input string, prevents formula injection, trims whitespace, and limits length
- */
-function sanitizeString(val, maxLength) {
-  if (val === null || val === undefined) return '';
-  var str = String(val).trim();
-  if (str.length > maxLength) {
-    str = str.substring(0, maxLength);
-  }
-  // Formula injection defense: prevent Excel/Sheets formula execution if string begins with =, +, -, @
-  if (/^[=\+\-@]/.test(str)) {
-    str = "'" + str;
-  }
-  return str;
+function safeWebsiteCell(value) {
+  const text = String(value == null ? "" : value);
+  // Prevent spreadsheet formula injection.
+  return /^[=+\-@]/.test(text) ? "'" + text : text;
 }
 
-/**
- * Strict email validation regex
- */
-function isValidEmail(email) {
-  // Disallow CRLF to prevent email header injection
-  if (/[\r\n]/.test(email)) return false;
-  var re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-  return re.test(email);
-}
-
-/**
- * Locate or initialize the spreadsheet and the "Enquiries" tab
- */
-function getOrInitEnquiriesSheet() {
-  var ss;
-  try {
-    // 1. Try bound spreadsheet first (if script is attached to sheet via Extensions > Apps Script)
-    ss = SpreadsheetApp.getActiveSpreadsheet();
-  } catch (e) {
-    ss = null;
-  }
-
-  // 2. If standalone, search by file name
-  if (!ss) {
-    var files = DriveApp.getFilesByName(CONFIG.SPREADSHEET_NAME);
-    if (files.hasNext()) {
-      ss = SpreadsheetApp.open(files.next());
-    }
-  }
-
-  if (!ss) {
-    // If still not found, create new spreadsheet with the requested name
-    ss = SpreadsheetApp.create(CONFIG.SPREADSHEET_NAME);
-  }
-
-  var sheet = ss.getSheetByName(CONFIG.SHEET_TAB_NAME);
-  if (!sheet) {
-    sheet = ss.insertSheet(CONFIG.SHEET_TAB_NAME);
-  }
-
-  // Ensure header row exists
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(STANDARD_HEADERS);
-    var headerRange = sheet.getRange(1, 1, 1, STANDARD_HEADERS.length);
-    headerRange.setFontWeight('bold');
-    headerRange.setBackground('#173b30');
-    headerRange.setFontColor('#ffffff');
-    sheet.setFrozenRows(1);
-  }
-
-  return sheet;
-}
-
-/**
- * Check if the same email sent the same requirement in the last 3 minutes
- */
-function checkRecentDuplicate(sheet, email, requirements) {
-  var lastRow = sheet.getLastRow();
-  if (lastRow <= 1) return { isDuplicate: false };
-
-  var checkCount = Math.min(10, lastRow - 1);
-  var startRow = lastRow - checkCount + 1;
-  var values = sheet.getRange(startRow, 1, checkCount, sheet.getLastColumn()).getValues();
-  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-
-  var colMap = mapHeadersToIndexes(headers);
-  var now = new Date().getTime();
-
-  for (var i = values.length - 1; i >= 0; i--) {
-    var row = values[i];
-    var rowEmail = String(row[colMap.email] || '').trim().toLowerCase();
-    var rowReq = String(row[colMap.requirements] || '').trim();
-    var rowRef = String(row[colMap.referenceId] || '').trim();
-    var rowTimeRaw = row[colMap.timestamp];
-
-    if (rowEmail === email.toLowerCase() && rowReq === requirements) {
-      if (rowTimeRaw) {
-        var rowTime = new Date(rowTimeRaw).getTime();
-        if (!isNaN(rowTime) && (now - rowTime) < CONFIG.DEDUPLICATION_WINDOW_MS) {
-          return { isDuplicate: true, referenceId: rowRef };
-        }
-      }
-    }
-  }
-
-  return { isDuplicate: false };
-}
-
-/**
- * Normalizes headers and maps them to standard field keys
- */
-function mapHeadersToIndexes(headers) {
-  var map = {
-    referenceId: 0,
-    timestamp: 1,
-    name: 2,
-    email: 3,
-    phone: 4,
-    company: 5,
-    division: 6,
-    quantity: 7,
-    requirements: 8,
-    bagFinish: 9,
-    brandName: 10,
-    industrySector: 11,
-    status: 12
-  };
-
-  for (var c = 0; c < headers.length; c++) {
-    var h = String(headers[c] || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (h.indexOf('ref') !== -1 || h === 'id') map.referenceId = c;
-    else if (h.indexOf('time') !== -1 || h.indexOf('date') !== -1) map.timestamp = c;
-    else if (h.indexOf('name') !== -1 && h.indexOf('brand') === -1) map.name = c;
-    else if (h.indexOf('mail') !== -1) map.email = c;
-    else if (h.indexOf('phone') !== -1 || h.indexOf('mobile') !== -1 || h.indexOf('whatsapp') !== -1) map.phone = c;
-    else if (h.indexOf('comp') !== -1 || h.indexOf('org') !== -1) map.company = c;
-    else if (h.indexOf('div') !== -1 || h.indexOf('inter') !== -1 || h.indexOf('cat') !== -1) map.division = c;
-    else if (h.indexOf('quant') !== -1 || h.indexOf('cap') !== -1) map.quantity = c;
-    else if (h.indexOf('req') !== -1 || h.indexOf('msg') !== -1 || h.indexOf('mess') !== -1) map.requirements = c;
-    else if (h.indexOf('finish') !== -1) map.bagFinish = c;
-    else if (h.indexOf('brand') !== -1) map.brandName = c;
-    else if (h.indexOf('sect') !== -1 || h.indexOf('indus') !== -1) map.industrySector = c;
-    else if (h.indexOf('stat') !== -1) map.status = c;
-  }
-
-  return map;
-}
-
-/**
- * Append record respecting existing header layout
- */
-function appendRecordToSheet(sheet, record) {
-  var lastCol = sheet.getLastColumn();
-  if (lastCol === 0) {
-    sheet.appendRow(STANDARD_HEADERS);
-    lastCol = STANDARD_HEADERS.length;
-  }
-
-  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-  var colMap = mapHeadersToIndexes(headers);
-  var rowData = new Array(lastCol);
-
-  for (var i = 0; i < lastCol; i++) {
-    rowData[i] = '';
-  }
-
-  rowData[colMap.referenceId] = record.referenceId;
-  rowData[colMap.timestamp] = record.timestamp;
-  rowData[colMap.name] = record.name;
-  rowData[colMap.email] = record.email;
-  rowData[colMap.phone] = record.phone;
-  rowData[colMap.company] = record.company;
-  rowData[colMap.division] = record.division;
-  rowData[colMap.quantity] = record.quantity;
-  rowData[colMap.requirements] = record.requirements;
-  rowData[colMap.bagFinish] = record.bagFinish;
-  rowData[colMap.brandName] = record.brandName;
-  rowData[colMap.industrySector] = record.industrySector;
-  rowData[colMap.status] = record.status;
-
-  sheet.appendRow(rowData);
-}
-
-/**
- * Updates status on the last row if email fails
- */
-function updateLastRowStatus(sheet, statusText) {
-  try {
-    var lastRow = sheet.getLastRow();
-    var lastCol = sheet.getLastColumn();
-    var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-    var colMap = mapHeadersToIndexes(headers);
-    sheet.getRange(lastRow, colMap.status + 1).setValue(statusText);
-  } catch (e) {
-    Logger.log('Could not update last row status: ' + e.toString());
-  }
-}
-
-/**
- * Sends responsive HTML thank-you confirmation email to customer
- */
-function sendConfirmationEmail(customerEmail, customerName, referenceId, record) {
-  var subject = 'Thank you for your enquiry [' + referenceId + '] — VSPIAS';
-
-  var plainBody =
-    'Dear ' + customerName + ',\n\n' +
-    'Thank you for contacting VSPIAS Ecoautomation.\n' +
-    'We have received your enquiry regarding ' + record.division + '.\n\n' +
-    'Your Enquiry Reference ID: ' + referenceId + '\n' +
-    'Timestamp: ' + record.timestamp + ' (IST)\n\n' +
-    'Submitted Summary:\n' +
-    '• Division: ' + record.division + '\n' +
-    '• Company: ' + record.company + '\n' +
-    '• Phone / WhatsApp: ' + record.phone + '\n' +
-    '• Quantity / Capacity: ' + record.quantity + '\n' +
-    (record.bagFinish !== '—' ? ('• Finish: ' + record.bagFinish + '\n') : '') +
-    (record.brandName !== '—' ? ('• Brand Imprint: ' + record.brandName + '\n') : '') +
-    (record.industrySector !== '—' ? ('• Industry Sector: ' + record.industrySector + '\n') : '') +
-    '• Requirements: ' + record.requirements + '\n\n' +
-    'What happens next?\n' +
-    'Our technical and commercial desk is reviewing your specifications. Paawan Bhargava or a technical specialist will connect with you shortly with detailed parameters and quotation.\n\n' +
-    'For urgent questions or quick coordination, you can also reach us directly:\n' +
-    '• Email: ' + CONFIG.OFFICIAL_EMAIL + '\n' +
-    '• Phone / WhatsApp: ' + CONFIG.OFFICIAL_PHONE + '\n' +
-    '• Facility: #66, 6th Main Road, behind UCO Bank, Peenya, Bengaluru 560058, Karnataka, India\n\n' +
-    'Best regards,\n' +
-    'Paawan Bhargava\n' +
-    'VSPIAS Ecoautomation\n' +
-    'https://vspias.in';
-
-  var htmlBody =
-    '<!DOCTYPE html>' +
-    '<html>' +
-    '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>' +
-    '<body style="margin:0;padding:24px;background-color:#f4f6f3;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;color:#173b30;">' +
-      '<div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;border:1px solid #e1e7e3;overflow:hidden;">' +
-        '<div style="background:#173b30;padding:24px 32px;color:#ffffff;">' +
-          '<h1 style="margin:0;font-size:22px;letter-spacing:-0.5px;font-weight:700;">VSPIAS</h1>' +
-          '<p style="margin:4px 0 0;font-size:12px;opacity:0.8;letter-spacing:1px;text-transform:uppercase;">Packaging Machinery & Ecoautomation</p>' +
-        '</div>' +
-
-        '<div style="padding:32px;">' +
-          '<div style="display:inline-block;padding:6px 14px;background:#eef4f0;border-radius:4px;color:#173b30;font-size:12px;font-weight:600;margin-bottom:16px;">' +
-            'Reference ID: ' + referenceId +
-          '</div>' +
-
-          '<h2 style="margin:0 0 12px;font-size:20px;color:#173b30;">Thank you, ' + escapeHtml(customerName) + '.</h2>' +
-          '<p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#4a5568;">' +
-            'We have received your enquiry and registered it directly in our client communication desk. Our team is reviewing your requirements.' +
-          '</p>' +
-
-          '<div style="background:#fafbf9;border:1px solid #e2e8f0;border-radius:6px;padding:20px;margin-bottom:24px;">' +
-            '<h3 style="margin:0 0 14px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Enquiry Summary</h3>' +
-            '<table style="width:100%;font-size:13px;line-height:1.6;border-collapse:collapse;">' +
-              '<tr><td style="padding:4px 0;color:#718096;width:140px;">Division:</td><td style="padding:4px 0;font-weight:600;color:#173b30;">' + escapeHtml(record.division) + '</td></tr>' +
-              (record.company !== 'N/A' ? '<tr><td style="padding:4px 0;color:#718096;">Company:</td><td style="padding:4px 0;color:#173b30;">' + escapeHtml(record.company) + '</td></tr>' : '') +
-              (record.phone !== 'N/A' ? '<tr><td style="padding:4px 0;color:#718096;">Phone / WhatsApp:</td><td style="padding:4px 0;color:#173b30;">' + escapeHtml(record.phone) + '</td></tr>' : '') +
-              '<tr><td style="padding:4px 0;color:#718096;">Quantity / Target:</td><td style="padding:4px 0;color:#173b30;">' + escapeHtml(record.quantity) + '</td></tr>' +
-              (record.bagFinish !== '—' ? '<tr><td style="padding:4px 0;color:#718096;">Finish:</td><td style="padding:4px 0;color:#173b30;">' + escapeHtml(record.bagFinish) + '</td></tr>' : '') +
-              (record.brandName !== '—' ? '<tr><td style="padding:4px 0;color:#718096;">Brand Imprint:</td><td style="padding:4px 0;color:#173b30;">' + escapeHtml(record.brandName) + '</td></tr>' : '') +
-              (record.industrySector !== '—' ? '<tr><td style="padding:4px 0;color:#718096;">Target Sector:</td><td style="padding:4px 0;color:#173b30;">' + escapeHtml(record.industrySector) + '</td></tr>' : '') +
-              '<tr><td style="padding:8px 0 4px;color:#718096;vertical-align:top;">Requirements:</td><td style="padding:8px 0 4px;color:#173b30;white-space:pre-wrap;">' + escapeHtml(record.requirements) + '</td></tr>' +
-            '</table>' +
-          '</div>' +
-
-          '<h3 style="margin:0 0 8px;font-size:14px;color:#173b30;">What is next?</h3>' +
-          '<p style="margin:0 0 24px;font-size:13px;line-height:1.6;color:#4a5568;">' +
-            'Paawan Bhargava or a technical specialist from our Peenya, Bengaluru desk will review these parameters and provide quotation details and recommendations.' +
-          '</p>' +
-
-          '<div style="background:#eef4f0;border-left:4px solid #173b30;padding:16px 20px;border-radius:0 4px 4px 0;font-size:13px;line-height:1.6;color:#173b30;">' +
-            '<strong>Direct Point of Contact:</strong><br>' +
-            'Paawan Bhargava &middot; <a href="mailto:' + CONFIG.OFFICIAL_EMAIL + '" style="color:#173b30;text-decoration:underline;">' + CONFIG.OFFICIAL_EMAIL + '</a><br>' +
-            'Phone / WhatsApp: <a href="tel:+919783133333" style="color:#173b30;text-decoration:underline;">' + CONFIG.OFFICIAL_PHONE + '</a><br>' +
-            '#66, 6th Main Road, behind UCO Bank, Peenya, Bengaluru 560058, Karnataka' +
-          '</div>' +
-        '</div>' +
-
-        '<div style="background:#f9fbf9;padding:16px 32px;font-size:11px;color:#718096;text-align:center;border-top:1px solid #e1e7e3;">' +
-          '&copy; ' + new Date().getFullYear() + ' VSPIAS Ecoautomation. All rights reserved.<br>' +
-          'This automated confirmation was generated upon submission at <a href="https://vspias.in" style="color:#718096;">vspias.in</a>.' +
-        '</div>' +
-      '</div>' +
-    '</body>' +
-    '</html>';
-
-  GmailApp.sendEmail(customerEmail, subject, plainBody, {
-    htmlBody: htmlBody,
-    name: CONFIG.SENDER_NAME,
-    replyTo: CONFIG.OFFICIAL_EMAIL
+function escapeWebsiteHtml(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[ch];
   });
 }
 
-function escapeHtml(text) {
-  if (!text) return '';
-  return String(text)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+function jsonResponse(value) {
+  return ContentService
+    .createTextOutput(JSON.stringify(value))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+const CONFIG = {
+  SHEET_ID: "1oOEB3vGQdl7W7Ri2L5mdm83MXaMA_BzmVEEo0xvUHio",
+  SHEET_NAME: "VSPIAS Customer Enquiries",
+  BUSINESS_EMAIL: "info@vspias.in",
+  BUSINESS_NAME: "VSPIAS Ecoautomation Pvt. Ltd.",
+  SITE_URL: "https://vspias.in",
+  LOOKBACK_DAYS: 7
+};
+
+const HEADERS = [
+  "Received At",
+  "Customer Name",
+  "Customer Email",
+  "Subject",
+  "Enquiry Message",
+  "Division",
+  "Auto-Reply Status",
+  "Gmail Message ID"
+];
+
+function setup() {
+  const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+  let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+
+  if (!sheet) sheet = ss.insertSheet(CONFIG.SHEET_NAME);
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.setFrozenRows(1);
+  }
+
+  // Create one recurring trigger, without duplicates.
+  const exists = ScriptApp.getProjectTriggers().some(
+    t => t.getHandlerFunction() === "processEnquiries"
+  );
+
+  if (!exists) {
+    ScriptApp.newTrigger("processEnquiries")
+      .timeBased()
+      .everyMinutes(5)
+      .create();
+  }
+}
+
+function processEnquiries() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(20000)) return;
+
+  try {
+    const sheet = SpreadsheetApp
+      .openById(CONFIG.SHEET_ID)
+      .getSheetByName(CONFIG.SHEET_NAME);
+
+    if (!sheet) throw new Error("Run setup() first.");
+
+    const processed = new Set();
+
+    if (sheet.getLastRow() > 1) {
+      sheet.getRange(2, 8, sheet.getLastRow() - 1, 1)
+        .getValues()
+        .flat()
+        .filter(String)
+        .forEach(id => processed.add(String(id)));
+    }
+
+    const query =
+      `in:inbox newer_than:${CONFIG.LOOKBACK_DAYS}d ` +
+      `-from:${CONFIG.BUSINESS_EMAIL}`;
+
+    const threads = GmailApp.search(query, 0, 100);
+
+    for (const thread of threads) {
+      for (const message of thread.getMessages()) {
+        const id = message.getId();
+        if (processed.has(id)) continue;
+
+        const sender = parseAddress(message.getFrom());
+        const subject = message.getSubject() || "(No subject)";
+        const body = message.getPlainBody() || "";
+        const receivedAt = message.getDate();
+
+        // Never process messages sent by the business mailbox itself.
+        if (sender === CONFIG.BUSINESS_EMAIL.toLowerCase()) continue;
+
+        // Skip obvious automated messages and delivery failures.
+        if (isAutomatedMessage(message, sender)) continue;
+
+        const customerEmail = findCustomerEmail(message, body);
+
+        // Save the enquiry even if the sender cannot be safely identified.
+        const customerName = extractName(message.getFrom());
+        const division = detectDivision(subject + " " + body);
+
+        const row = sheet.getLastRow() + 1;
+
+        sheet.appendRow([
+          receivedAt,
+          safeCell(customerName),
+          safeCell(customerEmail || ""),
+          safeCell(subject),
+          safeCell(body.slice(0, 40000)),
+          division,
+          customerEmail ? "Pending" : "Skipped - verify customer email",
+          id
+        ]);
+
+        // Mark the ID locally to avoid duplicate handling in this run.
+        processed.add(id);
+
+        if (!customerEmail) continue;
+
+        try {
+          sendThankYou(customerEmail, customerName, subject, division);
+
+          sheet.getRange(row, 7).setValue("Sent");
+        } catch (error) {
+          sheet.getRange(row, 7)
+            .setValue("Failed - " + String(error).slice(0, 180));
+        }
+      }
+    }
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function findCustomerEmail(message, body) {
+  const replyTo = parseAddress(message.getReplyTo() || "");
+
+  // Reply-To is useful for website notifications, but reject the
+  // business mailbox and automated addresses.
+  if (isCustomerAddress(replyTo)) return replyTo;
+
+  const sender = parseAddress(message.getFrom());
+
+  // For direct customer emails, the sender is the customer.
+  if (isCustomerAddress(sender) &&
+      !sender.endsWith("@vspias.in")) {
+    return sender;
+  }
+
+  // For website notifications sent from the business domain,
+  // try to find a clearly labelled customer email in the body.
+  const patterns = [
+    /(?:customer\s*)?e-?mail(?:\s*address)?\s*[:\-]\s*([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i,
+    /(?:your\s*)?email\s*[:\-]\s*([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i
+  ];
+
+  for (const pattern of patterns) {
+    const match = body.match(pattern);
+    if (match && isCustomerAddress(match[1].toLowerCase())) {
+      return match[1].toLowerCase();
+    }
+  }
+
+  return "";
+}
+
+function sendThankYou(to, customerName, subject, division) {
+  const greeting = escapeHtml(customerName || "there");
+  const ref = "VS-" + Utilities.getUuid().slice(0, 8).toUpperCase();
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:620px;
+      margin:auto;color:#173b30;background:#f5f3eb;padding:24px">
+      <div style="background:#173b30;color:#fffef9;padding:24px;
+        border-radius:12px">
+        <p style="color:#dbe999;font-size:12px;letter-spacing:2px">
+          VSPIAS ECOAUTOMATION
+        </p>
+        <h2>Thank you for reaching out.</h2>
+        <p>We've successfully received your enquiry.</p>
+      </div>
+      <div style="padding:24px;background:#fffef9;margin-top:12px;
+        border-radius:12px;line-height:1.7">
+        <p>Dear ${greeting},</p>
+        <p>Thank you for reaching out to
+          <strong>VSPIAS Ecoautomation Pvt. Ltd.</strong></p>
+        <p>We've successfully received your enquiry. Our team will
+          review your requirements and get in touch with you regarding
+          the most suitable solution for your business.</p>
+        <h3>Your Enquiry Summary</h3>
+        <p><strong>Reference ID:</strong> ${ref}<br>
+        <strong>Requirement:</strong> ${escapeHtml(subject)}<br>
+        <strong>Division:</strong> ${escapeHtml(division)}</p>
+        <h3>How can we help you?</h3>
+        <p>Whether you need industrial automation products and control
+          solutions or customised, sustainable paper packaging, our team
+          is here to help you explore the right options for your requirements.</p>
+        <p>To help us assist you more efficiently, you can reply to this
+          email with any additional specifications, quantities, technical
+          details, or project requirements.</p>
+        <p><a href="https://vspias.in/automation">Industrial Automation</a><br>
+        <a href="https://vspias.in/paper-bags">Paper Packaging</a></p>
+        <p>Thank you for considering VSPIAS as your business partner.
+          We look forward to connecting with you.</p>
+        <p>Best regards,<br><strong>Team VSPIAS</strong><br>
+          VSPIAS Ecoautomation Pvt. Ltd.<br>
+          Industrial Automation | Sustainable Paper Packaging<br>
+          <a href="https://vspias.in">vspias.in</a></p>
+        <hr style="border:0;border-top:1px solid #d8ddd3">
+        <small>This is an automated confirmation that your enquiry
+          has been received. You can reply directly to this email
+          to share additional details.</small>
+      </div>
+    </div>`;
+
+  const plainText =
+`Dear ${customerName || "Customer"},
+
+Thank you for reaching out to VSPIAS Ecoautomation Pvt. Ltd.
+
+We've successfully received your enquiry. Our team will review your
+requirements and get in touch with you regarding the most suitable
+solution for your business.
+
+Your Enquiry Summary
+Reference ID: ${ref}
+Requirement: ${subject}
+Division: ${division}
+
+Whether you need industrial automation products and control solutions
+or customised, sustainable paper packaging, our team is here to help.
+
+You can reply to this email with additional specifications, quantities,
+technical details, or project requirements.
+
+Industrial Automation: https://vspias.in/automation
+Paper Packaging: https://vspias.in/paper-bags
+
+Best regards,
+Team VSPIAS
+VSPIAS Ecoautomation Pvt. Ltd.
+https://vspias.in`;
+
+  GmailApp.sendEmail(to, "Thank you for contacting VSPIAS", plainText, {
+    htmlBody: html,
+    name: CONFIG.BUSINESS_NAME,
+    replyTo: CONFIG.BUSINESS_EMAIL
+  });
+}
+
+function isAutomatedMessage(message, sender) {
+  const subject = (message.getSubject() || "").toLowerCase();
+  const headers = message.getRawContent().slice(0, 12000).toLowerCase();
+
+  return (
+    /no.?reply|mailer-daemon|postmaster/.test(sender) ||
+    /delivery status notification|undeliverable|out of office|automatic reply|auto.?reply/.test(subject) ||
+    headers.includes("auto-submitted: auto-generated") ||
+    headers.includes("auto-submitted: auto-replied") ||
+    headers.includes("precedence: bulk")
+  );
+}
+
+function isCustomerAddress(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+    email !== CONFIG.BUSINESS_EMAIL.toLowerCase() &&
+    !/^(no-?reply|mailer-daemon|postmaster)@/i.test(email);
+}
+
+function parseAddress(value) {
+  const match = String(value).match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  return match ? match[0].toLowerCase() : "";
+}
+
+function extractName(from) {
+  const match = String(from).match(/^\s*"?([^"<]+)"?\s*</);
+  return match ? match[1].trim() : "";
+}
+
+function detectDivision(text) {
+  const t = text.toLowerCase();
+
+  if (/paper bag|kraft|packaging|bag studio|paper roll/.test(t)) {
+    return "Paper Packaging";
+  }
+
+  if (/automation|plc|vfd|drive|hmi|switchgear|contactor|control panel|schneider|siemens|abb|l&t/.test(t)) {
+    return "Industrial Automation";
+  }
+
+  return "Other / Review";
+}
+
+function safeCell(value) {
+  const s = String(value || "");
+  // Prevent spreadsheet formula injection from incoming email content.
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+}
+
+function escapeHtml(value) {
+  return String(value || "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[ch]);
 }

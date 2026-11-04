@@ -43,10 +43,10 @@ export default function PremiumStudioSection(): JSX.Element {
           <BagStudio onRequestQuote={handleRequestQuote} />
         </div>
 
-        <div className="studio-bottom-note">
+        {/* <div className="studio-bottom-note">
           <svg className="icon" aria-hidden="true"><use href="#i-info"></use></svg>
           Digital concept preview. Continuous auto-rotation and interactive drag allow 360&deg; inspection. Dimensions, materials, and print registration are confirmed during pre-production sign-off.
-        </div>
+        </div> */}
       </div>
     </section>
   );
